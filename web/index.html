@@ -15,6 +15,39 @@
   #splash .name { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 38px); text-align: center; font-family: "Cinzel Splash", "Cinzel", Georgia, serif; font-weight: 700; font-size: 15px; letter-spacing: .42em; padding-left: .42em; color: #faf6ec; line-height: 1; }
 </style>
 <script>try { document.documentElement.style.setProperty("--sh", Math.max(screen.height, screen.width) + "px"); } catch (e) {}</script>
+<script>
+/* Launch diagnostics: records what the page sees during start-up (sizes, safe areas, launch screen, colours, reloads). */
+(function () {
+  var L = window.__lyLog = [], T = function () { return Math.round(performance.now()); };
+  function add(m) { L.push(T() + "ms  " + m); }
+  try {
+    var nav = (performance.getEntriesByType && performance.getEntriesByType("navigation")[0]) || {};
+    add("start nav=" + (nav.type || "?") + " responseEnd=" + Math.round(nav.responseEnd || 0) + "ms dark=" + matchMedia("(prefers-color-scheme: dark)").matches +
+        " standalone=" + (navigator.standalone === true || matchMedia("(display-mode: standalone)").matches) + " sw-controller=" + !!(navigator.serviceWorker && navigator.serviceWorker.controller));
+  } catch (e) {}
+  document.addEventListener("readystatechange", function () { add("readyState=" + document.readyState); });
+  window.addEventListener("pageshow", function (e) { add("pageshow persisted=" + e.persisted); });
+  window.addEventListener("pagehide", function () { add("pagehide"); });
+  document.addEventListener("visibilitychange", function () { add("visibility=" + document.visibilityState); });
+  window.addEventListener("resize", function () { add("resize event " + innerWidth + "x" + innerHeight); });
+  try { if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("controllerchange", function () { add("service worker took control"); }); } catch (e) {}
+  var last = "";
+  function snap() {
+    try {
+      var vv = window.visualViewport, sp = document.getElementById("splash"), lg = sp && sp.querySelector("svg"), r = lg && lg.getBoundingClientRect();
+      var pr = document.getElementById("lyProbe"), cs = pr && getComputedStyle(pr);
+      var s = "inner=" + innerWidth + "x" + innerHeight + " docH=" + document.documentElement.clientHeight +
+        " vv=" + (vv ? Math.round(vv.height) + "@top" + Math.round(vv.offsetTop) : "-") + " screen=" + screen.width + "x" + screen.height +
+        (cs ? " inset(top/bottom)=" + cs.paddingTop + "/" + cs.paddingBottom : "") +
+        " splash=" + (sp ? getComputedStyle(sp).opacity : "gone") + (r ? " logoY=" + Math.round((r.top + r.bottom) / 2) : "") +
+        " htmlBg=" + getComputedStyle(document.documentElement).backgroundColor + " fonts=" + (document.fonts && document.fonts.status);
+      if (s !== last) { add(s); last = s; }
+    } catch (e) {}
+  }
+  var iv = setInterval(snap, 40);
+  setTimeout(function () { clearInterval(iv); snap(); try { localStorage.setItem("lyceum-launchlog", L.join("\n")); } catch (e) {} }, 3800);
+})();
+</script>
 <title>Lyceum</title>
 <meta name="description" content="A morning news briefing with Greek philosophy.">
 <link rel="manifest" href="manifest.webmanifest">
@@ -285,6 +318,7 @@
 </style>
 </head>
 <body>
+<div id="lyProbe" aria-hidden="true" style="position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)"></div>
 <div id="splash" aria-hidden="true"><svg viewBox="0 0 56 49"><path d="M0 13.5 28 0l28 13.5Z"/><rect x="1.5" y="16" width="53" height="5.5" rx="1"/><rect x="3.1" y="24.5" width="6.2" height="18" rx="1.4"/><rect x="14" y="24.5" width="6.2" height="18" rx="1.4"/><rect x="24.9" y="24.5" width="6.2" height="18" rx="1.4"/><rect x="35.8" y="24.5" width="6.2" height="18" rx="1.4"/><rect x="46.7" y="24.5" width="6.2" height="18" rx="1.4"/><rect y="45" width="56" height="4" rx="1"/></svg><div class="name">LYCEUM</div></div>
 <svg class="defs" aria-hidden="true" focusable="false">
   <defs>
@@ -350,6 +384,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
+    <div><button class="pill" id="diagLink" type="button" style="margin-top:10px">Launch diagnostics</button></div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -900,6 +935,18 @@
       if ((store("lyceum-tz") || DEFAULT_TZ) !== currentTz()) showAlert("tz", sub); else box.hidden = true;
     }).catch(function () { box.hidden = true; });
   }
+  $("diagLink").addEventListener("click", function () {
+    var box = $("alert"); box.textContent = ""; box.hidden = false;
+    var log = (window.__lyLog && window.__lyLog.length > 3 ? window.__lyLog.join("\n") : "") || store("lyceum-launchlog") || "(nothing recorded yet: close the app, open it, wait 4 seconds, then try again)";
+    var text = "Lyceum launch log\n" + new Date().toISOString() + "\n" + navigator.userAgent + "\n\n" + (typeof log === "string" ? log : JSON.stringify(log));
+    box.appendChild(el("h4", null, "Launch diagnostics"));
+    box.appendChild(el("p", null, "Open the app from the Home Screen, wait 4 seconds, scroll here, copy this and send it to Claude."));
+    var ta = el("textarea"); ta.readOnly = true; ta.value = text; ta.style.height = "240px"; box.appendChild(ta);
+    var acts = el("div", "acts");
+    acts.appendChild(pill("Copy log", "solid", function () { copyText(text, ta, "Log copied"); }));
+    acts.appendChild(pill("Close", "", function () { box.hidden = true; }));
+    box.appendChild(acts); window.scrollTo({ top: 0 });
+  });
   $("alertLink").addEventListener("click", function () { window.scrollTo({ top: 0 }); refreshAlert(true); });
   afterSplash(refreshAlert);
   $("dismiss").addEventListener("click", function () { $("install").hidden = true; store("lyceum-banner", 1); });
