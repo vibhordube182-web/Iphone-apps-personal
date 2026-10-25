@@ -1,10 +1,56 @@
-// This worker exists for push notifications and the icon badge only. It deliberately has no "fetch" handler,
-// so opening the app never has to wake it first: the page loads straight from the browser's own cache and
-// network, which gets the first frame on screen sooner. (Trade-off: the app does not open offline.)
-self.addEventListener("install", () => { self.skipWaiting(); });
+// Opens instantly from the phone: the app shell, readings and fonts are served from the cache while a
+// fresh copy is fetched in the background (stale-while-revalidate). The edition itself is network-first
+// with a short timeout, because the page already paints the last saved edition on its own.
+const CACHE = "lyceum-v7";
+const FILES = ["./", "index.html", "manifest.webmanifest", "mark-192.png", "mark-touch.png"];
+
+self.addEventListener("install", (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+});
 self.addEventListener("activate", (e) => {
-  // earlier versions cached the app shell here; that cache is no longer used
-  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(
+    caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+function keyFor(url) { return url.origin + url.pathname; }
+
+async function staleWhileRevalidate(request, key) {
+  const cache = await caches.open(CACHE);
+  const hit = await cache.match(key);
+  const network = fetch(request).then((r) => {
+    if (r && (r.ok || r.type === "opaque")) cache.put(key, r.clone());
+    return r;
+  }).catch(() => null);
+  return hit || (await network) || (await cache.match("index.html")) || Response.error();
+}
+
+async function networkFirst(request, key, ms) {
+  const cache = await caches.open(CACHE);
+  try {
+    const r = await Promise.race([
+      fetch(request),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("slow")), ms)),
+    ]);
+    if (r && r.ok) cache.put(key, r.clone());
+    return r;
+  } catch (_) {
+    return (await cache.match(key)) || fetch(request).catch(() => Response.error());
+  }
+}
+
+self.addEventListener("fetch", (e) => {
+  const req = e.request;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.origin === location.origin) {
+    if (url.pathname.endsWith("news.json")) { e.respondWith(networkFirst(req, keyFor(url), 4000)); return; }
+    const key = req.mode === "navigate" ? new URL("index.html", location.href).href : keyFor(url);
+    e.respondWith(staleWhileRevalidate(req, key));
+  } else if (/(^|\.)fonts\.(googleapis|gstatic)\.com$/.test(url.hostname)) {
+    e.respondWith(staleWhileRevalidate(req, req.url));
+  }
 });
 
 function readList() {

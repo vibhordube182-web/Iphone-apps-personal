@@ -22,8 +22,7 @@
   function add(m) { L.push(T() + "ms  " + m); }
   try {
     var nav = (performance.getEntriesByType && performance.getEntriesByType("navigation")[0]) || {};
-    add("start nav=" + (nav.type || "?") + " timings(ms) worker=" + Math.round(nav.workerStart || 0) + " fetch=" + Math.round(nav.fetchStart || 0) + " request=" + Math.round(nav.requestStart || 0) +
-        " responseStart=" + Math.round(nav.responseStart || 0) + " responseEnd=" + Math.round(nav.responseEnd || 0) + " domInteractive=" + Math.round(nav.domInteractive || 0) + " dark=" + matchMedia("(prefers-color-scheme: dark)").matches +
+    add("start nav=" + (nav.type || "?") + " responseEnd=" + Math.round(nav.responseEnd || 0) + "ms dark=" + matchMedia("(prefers-color-scheme: dark)").matches +
         " standalone=" + (navigator.standalone === true || matchMedia("(display-mode: standalone)").matches) + " sw-controller=" + !!(navigator.serviceWorker && navigator.serviceWorker.controller));
   } catch (e) {}
   document.addEventListener("readystatechange", function () { add("readyState=" + document.readyState); });
