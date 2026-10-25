@@ -22,7 +22,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lyceum">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0b1d3d">
+<meta name="theme-color" content="#0b1d3d" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1320x2868.png">
 <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1206x2622.png">
 <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1290x2796.png">
@@ -55,16 +56,16 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --paper: #0a1222; --card: #111b32; --ink: #ece9de; --muted: #98a3b9; --rule: #212e4c;
+      --paper: #000000; --card: #0d0d0f; --ink: #ece9de; --muted: #98a3b9; --rule: #1d1d21; --navy: #000000; --navy-2: #0c0c0e;
       --aegean: #8db8ea; --gold: #ddbd6a; --clay: #ea926c; --olive: #afc17d; --teal: #5fc4b8; --violet: #aa9ef2; --plum: #e68cbf;
-      --bar: rgba(10, 18, 34, 0.84); --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
+      --bar: rgba(0, 0, 0, 0.86); --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --paper: #0a1222; --card: #111b32; --ink: #ece9de; --muted: #98a3b9; --rule: #212e4c;
+    --paper: #000000; --card: #0d0d0f; --ink: #ece9de; --muted: #98a3b9; --rule: #1d1d21; --navy: #000000; --navy-2: #0c0c0e;
     --aegean: #8db8ea; --gold: #ddbd6a; --clay: #ea926c; --olive: #afc17d; --teal: #5fc4b8; --violet: #aa9ef2; --plum: #e68cbf;
-    --bar: rgba(10, 18, 34, 0.84); --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
+    --bar: rgba(0, 0, 0, 0.86); --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
     color-scheme: dark;
   }
 
