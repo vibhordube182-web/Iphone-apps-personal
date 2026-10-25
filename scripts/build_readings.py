@@ -38,8 +38,8 @@ WORKS = [
          first_heading="Book 1", cap=None,
          url="https://classics.mit.edu/Antoninus/meditations.html",
          why="Marcus Aurelius wrote these private notes to himself while leading Rome’s armies. Read one passage slowly."),
-    dict(key="enchiridion", work="Enchiridion", author="Epictetus", ids=[45109, 10661], title_hint="Enchiridion",
-         start=r"(?i)of things some are in our power|some things are (?:in|within) our (?:control|power)|some things are up to us",
+    dict(key="enchiridion", work="Enchiridion", author="Epictetus", ids=[45109, 10661], title_hint=r"Ench[ei]+ridion",
+         start=r"(?i)there are things which are within our power|of things some are in our power|some things are (?:in|within) our (?:control|power)|some things are up to us",
          start_alt=r"^(?:I|1)\.\s+\S",
          end=r"^(FRAGMENTS|NOTES|FOOTNOTES)\b", heading=None, first_heading=None, cap=None,
          url="https://classics.mit.edu/Epictetus/epicench.html",
@@ -151,7 +151,7 @@ def build_from(cfg, n):
     n, raw = download([n])
     head = " | ".join([l.strip() for l in raw.split("\n")[:25] if l.strip()][:6])
     print(f"[{cfg['key']}] ebook {n}: {head[:200]}")
-    if cfg["title_hint"].lower() not in raw[:4000].lower():
+    if not re.search(cfg["title_hint"], raw[:4000], re.I):
         raise RuntimeError(f"title '{cfg['title_hint']}' not near top of ebook {n}")
     paras = paragraphs(raw)
     start = next((i for i, p in enumerate(paras) if re.search(cfg["start"], p)), None)
@@ -232,6 +232,14 @@ def build_from(cfg, n):
             if m: why = BOOK_BLURB.get(int(m.group(1)), why)
         result.append(dict(work=cfg["work"], part=label, author=cfg["author"], why=why, url=cfg["url"],
                            minutes=max(1, round(w / WORDS_PER_MIN)), words=w, paras=c))
+    # passages that share a label (e.g. several from Book 1) become "Book 1 · part 2 of 3"
+    counts = {}
+    for r in result: counts[r["part"]] = counts.get(r["part"], 0) + 1
+    seen = {}
+    for r in result:
+        if counts[r["part"]] > 1 and not r["part"].startswith("Part "):
+            seen[r["part"]] = seen.get(r["part"], 0) + 1
+            r["part"] = f"{r['part']} · part {seen[r['part']]} of {counts[r['part']]}"
     ws = [r["words"] for r in result]
     print(f"[{cfg['key']}] passages={len(result)} words min/max={min(ws)}/{max(ws)}")
     print(f"[{cfg['key']}] first passage begins: {first_text(result[0])[:150]!r}")
