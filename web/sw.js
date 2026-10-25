@@ -1,28 +1,23 @@
-// Network-first for the edition, cache-first for the app shell, so Lyceum opens offline.
-const SHELL = "lyceum-shell-v1";
+// Network-first for pages and the edition, so updates arrive immediately and Lyceum still opens offline.
+const CACHE = "lyceum-v2";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(SHELL).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(
-    caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== SHELL && k !== "lyceum-data").map((k) => caches.delete(k))))
+    caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET" || url.origin !== location.origin) return;
-  if (url.pathname.endsWith("news.json")) {
-    e.respondWith(
-      fetch(e.request).then((r) => {
-        const copy = r.clone();
-        caches.open("lyceum-data").then((c) => c.put("news.json", copy));
-        return r;
-      }).catch(() => caches.open("lyceum-data").then((c) => c.match("news.json")))
-    );
-    return;
-  }
-  e.respondWith(caches.match(e.request).then((hit) => hit || fetch(e.request)));
+  e.respondWith(
+    fetch(e.request).then((r) => {
+      if (r.ok) { const copy = r.clone(); caches.open(CACHE).then((c) => c.put(url.origin + url.pathname, copy)); }
+      return r;
+    }).catch(() => caches.match(url.origin + url.pathname).then((hit) => hit || caches.match("index.html")))
+  );
 });
