@@ -1,13 +1,23 @@
 [
  {
   "work": "Meditations",
-  "part": "Book 1",
+  "part": "Book 1 · part 1 of 3",
   "author": "Marcus Aurelius",
   "why": "Marcus lists what he owes to each person who shaped him. Who shaped you?",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1105,
   "file": "readings/0.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 1 of 7",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1124,
+  "file": "readings/1.json"
  },
  {
   "work": "Apology",
@@ -17,7 +27,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 6,
   "words": 1261,
-  "file": "readings/1.json"
+  "file": "readings/2.json"
  },
  {
   "work": "Crito",
@@ -27,17 +37,17 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 5,
   "words": 1127,
-  "file": "readings/2.json"
+  "file": "readings/3.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 1",
+  "part": "Book 1 · part 1 of 7",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1127,
-  "file": "readings/3.json"
+  "file": "readings/4.json"
  },
  {
   "work": "Symposium",
@@ -47,27 +57,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1135,
-  "file": "readings/4.json"
+  "file": "readings/5.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 1",
+  "part": "Book 1 · part 2 of 3",
   "author": "Marcus Aurelius",
   "why": "Marcus lists what he owes to each person who shaped him. Who shaped you?",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1316,
-  "file": "readings/5.json"
+  "file": "readings/6.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 1",
+  "part": "Book 1 · part 3 of 3",
   "author": "Marcus Aurelius",
   "why": "Marcus lists what he owes to each person who shaped him. Who shaped you?",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1191,
-  "file": "readings/6.json"
+  "file": "readings/7.json"
  },
  {
   "work": "Meditations",
@@ -77,7 +87,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1188,
-  "file": "readings/7.json"
+  "file": "readings/8.json"
  },
  {
   "work": "Symposium",
@@ -87,7 +97,7 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1233,
-  "file": "readings/8.json"
+  "file": "readings/9.json"
  },
  {
   "work": "Meditations",
@@ -97,17 +107,17 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1223,
-  "file": "readings/9.json"
+  "file": "readings/10.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 1",
+  "part": "Book 1 · part 2 of 7",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1132,
-  "file": "readings/10.json"
+  "file": "readings/11.json"
  },
  {
   "work": "Apology",
@@ -117,7 +127,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 6,
   "words": 1245,
-  "file": "readings/11.json"
+  "file": "readings/12.json"
  },
  {
   "work": "Meditations",
@@ -127,7 +137,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1191,
-  "file": "readings/12.json"
+  "file": "readings/13.json"
  },
  {
   "work": "Meditations",
@@ -137,7 +147,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1206,
-  "file": "readings/13.json"
+  "file": "readings/14.json"
  },
  {
   "work": "Symposium",
@@ -147,7 +157,7 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1322,
-  "file": "readings/14.json"
+  "file": "readings/15.json"
  },
  {
   "work": "Meditations",
@@ -157,37 +167,47 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1119,
-  "file": "readings/15.json"
+  "file": "readings/16.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 2 of 7",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1158,
+  "file": "readings/17.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 4",
+  "part": "Book 4 · part 1 of 4",
   "author": "Marcus Aurelius",
   "why": "Retreating into your own mind, and the brevity of life.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1106,
-  "file": "readings/16.json"
+  "file": "readings/18.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 1",
+  "part": "Book 1 · part 3 of 7",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1100,
-  "file": "readings/17.json"
+  "file": "readings/19.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 4",
+  "part": "Book 4 · part 2 of 4",
   "author": "Marcus Aurelius",
   "why": "Retreating into your own mind, and the brevity of life.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1167,
-  "file": "readings/18.json"
+  "file": "readings/20.json"
  },
  {
   "work": "Apology",
@@ -197,7 +217,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1103,
-  "file": "readings/19.json"
+  "file": "readings/21.json"
  },
  {
   "work": "Crito",
@@ -207,7 +227,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 5,
   "words": 1106,
-  "file": "readings/20.json"
+  "file": "readings/22.json"
  },
  {
   "work": "Symposium",
@@ -217,27 +237,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1122,
-  "file": "readings/21.json"
+  "file": "readings/23.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 4",
+  "part": "Book 4 · part 3 of 4",
   "author": "Marcus Aurelius",
   "why": "Retreating into your own mind, and the brevity of life.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1233,
-  "file": "readings/22.json"
+  "file": "readings/24.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 4",
+  "part": "Book 4 · part 4 of 4",
   "author": "Marcus Aurelius",
   "why": "Retreating into your own mind, and the brevity of life.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1196,
-  "file": "readings/23.json"
+  "file": "readings/25.json"
  },
  {
   "work": "Meditations",
@@ -247,27 +267,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1120,
-  "file": "readings/24.json"
+  "file": "readings/26.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 1",
+  "part": "Book 1 · part 4 of 7",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1169,
-  "file": "readings/25.json"
+  "file": "readings/27.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 5",
+  "part": "Book 5 · part 1 of 4",
   "author": "Marcus Aurelius",
   "why": "Starts with getting out of bed: the case for doing your work.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1205,
-  "file": "readings/26.json"
+  "file": "readings/28.json"
  },
  {
   "work": "Symposium",
@@ -277,17 +297,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1253,
-  "file": "readings/27.json"
+  "file": "readings/29.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 5",
+  "part": "Book 5 · part 2 of 4",
   "author": "Marcus Aurelius",
   "why": "Starts with getting out of bed: the case for doing your work.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1320,
-  "file": "readings/28.json"
+  "file": "readings/30.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 3 of 7",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1181,
+  "file": "readings/31.json"
  },
  {
   "work": "Apology",
@@ -297,37 +327,37 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1167,
-  "file": "readings/29.json"
+  "file": "readings/32.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 5",
+  "part": "Book 5 · part 3 of 4",
   "author": "Marcus Aurelius",
   "why": "Starts with getting out of bed: the case for doing your work.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1104,
-  "file": "readings/30.json"
+  "file": "readings/33.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 5",
+  "part": "Book 5 · part 4 of 4",
   "author": "Marcus Aurelius",
   "why": "Starts with getting out of bed: the case for doing your work.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1113,
-  "file": "readings/31.json"
+  "file": "readings/34.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 1",
+  "part": "Book 1 · part 5 of 7",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1109,
-  "file": "readings/32.json"
+  "file": "readings/35.json"
  },
  {
   "work": "Symposium",
@@ -337,7 +367,7 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1128,
-  "file": "readings/33.json"
+  "file": "readings/36.json"
  },
  {
   "work": "Meditations",
@@ -347,27 +377,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1287,
-  "file": "readings/34.json"
+  "file": "readings/37.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 6",
+  "part": "Book 6 · part 1 of 3",
   "author": "Marcus Aurelius",
   "why": "Reason, reputation and acting for the common good.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1171,
-  "file": "readings/35.json"
+  "file": "readings/38.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 6",
+  "part": "Book 6 · part 2 of 3",
   "author": "Marcus Aurelius",
   "why": "Reason, reputation and acting for the common good.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1120,
-  "file": "readings/36.json"
+  "file": "readings/39.json"
  },
  {
   "work": "Apology",
@@ -377,7 +407,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1182,
-  "file": "readings/37.json"
+  "file": "readings/40.json"
  },
  {
   "work": "Crito",
@@ -387,7 +417,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 6,
   "words": 1313,
-  "file": "readings/38.json"
+  "file": "readings/41.json"
  },
  {
   "work": "Symposium",
@@ -397,27 +427,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1101,
-  "file": "readings/39.json"
+  "file": "readings/42.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 6",
+  "part": "Book 6 · part 3 of 3",
   "author": "Marcus Aurelius",
   "why": "Reason, reputation and acting for the common good.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1308,
-  "file": "readings/40.json"
+  "file": "readings/43.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 1",
+  "part": "Book 1 · part 6 of 7",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1173,
-  "file": "readings/41.json"
+  "file": "readings/44.json"
  },
  {
   "work": "Meditations",
@@ -427,17 +457,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1104,
-  "file": "readings/42.json"
+  "file": "readings/45.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 4 of 7",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1108,
+  "file": "readings/46.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 7",
+  "part": "Book 7 · part 1 of 4",
   "author": "Marcus Aurelius",
   "why": "Practical notes on anger, pain and living with nature.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1135,
-  "file": "readings/43.json"
+  "file": "readings/47.json"
  },
  {
   "work": "Symposium",
@@ -447,27 +487,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1184,
-  "file": "readings/44.json"
+  "file": "readings/48.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 7",
+  "part": "Book 7 · part 2 of 4",
   "author": "Marcus Aurelius",
   "why": "Practical notes on anger, pain and living with nature.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1174,
-  "file": "readings/45.json"
+  "file": "readings/49.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 7",
+  "part": "Book 7 · part 3 of 4",
   "author": "Marcus Aurelius",
   "why": "Practical notes on anger, pain and living with nature.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1123,
-  "file": "readings/46.json"
+  "file": "readings/50.json"
  },
  {
   "work": "Apology",
@@ -477,27 +517,27 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1154,
-  "file": "readings/47.json"
+  "file": "readings/51.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 1",
+  "part": "Book 1 · part 7 of 7",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1189,
-  "file": "readings/48.json"
+  "file": "readings/52.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 7",
+  "part": "Book 7 · part 4 of 4",
   "author": "Marcus Aurelius",
   "why": "Practical notes on anger, pain and living with nature.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1120,
-  "file": "readings/49.json"
+  "file": "readings/53.json"
  },
  {
   "work": "Meditations",
@@ -507,7 +547,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1209,
-  "file": "readings/50.json"
+  "file": "readings/54.json"
  },
  {
   "work": "Symposium",
@@ -517,27 +557,37 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1267,
-  "file": "readings/51.json"
+  "file": "readings/55.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 8",
+  "part": "Book 8 · part 1 of 4",
   "author": "Marcus Aurelius",
   "why": "Includes the idea of the mind as an inner citadel.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1257,
-  "file": "readings/52.json"
+  "file": "readings/56.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 8",
+  "part": "Book 8 · part 2 of 4",
   "author": "Marcus Aurelius",
   "why": "Includes the idea of the mind as an inner citadel.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1146,
-  "file": "readings/53.json"
+  "file": "readings/57.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 5 of 7",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1198,
+  "file": "readings/58.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -547,17 +597,17 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1108,
-  "file": "readings/54.json"
+  "file": "readings/59.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 8",
+  "part": "Book 8 · part 3 of 4",
   "author": "Marcus Aurelius",
   "why": "Includes the idea of the mind as an inner citadel.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1157,
-  "file": "readings/55.json"
+  "file": "readings/60.json"
  },
  {
   "work": "Apology",
@@ -567,7 +617,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1106,
-  "file": "readings/56.json"
+  "file": "readings/61.json"
  },
  {
   "work": "Crito",
@@ -577,7 +627,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 6,
   "words": 1339,
-  "file": "readings/57.json"
+  "file": "readings/62.json"
  },
  {
   "work": "Symposium",
@@ -587,17 +637,17 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1138,
-  "file": "readings/58.json"
+  "file": "readings/63.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 8",
+  "part": "Book 8 · part 4 of 4",
   "author": "Marcus Aurelius",
   "why": "Includes the idea of the mind as an inner citadel.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1245,
-  "file": "readings/59.json"
+  "file": "readings/64.json"
  },
  {
   "work": "Meditations",
@@ -607,27 +657,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1111,
-  "file": "readings/60.json"
+  "file": "readings/65.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 9",
+  "part": "Book 9 · part 1 of 4",
   "author": "Marcus Aurelius",
   "why": "Justice, mortality and our common nature.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1203,
-  "file": "readings/61.json"
+  "file": "readings/66.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 2",
+  "part": "Book 2 · part 1 of 4",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 6,
   "words": 1252,
-  "file": "readings/62.json"
+  "file": "readings/67.json"
  },
  {
   "work": "Symposium",
@@ -637,27 +687,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1105,
-  "file": "readings/63.json"
+  "file": "readings/68.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 9",
+  "part": "Book 9 · part 2 of 4",
   "author": "Marcus Aurelius",
   "why": "Justice, mortality and our common nature.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1120,
-  "file": "readings/64.json"
+  "file": "readings/69.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 9",
+  "part": "Book 9 · part 3 of 4",
   "author": "Marcus Aurelius",
   "why": "Justice, mortality and our common nature.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1143,
-  "file": "readings/65.json"
+  "file": "readings/70.json"
  },
  {
   "work": "Apology",
@@ -667,17 +717,27 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 6,
   "words": 1270,
-  "file": "readings/66.json"
+  "file": "readings/71.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 9",
+  "part": "Book 9 · part 4 of 4",
   "author": "Marcus Aurelius",
   "why": "Justice, mortality and our common nature.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1284,
-  "file": "readings/67.json"
+  "file": "readings/72.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 6 of 7",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 6,
+  "words": 1235,
+  "file": "readings/73.json"
  },
  {
   "work": "Symposium",
@@ -687,7 +747,7 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1316,
-  "file": "readings/68.json"
+  "file": "readings/74.json"
  },
  {
   "work": "Meditations",
@@ -697,47 +757,47 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1137,
-  "file": "readings/69.json"
+  "file": "readings/75.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 2",
+  "part": "Book 2 · part 2 of 4",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1177,
-  "file": "readings/70.json"
+  "file": "readings/76.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 10",
+  "part": "Book 10 · part 1 of 4",
   "author": "Marcus Aurelius",
   "why": "Includes the line about being a good person instead of arguing about it.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1162,
-  "file": "readings/71.json"
+  "file": "readings/77.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 10",
+  "part": "Book 10 · part 2 of 4",
   "author": "Marcus Aurelius",
   "why": "Includes the line about being a good person instead of arguing about it.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1162,
-  "file": "readings/72.json"
+  "file": "readings/78.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 10",
+  "part": "Book 10 · part 3 of 4",
   "author": "Marcus Aurelius",
   "why": "Includes the line about being a good person instead of arguing about it.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1177,
-  "file": "readings/73.json"
+  "file": "readings/79.json"
  },
  {
   "work": "Apology",
@@ -747,7 +807,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1166,
-  "file": "readings/74.json"
+  "file": "readings/80.json"
  },
  {
   "work": "Crito",
@@ -757,7 +817,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 2,
   "words": 462,
-  "file": "readings/75.json"
+  "file": "readings/81.json"
  },
  {
   "work": "Symposium",
@@ -767,27 +827,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1119,
-  "file": "readings/76.json"
+  "file": "readings/82.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 10",
+  "part": "Book 10 · part 4 of 4",
   "author": "Marcus Aurelius",
   "why": "Includes the line about being a good person instead of arguing about it.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1301,
-  "file": "readings/77.json"
+  "file": "readings/83.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 2",
+  "part": "Book 2 · part 3 of 4",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1159,
-  "file": "readings/78.json"
+  "file": "readings/84.json"
  },
  {
   "work": "Meditations",
@@ -797,17 +857,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1163,
-  "file": "readings/79.json"
+  "file": "readings/85.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 11",
+  "part": "Book 11 · part 1 of 3",
   "author": "Marcus Aurelius",
   "why": "On the rational soul, and how to look at life from outside it.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1275,
-  "file": "readings/80.json"
+  "file": "readings/86.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 7 of 7",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 7,
+  "words": 1431,
+  "file": "readings/87.json"
  },
  {
   "work": "Symposium",
@@ -817,27 +887,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1327,
-  "file": "readings/81.json"
+  "file": "readings/88.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 11",
+  "part": "Book 11 · part 2 of 3",
   "author": "Marcus Aurelius",
   "why": "On the rational soul, and how to look at life from outside it.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1137,
-  "file": "readings/82.json"
+  "file": "readings/89.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 11",
+  "part": "Book 11 · part 3 of 3",
   "author": "Marcus Aurelius",
   "why": "On the rational soul, and how to look at life from outside it.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1110,
-  "file": "readings/83.json"
+  "file": "readings/90.json"
  },
  {
   "work": "Apology",
@@ -847,17 +917,17 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 3,
   "words": 729,
-  "file": "readings/84.json"
+  "file": "readings/91.json"
  },
  {
   "work": "Nicomachean Ethics",
-  "part": "Book 2",
+  "part": "Book 2 · part 4 of 4",
   "author": "Aristotle",
   "why": "Aristotle on happiness, and on virtue as something you build by practice.",
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1158,
-  "file": "readings/85.json"
+  "file": "readings/92.json"
  },
  {
   "work": "Meditations",
@@ -867,7 +937,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1136,
-  "file": "readings/86.json"
+  "file": "readings/93.json"
  },
  {
   "work": "Symposium",
@@ -877,36 +947,36 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1155,
-  "file": "readings/87.json"
+  "file": "readings/94.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 12",
+  "part": "Book 12 · part 1 of 3",
   "author": "Marcus Aurelius",
   "why": "The last book: leaving the stage with good grace.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1151,
-  "file": "readings/88.json"
+  "file": "readings/95.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 12",
+  "part": "Book 12 · part 2 of 3",
   "author": "Marcus Aurelius",
   "why": "The last book: leaving the stage with good grace.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1117,
-  "file": "readings/89.json"
+  "file": "readings/96.json"
  },
  {
   "work": "Meditations",
-  "part": "Book 12",
+  "part": "Book 12 · part 3 of 3",
   "author": "Marcus Aurelius",
   "why": "The last book: leaving the stage with good grace.",
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 3,
   "words": 759,
-  "file": "readings/90.json"
+  "file": "readings/97.json"
  }
 ]
