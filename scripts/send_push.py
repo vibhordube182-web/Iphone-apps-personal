@@ -13,10 +13,11 @@ from zoneinfo import ZoneInfo
 
 SITE = "https://vibhordube182-web.github.io/Iphone-apps-personal/"
 NAME = "Vibhor"
+TITLE = "Lyceum"   # notification title: just the app name; the line below it carries the message
 
 # Four daily nudges, Melbourne time. No headlines: just a reason to open the app.
 SLOTS = {
-    "morning": ("Good morning, " + NAME, [
+    "morning": (TITLE, [
         "Your edition is ready. Know the world before it knows you.",
         "A sharp mind starts with a sharp morning. Your briefing is waiting.",
         "Five minutes of reading now beats an hour of scrolling later.",
@@ -24,7 +25,7 @@ SLOTS = {
         "Discipline is a morning decision. Open your edition.",
         "Today’s Logos and your reading are waiting for you.",
     ]),
-    "midday": ("Midday reset", [
+    "midday": (TITLE, [
         "Two minutes, a clearer head. See what changed this morning.",
         "Step away from the noise and read what actually matters.",
         "Keep the streak alive. Your edition has been refreshed.",
@@ -32,7 +33,7 @@ SLOTS = {
         "Curiosity is a muscle. Give it a quick workout.",
         "Pause. Breathe. Catch up on the world.",
     ]),
-    "evening": ("Evening edition", [
+    "evening": (TITLE, [
         "Close the day informed, not overwhelmed. Your edition is updated.",
         "Finish what you started this morning. Your stories are waiting.",
         "A few minutes now, and tomorrow starts ahead of the crowd.",
@@ -40,7 +41,7 @@ SLOTS = {
         "Ambition is built in the hours after work. Read, then reflect.",
         "Your unread stories are still here. Make the time.",
     ]),
-    "night": ("Before you switch off", [
+    "night": (TITLE, [
         "One last look at the world, then rest. Tomorrow needs you sharp.",
         "Read something worth thinking about before sleep.",
         "Finish your reading and close the day well.",
