@@ -54,6 +54,31 @@ def parse_date(s):
     return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
 
 
+def pick_image(el, raw_html):
+    """Largest image advertised by the item (media:thumbnail/content, enclosure) or its first <img>."""
+    best, best_w = None, -1
+    for c in el.iter():
+        tag = c.tag.split("}")[-1]
+        url = c.get("url") if tag in ("thumbnail", "content", "enclosure") else None
+        if not url:
+            continue
+        if tag in ("content", "enclosure"):
+            kind = c.get("type") or c.get("medium") or ""
+            if not kind.startswith("image") and not re.search(r"\.(jpe?g|png|webp)(\?|$)", url, re.I):
+                continue
+        try:
+            w = int(c.get("width") or 0)
+        except ValueError:
+            w = 0
+        if url.startswith("http") and (w == 0 or w >= 100) and w > best_w:
+            best, best_w = url, w
+    if not best:
+        m = re.search(r"<img[^>]+src=[\"']([^\"']+)", raw_html or "")
+        if m and m.group(1).startswith("http"):
+            best = html.unescape(m.group(1))
+    return best
+
+
 def fetch(feed):
     realm, name, url = feed
     req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0"})
@@ -78,6 +103,8 @@ def fetch(feed):
                     f["link"] = c.text.strip()
             elif tag in ("title", "description", "summary", "content") and tag not in f:
                 f[tag] = c.text or ""
+                if tag != "title":
+                    f["raw"] = f.get("raw", "") + (c.text or "")
             elif tag in ("pubDate", "published", "updated", "date") and "date" not in f:
                 f["date"] = parse_date((c.text or "").strip())
         title = clean(f.get("title"))
@@ -88,8 +115,14 @@ def fetch(feed):
         if len(summary) < 30 or summary.lower().startswith(title.lower()):
             summary = ""
         d = f.get("date") or datetime.now(timezone.utc)
+        image = pick_image(el, f.get("raw"))
+        alt = None
+        if image:
+            image = image.replace("http://", "https://", 1)
+            if "ichef.bbci.co.uk" in image and re.search(r"/(standard|news)/\d+/", image):
+                alt, image = image, re.sub(r"/(standard|news)/\d+/", r"/\1/800/", image)
         out.append({"realm": realm, "source": name, "title": title, "summary": summary,
-                    "link": link, "date": d})
+                    "link": link, "date": d, "image": image, "image_alt": alt})
     out.sort(key=lambda s: s["date"], reverse=True)
     return out
 
