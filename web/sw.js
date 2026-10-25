@@ -1,7 +1,7 @@
 // Opens instantly from the phone: the app shell, readings and fonts are served from the cache while a
 // fresh copy is fetched in the background (stale-while-revalidate). The edition itself is network-first
 // with a short timeout, because the page already paints the last saved edition on its own.
-const CACHE = "lyceum-v8";
+const CACHE = "lyceum-v9";
 const FILES = ["./", "index.html", "manifest.webmanifest", "mark-192.png", "mark-touch.png"];
 
 self.addEventListener("install", (e) => {
@@ -41,11 +41,52 @@ async function networkFirst(request, key, ms) {
   }
 }
 
+
+// ---- TEMPORARY launch-flash test: each cold launch serves the next, more complete version of the page
+// (V0 plain black ... V4 the real page) with a label, so the version that flashes can be identified. ----
+async function nextRung() {
+  const c = await caches.open("lyceum-ladder");
+  const r = await c.match("n");
+  const n = r ? parseInt(await r.text(), 10) || 0 : 0;
+  await c.put("n", new Response(String((n + 1) % 5)));
+  return n;
+}
+
+function ladder(html, n) {
+  const label = '<style>@keyframes vl{to{opacity:1}}</style><div style="position:fixed;z-index:99999;left:0;right:0;bottom:90px;text-align:center;color:#fff;font:600 22px -apple-system,sans-serif;opacity:0;animation:vl 0s 2.5s forwards">V' + n + '</div>';
+  const head = html.slice(html.indexOf("<head>") + 6, html.indexOf("</head>"));
+  const body = html.slice(html.indexOf("<body>") + 6, html.lastIndexOf("</body>"));
+  const viewport = (head.match(/<meta name="viewport"[^>]*>/) || [""])[0];
+  const tags = (head.match(/<(meta|link)\b[^>]*>/g) || []).filter((t) => !/charset|viewport|preload|preconnect/.test(t)).join("\n");
+  const styles = (head.match(/<style>[\s\S]*?<\/style>/g) || []).join("\n");
+  const plain = "<style>html,body{margin:0;background:#000;height:100%}</style>";
+  const noJs = (t) => t.replace(/<script\b[\s\S]*?<\/script>/g, "");
+  const doc = (htmlAttrs, headInner, bodyInner) =>
+    "<!doctype html><html " + htmlAttrs + "><head><meta charset=\"utf-8\">" + viewport + "<title>Lyceum</title>" + headInner + "</head><body>" + bodyInner + label + "</body></html>";
+  if (n === 0) return doc('lang="en"', plain, "");
+  if (n === 1) return doc('lang="en"', plain + tags, "");
+  const attrs = 'lang="en" class="booting" style="background:#000"';
+  const cut = body.indexOf('<svg class="defs"');
+  if (n === 2) return doc(attrs, tags + styles, body.slice(0, cut));
+  if (n === 3) return doc(attrs, tags + styles, noJs(body));
+  return html.replace("</body>", label + "</body>");
+}
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin === location.origin) {
+    if (req.mode === "navigate") {
+      e.respondWith((async () => {
+        const base = await staleWhileRevalidate(req, new URL("index.html", location.href).href);
+        if (!base || !base.ok) return base;
+        const html = await base.text();
+        const n = await nextRung();
+        return new Response(ladder(html, n), { headers: { "content-type": "text/html; charset=utf-8" } });
+      })());
+      return;
+    }
     if (url.pathname.endsWith("news.json")) { e.respondWith(networkFirst(req, keyFor(url), 4000)); return; }
     const key = req.mode === "navigate" ? new URL("index.html", location.href).href : keyFor(url);
     e.respondWith(staleWhileRevalidate(req, key));
