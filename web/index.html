@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lyceum</title>
+<meta name="description" content="A morning news briefing with Greek philosophy.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lyceum">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#102a4c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  /* Layout: a single narrow column, like a folded broadsheet, with a marble-and-Aegean palette. */
+  :root {
+    --paper: #f2f3f0;
+    --card: #fbfbf9;
+    --ink: #14213a;
+    --muted: #5d6679;
+    --rule: #d9dcd6;
+    --aegean: #1d4a80;
+    --gold: #9a7a2e;
+    --clay: #a8472a;
+    --olive: #5a6b34;
+    --display: "Cinzel", "Trajan Pro", Georgia, serif;
+    --body: "EB Garamond", "Iowan Old Style", Palatino, Georgia, serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0d1626; --card: #15203a; --ink: #eceadf; --muted: #9aa4b8; --rule: #26324d;
+      --aegean: #86b3e6; --gold: #dcbc68; --clay: #e8906a; --olive: #a9bc78;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0d1626; --card: #15203a; --ink: #eceadf; --muted: #9aa4b8; --rule: #26324d;
+    --aegean: #86b3e6; --gold: #dcbc68; --clay: #e8906a; --olive: #a9bc78;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--body); font-size: 19px; line-height: 1.45;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+    padding-left: max(18px, env(safe-area-inset-left, 0px));
+    padding-right: max(18px, env(safe-area-inset-right, 0px));
+    -webkit-tap-highlight-color: transparent;
+  }
+  main { max-width: 640px; margin: 0 auto; }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--aegean); outline-offset: 3px; border-radius: 4px; }
+
+  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .meander { display: block; width: 100%; height: 20px; color: var(--gold); }
+
+  /* Masthead */
+  .masthead { text-align: center; padding: 14px 0 6px; position: relative; }
+  .refresh {
+    position: absolute; right: -8px; top: 52px; width: 44px; height: 44px; border: 0; background: none;
+    color: var(--muted); border-radius: 50%; cursor: pointer; font: inherit;
+  }
+  .refresh svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .refresh.spin svg { animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .brand {
+    font-family: var(--display); font-weight: 700; font-size: 2.1rem; letter-spacing: 0.34em;
+    margin: 14px 0 8px; padding-left: 0.34em; line-height: 1;
+  }
+  .date { font-family: var(--display); font-size: 0.72rem; letter-spacing: 0.22em; color: var(--aegean); text-transform: uppercase; margin-bottom: 12px; }
+  .greeting { margin: 14px 0 22px; }
+  .greeting .greek { font-size: 1.55rem; font-weight: 500; color: var(--aegean); line-height: 1.1; }
+  .greeting .english { color: var(--muted); font-style: italic; }
+
+  /* Daily Logos */
+  .logos { background: var(--card); border: 1px solid var(--gold); border-radius: 4px; padding: 22px 20px 20px; text-align: center; margin-bottom: 8px; }
+  .eyebrow { font-family: var(--display); font-size: 0.66rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--gold); }
+  .logos blockquote { margin: 12px 0 8px; font-size: 1.4rem; line-height: 1.3; font-style: italic; text-wrap: balance; }
+  .logos .author { font-weight: 600; color: var(--aegean); font-size: 0.95rem; }
+  .logos hr { border: 0; border-top: 1px solid var(--rule); margin: 16px 28px; }
+  .logos .lens { color: var(--muted); font-size: 1.02rem; margin: 6px 0 0; text-wrap: pretty; }
+
+  /* Realms */
+  .realm-head { display: flex; align-items: center; gap: 14px; margin: 34px 0 6px; }
+  .mark {
+    flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 1.5rem; font-weight: 600; color: var(--paper); background: var(--tint);
+  }
+  .realm-head h2 { margin: 0; font-family: var(--display); font-size: 1.25rem; letter-spacing: 0.08em; line-height: 1.1; }
+  .realm-head h2 span { font-family: var(--body); font-weight: 400; font-size: 1.05rem; letter-spacing: 0; color: var(--tint); margin-left: 8px; }
+  .realm-head p { margin: 2px 0 0; font-family: var(--display); font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+
+  .story { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); column-gap: 12px; padding: 16px 0 18px; border-top: 1px solid var(--rule); }
+  .story .n { font-size: 2.2rem; font-weight: 400; line-height: 1; text-align: right; color: var(--tint); font-variant-numeric: lining-nums; }
+  .story .meta { font-family: var(--display); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  .story h3 { margin: 0 0 6px; font-size: 1.28rem; line-height: 1.2; font-weight: 600; text-wrap: balance; }
+  .story p { margin: 0 0 8px; color: color-mix(in srgb, var(--ink) 82%, var(--paper)); font-size: 1.04rem; line-height: 1.4; }
+  .story .more { font-size: 0.95rem; font-weight: 600; color: var(--tint); }
+  .story:active h3 { color: var(--aegean); }
+  .story a.cover { display: contents; }
+
+  .polis { --tint: var(--clay); } .techne { --tint: var(--aegean); } .agora { --tint: var(--gold); }
+  .oikonomia { --tint: var(--olive); } .sophia { --tint: var(--muted); }
+
+  /* States */
+  .note { text-align: center; color: var(--muted); font-style: italic; padding: 40px 12px; }
+  .banner { background: var(--card); border: 1px solid var(--rule); border-radius: 4px; padding: 10px 14px; margin: 0 0 14px; font-size: 0.95rem; color: var(--muted); }
+  .banner b { color: var(--ink); font-weight: 600; }
+  .banner[hidden] { display: none; }
+
+  footer { text-align: center; padding: 38px 0 20px; }
+  footer .done { font-size: 1.35rem; font-weight: 600; margin: 14px 0 2px; }
+  footer .chaire { font-style: italic; color: var(--aegean); }
+  footer .know { font-family: var(--display); font-size: 0.66rem; letter-spacing: 0.22em; color: var(--gold); text-transform: uppercase; margin: 14px 0 6px; }
+  footer .updated { font-size: 0.85rem; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) { .refresh.spin svg { animation: none; } }
+  @media (min-width: 700px) { body { font-size: 20px; } .brand { font-size: 2.6rem; } }
+</style>
+</head>
+<body>
+<svg class="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="key" width="24" height="20" patternUnits="userSpaceOnUse">
+      <path d="M0 19.2H24M0 19.2V.8H19.2V15.2H8V8H12V12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/>
+    </pattern>
+  </defs>
+</svg>
+
+<main>
+  <header class="masthead">
+    <button class="refresh" id="refresh" type="button" aria-label="Refresh edition">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+    </button>
+    <svg class="meander" aria-hidden="true"><rect width="100%" height="20" fill="url(#key)"/></svg>
+    <h1 class="brand">LYCEUM</h1>
+    <div class="date" id="date"></div>
+    <svg class="meander" aria-hidden="true"><rect width="100%" height="20" fill="url(#key)"/></svg>
+    <div class="greeting"><div class="greek" id="greek"></div><div class="english" id="english"></div></div>
+  </header>
+
+  <div class="banner" id="install" hidden><b>Keep Lyceum on your Home Screen.</b> In Safari tap Share, then Add to Home Screen.</div>
+
+  <section class="logos" id="logos" aria-label="Daily Logos"></section>
+
+  <div id="edition" aria-live="polite"><p class="note">Consulting the oracle…</p></div>
+
+  <footer id="footer" hidden>
+    <svg class="meander" aria-hidden="true" style="max-width:260px;margin:0 auto"><rect width="100%" height="20" fill="url(#key)"/></svg>
+    <div class="done">That is all for now.</div>
+    <div class="chaire">Χαῖρε — until tomorrow.</div>
+    <div class="know">γνῶθι σεαυτόν · know thyself</div>
+    <div class="updated" id="updated"></div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var REALMS = {
+    polis:     { name: "Polis",     greek: "Πόλις",     sub: "Geopolitics & the world", mark: "Π" },
+    techne:    { name: "Techne",    greek: "Τέχνη",     sub: "Technology & craft",      mark: "Τ" },
+    agora:     { name: "Agora",     greek: "Ἀγορά",     sub: "Current affairs",         mark: "Α" },
+    oikonomia: { name: "Oikonomia", greek: "Οἰκονομία", sub: "Markets & the economy",   mark: "Ο" },
+    sophia:    { name: "Sophia",    greek: "Σοφία",     sub: "Ideas worth your time",   mark: "Σ" }
+  };
+  var ORDER = ["polis", "techne", "agora", "oikonomia", "sophia"];
+  var $ = function (id) { return document.getElementById(id); };
+  var lastLoaded = 0;
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function header() {
+    var now = new Date(), h = now.getHours();
+    $("date").textContent = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    var g = h >= 4 && h < 12 ? ["Καλημέρα", "Good morning"] : h >= 12 && h < 18 ? ["Χαῖρε", "Good afternoon"] : ["Καλησπέρα", "Good evening"];
+    $("greek").textContent = g[0];
+    $("english").textContent = g[1] + ". Here is what matters today.";
+  }
+
+  function ago(iso) {
+    var m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    if (isNaN(m) || m < 0) return "";
+    if (m < 60) return Math.max(m, 1) + " min ago";
+    if (m < 1440) return Math.round(m / 60) + " h ago";
+    return Math.round(m / 1440) + " d ago";
+  }
+
+  function renderMaxim(maxims) {
+    var box = $("logos");
+    if (!maxims || !maxims.length) { box.hidden = true; return; }
+    var d = new Date();
+    var day = Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+    var m = maxims[day % maxims.length];
+    box.textContent = "";
+    box.appendChild(el("div", "eyebrow", "The Daily Logos"));
+    box.appendChild(el("blockquote", null, "“" + m.text + "”"));
+    box.appendChild(el("div", "author", "— " + m.author));
+    box.appendChild(document.createElement("hr"));
+    box.appendChild(el("div", "eyebrow", "A lens for today’s news"));
+    box.appendChild(el("p", "lens", m.lens));
+  }
+
+  function renderStories(stories) {
+    var root = $("edition"), n = 0;
+    root.textContent = "";
+    ORDER.forEach(function (key) {
+      var list = stories.filter(function (s) { return s.realm === key; });
+      if (!list.length) return;
+      var r = REALMS[key], sec = el("section", key);
+      var head = el("div", "realm-head");
+      head.appendChild(el("div", "mark", r.mark)).setAttribute("aria-hidden", "true");
+      var t = el("div");
+      var h2 = el("h2", null, r.name);
+      h2.appendChild(el("span", null, r.greek));
+      t.appendChild(h2);
+      t.appendChild(el("p", null, r.sub));
+      head.appendChild(t);
+      sec.appendChild(head);
+      list.forEach(function (s) {
+        n += 1;
+        var a = el("a", "story"); a.href = s.link; a.target = "_blank"; a.rel = "noopener";
+        a.appendChild(el("div", "n", String(n)));
+        var body = el("div");
+        body.appendChild(el("div", "meta", s.source + " · " + ago(s.date)));
+        body.appendChild(el("h3", null, s.title));
+        if (s.summary) body.appendChild(el("p", null, s.summary));
+        body.appendChild(el("span", "more", "Read more →"));
+        a.appendChild(body);
+        sec.appendChild(a);
+      });
+      root.appendChild(sec);
+    });
+  }
+
+  function load(manual) {
+    var btn = $("refresh");
+    btn.classList.add("spin");
+    return fetch("news.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (data) {
+        renderMaxim(data.maxims);
+        renderStories(data.stories || []);
+        $("footer").hidden = false;
+        $("updated").textContent = "Edition compiled " + ago(data.generated);
+        lastLoaded = Date.now();
+      })
+      .catch(function () {
+        renderMaxim(null);
+        if (!lastLoaded) {
+          $("edition").textContent = "";
+          $("edition").appendChild(el("p", "note", "Today’s edition is not ready yet. Check your connection and tap refresh."));
+        }
+      })
+      .then(function () { setTimeout(function () { btn.classList.remove("spin"); }, 400); });
+  }
+
+  header();
+  $("refresh").addEventListener("click", function () { header(); load(true); });
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && Date.now() - lastLoaded > 30 * 60 * 1000) { header(); load(false); }
+  });
+
+  var standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (ios && !standalone) $("install").hidden = false;
+
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+  load(false);
+})();
+</script>
+</body>
+</html>
