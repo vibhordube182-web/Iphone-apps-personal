@@ -2,7 +2,6 @@
 <html lang="en" class="booting" style="background:#000">
 <head>
 <meta charset="utf-8">
-<meta name="color-scheme" content="dark light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>
   /* Launch screen: black, temple in the middle, app name at the bottom. */
@@ -61,12 +60,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lyceum">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0b1d3d" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&display=swap" onload="this.onload=null;this.rel='stylesheet';window.__fcss=1">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&display=swap"></noscript>
 <style>
   /* Layout: navy masthead band, sticky section bar, then one reading column.
      Serif for reading, system sans for interface chrome, Cinzel for the brand only. */
@@ -782,6 +775,12 @@
       }
     }, 40);
   })();
+  // Web fonts are requested from the page, a moment after launch, so the opening has nothing in its head to wait for.
+  whenGo(function () {
+    var l = document.createElement("link");
+    l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&display=swap";
+    document.head.appendChild(l);
+  });
   var splashQueued = false, splashGone = false, afterQueue = [];
   function afterSplash(fn) { if (splashGone) fn(); else afterQueue.push(fn); }
   function hideSplash() {
