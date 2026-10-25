@@ -114,8 +114,8 @@
   }
   /* Paints the status-bar area navy so the clock stays readable in either theme. */
   body::before {
-    content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
-    background: var(--navy); z-index: 60;
+    content: ""; position: fixed; inset: 0 0 auto; height: calc(env(safe-area-inset-top, 0px) + 30px); pointer-events: none;
+    background: linear-gradient(to bottom, var(--navy) calc(100% - 30px), color-mix(in srgb, var(--navy) 0%, transparent) 100%); z-index: 60;
   }
   a { color: inherit; text-decoration: none; }
   button { font: inherit; color: inherit; }
@@ -127,7 +127,7 @@
 
   /* ---------- Masthead ---------- */
   .masthead {
-    background: radial-gradient(120% 90% at 50% 0%, var(--navy-2) 0%, var(--navy) 62%);
+    background: radial-gradient(120% 90% at 50% 42%, var(--navy-2) 0%, var(--navy) 62%);
     color: var(--ivory); text-align: center; position: relative; overflow: hidden;
     padding-top: calc(env(safe-area-inset-top, 0px) + 22px); padding-bottom: 0;
   }
@@ -223,7 +223,7 @@
   #reader[hidden] { display: none; }
   #reader.rd-s0 { --rd: 1rem; } #reader.rd-s2 { --rd: 1.24rem; }
   body.rd-open { overflow: hidden; }
-  .rd-bar { position: sticky; top: 0; z-index: 2; background: radial-gradient(120% 140% at 50% 0%, var(--navy-2), var(--navy) 70%); color: var(--ivory); padding-top: env(safe-area-inset-top, 0px); }
+  .rd-bar { position: sticky; top: 0; z-index: 2; background: radial-gradient(120% 140% at 50% 60%, var(--navy-2), var(--navy) 70%); color: var(--ivory); padding-top: env(safe-area-inset-top, 0px); }
   .rd-row { display: flex; align-items: center; gap: 4px; height: 56px; padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
   .rd-row .iconbtn { color: var(--ivory); }
   .rd-row .iconbtn:active { background: rgba(255, 255, 255, .14); }
