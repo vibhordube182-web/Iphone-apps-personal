@@ -7,9 +7,53 @@ Needs two repository secrets:
 Exits quietly when they are not set.
 """
 import json, os, sys
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 SITE = "https://vibhordube182-web.github.io/Iphone-apps-personal/"
+NAME = "Vibhor"
+
+# Four daily nudges, Melbourne time. No headlines: just a reason to open the app.
+SLOTS = {
+    "morning": ("Good morning, " + NAME, [
+        "Your edition is ready. Know the world before it knows you.",
+        "A sharp mind starts with a sharp morning. Your briefing is waiting.",
+        "Five minutes of reading now beats an hour of scrolling later.",
+        "The world moved overnight. Catch up before the day catches you.",
+        "Discipline is a morning decision. Open your edition.",
+        "Today’s Logos and your reading are waiting for you.",
+    ]),
+    "midday": ("Midday reset", [
+        "Two minutes, a clearer head. See what changed this morning.",
+        "Step away from the noise and read what actually matters.",
+        "Keep the streak alive. Your edition has been refreshed.",
+        "Small habits, big results. Take your midday read.",
+        "Curiosity is a muscle. Give it a quick workout.",
+        "Pause. Breathe. Catch up on the world.",
+    ]),
+    "evening": ("Evening edition", [
+        "Close the day informed, not overwhelmed. Your edition is updated.",
+        "Finish what you started this morning. Your stories are waiting.",
+        "A few minutes now, and tomorrow starts ahead of the crowd.",
+        "End the day with a clear picture of the world.",
+        "Ambition is built in the hours after work. Read, then reflect.",
+        "Your unread stories are still here. Make the time.",
+    ]),
+    "night": ("Before you switch off", [
+        "One last look at the world, then rest. Tomorrow needs you sharp.",
+        "Read something worth thinking about before sleep.",
+        "Finish your reading and close the day well.",
+        "Rest is part of discipline. One last read, then lights out.",
+        "Today’s reading is waiting. Mark it done and sleep easy.",
+        "Know thyself: did you read today? There is still time.",
+    ]),
+}
+
+
+def slot_for(now):
+    h = now.hour
+    return "morning" if h < 10 else "midday" if h < 15 else "evening" if h < 19 else "night"
 
 
 def main():
@@ -29,10 +73,14 @@ def main():
         subs = [subs]
     edition = json.loads(Path("web/news.json").read_text())
     stories = edition["stories"]
+    now = datetime.now(ZoneInfo("Australia/Melbourne"))
+    slot = slot_for(now)
+    title, messages = SLOTS[slot]
     payload = json.dumps({
-        "title": "Your morning edition is ready",
-        "body": stories[0]["title"] if stories else "Open Lyceum to read today’s briefing.",
+        "title": title,
+        "body": messages[(now.timetuple().tm_yday + now.hour) % len(messages)],
         "count": len(stories),
+        "tag": "lyceum-" + slot,
         "generated": edition["generated"],
     }, ensure_ascii=False)
 
