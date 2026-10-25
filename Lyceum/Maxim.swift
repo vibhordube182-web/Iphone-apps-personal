@@ -1,0 +1,83 @@
+import Foundation
+
+/// A daily piece of Greek wisdom, paired with a "lens" for reading the news.
+struct Maxim {
+    let text: String
+    let author: String
+    let lens: String
+
+    /// Same maxim all day, a different one tomorrow.
+    static func forDate(_ date: Date = Date()) -> Maxim {
+        let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
+        return all[day % all.count]
+    }
+
+    static let all: [Maxim] = [
+        Maxim(text: "It is not things that disturb us, but our judgments about things.",
+              author: "Epictetus",
+              lens: "Notice which headlines stir you up today — and whether it’s the event or your interpretation of it."),
+        Maxim(text: "Some things are in our control and others are not.",
+              author: "Epictetus",
+              lens: "For each story, ask: is there anything here I can actually influence? If not, read for understanding, not anxiety."),
+        Maxim(text: "The unexamined life is not worth living.",
+              author: "Socrates",
+              lens: "Read one story today and ask “how do I know this?” three times in a row."),
+        Maxim(text: "I know that I know nothing.",
+              author: "Socrates (attributed)",
+              lens: "Hold your opinions on today’s big story a little more loosely. What would change your mind?"),
+        Maxim(text: "Man is by nature a political animal.",
+              author: "Aristotle, Politics",
+              lens: "Every distant conflict is made of people deciding things together. Whose interests are at the table?"),
+        Maxim(text: "You could not step twice into the same river.",
+              author: "Heraclitus",
+              lens: "The world you read about this morning is already different. Watch for what is changing, not just what happened."),
+        Maxim(text: "The strong do what they can and the weak suffer what they must.",
+              author: "Thucydides, Melian Dialogue",
+              lens: "Read today’s geopolitics through power: who has it, who lacks it, and what is each side able to refuse?"),
+        Maxim(text: "Wonder is the feeling of a philosopher, and philosophy begins in wonder.",
+              author: "Plato, Theaetetus",
+              lens: "Find one story today that genuinely amazes you — in technology or in the world — and stay with it for a minute."),
+        Maxim(text: "The price good men pay for indifference to public affairs is to be ruled by evil men.",
+              author: "Plato (attributed)",
+              lens: "Staying informed is a civic act. Which story today deserves more than a glance?"),
+        Maxim(text: "I am a citizen of the world.",
+              author: "Diogenes of Sinope",
+              lens: "Read today’s news as a neighbour, not a spectator. Pick a place you rarely think about and follow its story."),
+        Maxim(text: "What stands in the way becomes the way.",
+              author: "Marcus Aurelius, Meditations",
+              lens: "Obstacles dominate the news. Look for who is turning one into an opportunity."),
+        Maxim(text: "Waste no more time arguing about what a good person should be. Be one.",
+              author: "Marcus Aurelius, Meditations",
+              lens: "After the headlines, choose one small action that matches the values you just read about."),
+        Maxim(text: "Do not spoil what you have by desiring what you have not.",
+              author: "Epicurus, Vatican Sayings",
+              lens: "Markets and tech cycles feed on wanting more. Notice what you already have before you read on."),
+        Maxim(text: "The most difficult thing is to know oneself; the easiest is to give advice to others.",
+              author: "Thales of Miletus",
+              lens: "It’s easy to know what leaders should do. Which of today’s judgments would you struggle to apply to yourself?"),
+        Maxim(text: "The mind is not a vessel to be filled, but a fire to be kindled.",
+              author: "Plutarch",
+              lens: "Don’t just collect facts this morning. Choose one that sparks a question and chase it."),
+        Maxim(text: "First say to yourself what you would be; and then do what you have to do.",
+              author: "Epictetus, Discourses",
+              lens: "Decide what kind of reader you want to be today — curious, calm, or reactive — before you open a story."),
+        Maxim(text: "Courage is knowing what not to fear.",
+              author: "Plato, Laches",
+              lens: "Fear is the engine of many headlines. Which of today’s worries are real, and which are noise?"),
+        Maxim(text: "The road up and the road down are one and the same.",
+              author: "Heraclitus",
+              lens: "Booms and busts, rises and falls. Read today’s economy and technology as parts of one cycle."),
+        Maxim(text: "We have two ears and one mouth so that we can listen twice as much as we speak.",
+              author: "Zeno of Citium (attributed)",
+              lens: "Before forming an opinion on today’s big story, read one source you usually wouldn’t."),
+        Maxim(text: "Well begun is half done.",
+              author: "Aristotle (attributed)",
+              lens: "You’ve just spent five minutes informing yourself. That’s a good start to the day."),
+        Maxim(text: "Hope is a waking dream.",
+              author: "Aristotle (attributed)",
+              lens: "Beneath the bad news, find one story today that points somewhere better."),
+        Maxim(text: "We do not say that a man who takes no interest in public affairs is a man who minds his own business; we say he has no business here.",
+              author: "Pericles, Funeral Oration (Thucydides)",
+              lens: "The Athenians treated attention as a duty. Give today’s news the attention it deserves — then put it down."),
+    ]
+}
