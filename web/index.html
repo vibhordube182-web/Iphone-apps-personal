@@ -155,6 +155,39 @@
   .pill.solid { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .pill.done { background: var(--olive); border-color: var(--olive); color: var(--paper); }
 
+  /* ---------- In-app reader ---------- */
+  #reader { position: fixed; inset: 0; z-index: 80; background: var(--paper); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; --rd: 1.1rem; }
+  #reader[hidden] { display: none; }
+  #reader.rd-s0 { --rd: 1rem; } #reader.rd-s2 { --rd: 1.24rem; }
+  body.rd-open { overflow: hidden; }
+  .rd-bar { position: sticky; top: 0; z-index: 2; background: radial-gradient(120% 140% at 50% 0%, var(--navy-2), var(--navy) 70%); color: var(--ivory); padding-top: env(safe-area-inset-top, 0px); }
+  .rd-row { display: flex; align-items: center; gap: 4px; height: 56px; padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
+  .rd-row .iconbtn { color: var(--ivory); }
+  .rd-row .iconbtn:active { background: rgba(255, 255, 255, .14); }
+  .rd-title { flex: 1; min-width: 0; text-align: center; }
+  .rd-title b { display: block; font-family: var(--display); font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rd-title small { display: block; font-family: var(--ui); font-size: .68rem; color: color-mix(in srgb, var(--ivory) 70%, transparent); margin-top: 2px; }
+  .rd-aa { font-family: var(--serif); font-weight: 700; font-size: 1.05rem; }
+  .rd-progress { height: 2px; background: rgba(255, 255, 255, .14); }
+  .rd-progress i { display: block; height: 100%; width: 0; background: var(--brass); }
+  .rd-body { max-width: 35rem; margin: 0 auto; padding: 26px max(22px, env(safe-area-inset-left, 0px)) 8px; font-size: var(--rd); line-height: 1.72; }
+  .rd-body p { margin: 0 0 1.1em; text-wrap: pretty; hyphens: auto; -webkit-hyphens: auto; }
+  .rd-intro { text-align: center; margin: 0 0 1.6em; }
+  .rd-intro .eyebrow { display: block; margin-bottom: 8px; }
+  .rd-intro h1 { margin: 0; font-family: var(--display); font-size: 1.35rem; letter-spacing: .06em; line-height: 1.2; }
+  .rd-intro p { margin: 8px auto 0; font-size: .92rem; line-height: 1.45; color: var(--muted); max-width: 30ch; font-style: italic; }
+  .rd-body .drop::first-letter { float: left; font-family: var(--display); font-weight: 700; font-size: 3.5em; line-height: .82; padding: .08em .09em 0 0; color: var(--gold); }
+  .rd-h { text-align: center; font-family: var(--display); font-weight: 700; font-size: .8rem; letter-spacing: .24em; text-transform: uppercase; color: var(--gold); margin: 2.2em 0 1.2em; }
+  .pnum { font-family: var(--ui); font-size: .62em; font-weight: 700; letter-spacing: .04em; color: var(--olive); margin-right: .55em; vertical-align: .12em; }
+  .spk { font-family: var(--ui); font-size: .64em; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--aegean); margin-right: .55em; vertical-align: .08em; }
+  .rd-loading { text-align: center; color: var(--muted); font-style: italic; padding: 60px 0; }
+  .rd-end { max-width: 35rem; margin: 0 auto; text-align: center; padding: 18px max(22px, env(safe-area-inset-left, 0px)) calc(env(safe-area-inset-bottom, 0px) + 56px); }
+  .rd-end .key { max-width: 200px; margin: 0 auto 18px; }
+  .rd-end h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  .rd-end p { margin: 0 0 18px; font-family: var(--greek); font-style: italic; font-size: 1.1rem; color: var(--aegean); }
+  .rd-end .pill { height: 44px; padding: 0 22px; font-size: .9rem; }
+  .rd-end .full { display: block; margin-top: 16px; font-family: var(--ui); font-size: .78rem; color: var(--muted); text-decoration: underline; }
+
   /* ---------- Realms & stories ---------- */
   .realm { scroll-margin-top: calc(var(--bar-h) + env(safe-area-inset-top, 0px) + 6px); }
   .polis { --tint: var(--clay); } .oikos { --tint: var(--teal); } .techne { --tint: var(--aegean); } .kosmos { --tint: var(--violet); }
@@ -287,6 +320,18 @@
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
   </footer>
 </main>
+<div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
+  <div class="rd-bar">
+    <div class="rd-row">
+      <button class="iconbtn" id="rdClose" type="button" aria-label="Close reading"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div class="rd-title"><b id="rdTitle"></b><small id="rdSub"></small></div>
+      <button class="iconbtn rd-aa" id="rdSize" type="button" aria-label="Change text size">Aa</button>
+    </div>
+    <div class="rd-progress" aria-hidden="true"><i id="rdBar"></i></div>
+  </div>
+  <article class="rd-body" id="rdBody"></article>
+  <div class="rd-end" id="rdEnd" hidden></div>
+</div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -402,11 +447,85 @@
     box.appendChild(el("p", "lens", m.lens));
   }
 
+  /* ---- in-app reader ---- */
+  var readingList = null, readerEntry = null;
+  function closeReader(fromPop) {
+    $("reader").hidden = true; document.body.classList.remove("rd-open");
+    if (!fromPop && history.state && history.state.reader) { try { history.back(); } catch (e) {} }
+  }
+  function finishReading() {
+    store("lyceum-reading", dayKey()); recordDay();
+    closeReader(); toast("Done. See you tomorrow.");
+    if (readingList) renderReading(readingList);
+  }
+  function renderPassage(r, paras) {
+    var body = $("rdBody"), end = $("rdEnd");
+    body.textContent = "";
+    var intro = el("div", "rd-intro");
+    intro.appendChild(el("span", "eyebrow", "Today’s reading"));
+    intro.appendChild(el("h1", null, r.work + " · " + r.part));
+    intro.appendChild(el("p", null, r.why));
+    body.appendChild(intro);
+    var first = true;
+    paras.forEach(function (p) {
+      if (typeof p === "object") { body.appendChild(el("h2", "rd-h", p.h)); first = false; return; }
+      var node = el("p"), text = p, m;
+      if ((m = text.match(/^(\d+|[IVXLC]+)\.\s+/))) { node.appendChild(el("span", "pnum", m[1])); text = text.slice(m[0].length); }
+      else if ((m = text.match(/^([A-Z][A-Z ]{1,24}):\s+/))) {
+        var nm = m[1].toLowerCase().replace(/(^|\s)\S/g, function (c) { return c.toUpperCase(); });
+        node.appendChild(el("span", "spk", nm)); text = text.slice(m[0].length);
+      } else if (first && /^[A-Za-z]/.test(text)) node.className = "drop";
+      first = false;
+      node.appendChild(document.createTextNode(text));
+      body.appendChild(node);
+    });
+    end.textContent = ""; end.hidden = false;
+    var k = document.createElementNS("http://www.w3.org/2000/svg", "svg"); k.setAttribute("class", "key"); k.setAttribute("aria-hidden", "true");
+    k.innerHTML = '<rect width="100%" height="20" fill="url(#key-gold)"/>'; end.appendChild(k);
+    end.appendChild(el("h2", null, "That is today’s reading."));
+    end.appendChild(el("p", null, "Χαῖρε — well read."));
+    end.appendChild(pill("Mark as read", "solid", finishReading));
+    var full = el("a", "full", "Read the full text on the web"); full.href = r.url; full.target = "_blank"; full.rel = "noopener";
+    end.appendChild(full);
+  }
+  function openReader(r) {
+    var box = $("reader"), body = $("rdBody");
+    readerEntry = r;
+    $("rdTitle").textContent = r.work + " · " + r.part;
+    $("rdSub").textContent = r.author + " · about " + r.minutes + " min";
+    var size = store("lyceum-rdsize"); box.className = "rd-s" + (size == null ? 1 : size);
+    body.textContent = ""; body.appendChild(el("p", "rd-loading", "Opening today’s reading…"));
+    $("rdEnd").hidden = true; $("rdBar").style.width = "0";
+    box.hidden = false; box.scrollTop = 0; document.body.classList.add("rd-open");
+    try { history.pushState({ reader: 1 }, ""); } catch (e) {}
+    fetch(r.file).then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
+      .then(function (d) { renderPassage(r, d.p); })
+      .catch(function () {
+        body.textContent = "";
+        var p = el("p", "rd-loading", "Couldn’t load today’s passage. Check your connection, or "); 
+        var a = el("a", null, "read it on the web"); a.href = r.url; a.target = "_blank"; a.rel = "noopener"; a.style.textDecoration = "underline";
+        p.appendChild(a); p.appendChild(document.createTextNode(".")); body.appendChild(p);
+      });
+  }
+  $("rdClose").addEventListener("click", function () { closeReader(); });
+  $("rdSize").addEventListener("click", function () {
+    var cur = store("lyceum-rdsize"); cur = cur == null ? 1 : cur;
+    var next = (cur + 1) % 3; store("lyceum-rdsize", next); $("reader").className = "rd-s" + next;
+  });
+  $("reader").addEventListener("scroll", function () {
+    var r = $("reader"), max = r.scrollHeight - r.clientHeight;
+    $("rdBar").style.width = max > 0 ? Math.min(100, r.scrollTop / max * 100) + "%" : "0";
+  }, { passive: true });
+  window.addEventListener("popstate", function () { if (!$("reader").hidden) closeReader(true); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("reader").hidden) closeReader(); });
+
   /* ---- today's reading ---- */
   function renderReading(list) {
     var box = $("reading");
     if (!list || !list.length) { box.hidden = true; return; }
+    readingList = list;
     var r = list[dayNumber() % list.length], done = store("lyceum-reading") === dayKey();
+    if (r.file) fetch(r.file).catch(function () {});   // warm the cache so it opens instantly
     box.hidden = false; box.textContent = "";
     var ico = el("div", "ico"); ico.innerHTML = BOOK_SVG; box.appendChild(ico);
     var head = el("div"); head.appendChild(el("div", "eyebrow", "Today’s reading")); box.appendChild(head);
@@ -414,7 +533,9 @@
     box.appendChild(el("p", "by", r.author + " · about " + r.minutes + " min"));
     box.appendChild(el("p", "why", r.why));
     var acts = el("div", "acts");
-    var open = el("a", "pill solid", "Open the text"); open.href = r.url; open.target = "_blank"; open.rel = "noopener";
+    var open;
+    if (r.file) { open = pill("Read now · " + r.minutes + " min", "solid", function () { openReader(r); }); }
+    else { open = el("a", "pill solid", "Open the text"); open.href = r.url; open.target = "_blank"; open.rel = "noopener"; }
     var tick = el("button", "pill" + (done ? " done" : ""), done ? "✓ Read today" : "Mark as read"); tick.type = "button";
     tick.addEventListener("click", function () {
       var now = store("lyceum-reading") === dayKey();

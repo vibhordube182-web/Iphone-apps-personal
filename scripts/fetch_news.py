@@ -229,7 +229,8 @@ def main():
     Path("web/news.json").write_text(json.dumps(
         {"generated": datetime.now(timezone.utc).isoformat(), "stories": stories, "weather": weather(),
          "maxims": json.loads(Path("web/maxims.json").read_text()),
-         "reading": json.loads(Path("web/reading.json").read_text())},
+         "reading": json.loads(Path("web/readings/index.json" if Path("web/readings/index.json").exists()
+                                   else "web/reading.json").read_text())},
         ensure_ascii=False, indent=1))
     print(f"wrote {len(stories)} stories")
 

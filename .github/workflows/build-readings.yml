@@ -1,0 +1,31 @@
+name: Build readings
+
+# Downloads the public-domain texts from Project Gutenberg, cuts them into 5-6 minute passages and
+# commits them to web/readings. Run it once (and again only if you change scripts/build_readings.py).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build passages
+        run: python scripts/build_readings.py
+      - name: Commit passages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add web/readings
+          if git diff --cached --quiet; then echo "No changes."; else git commit -m "Update readings" && git push; fi
+      - name: Republish the site
+        run: gh workflow run daily-edition.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
