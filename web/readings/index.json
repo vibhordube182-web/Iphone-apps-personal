@@ -60,6 +60,46 @@
   "file": "readings/5.json"
  },
  {
+  "work": "The Republic",
+  "part": "Part 1 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1120,
+  "file": "readings/6.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 1 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1163,
+  "file": "readings/7.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 1 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1143,
+  "file": "readings/8.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 2 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1107,
+  "file": "readings/9.json"
+ },
+ {
   "work": "Meditations",
   "part": "Book 1 · part 2 of 3",
   "author": "Marcus Aurelius",
@@ -67,7 +107,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1316,
-  "file": "readings/6.json"
+  "file": "readings/10.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 2 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1206,
+  "file": "readings/11.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 3 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1150,
+  "file": "readings/12.json"
  },
  {
   "work": "Meditations",
@@ -77,7 +137,37 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1191,
-  "file": "readings/7.json"
+  "file": "readings/13.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 2 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1185,
+  "file": "readings/14.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 4 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1142,
+  "file": "readings/15.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 3 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1192,
+  "file": "readings/16.json"
  },
  {
   "work": "Meditations",
@@ -87,7 +177,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1188,
-  "file": "readings/8.json"
+  "file": "readings/17.json"
  },
  {
   "work": "Symposium",
@@ -97,7 +187,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1233,
-  "file": "readings/9.json"
+  "file": "readings/18.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 5 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1104,
+  "file": "readings/19.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 4 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1322,
+  "file": "readings/20.json"
  },
  {
   "work": "Meditations",
@@ -107,7 +217,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1223,
-  "file": "readings/10.json"
+  "file": "readings/21.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -117,7 +227,27 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1132,
-  "file": "readings/11.json"
+  "file": "readings/22.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 6 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1107,
+  "file": "readings/23.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 3 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1111,
+  "file": "readings/24.json"
  },
  {
   "work": "Apology",
@@ -127,7 +257,27 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 6,
   "words": 1245,
-  "file": "readings/12.json"
+  "file": "readings/25.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 7 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 6,
+  "words": 1227,
+  "file": "readings/26.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 5 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1143,
+  "file": "readings/27.json"
  },
  {
   "work": "Meditations",
@@ -137,7 +287,17 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1191,
-  "file": "readings/13.json"
+  "file": "readings/28.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 8 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1107,
+  "file": "readings/29.json"
  },
  {
   "work": "Meditations",
@@ -147,7 +307,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1206,
-  "file": "readings/14.json"
+  "file": "readings/30.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 6 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1279,
+  "file": "readings/31.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 4 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 6,
+  "words": 1295,
+  "file": "readings/32.json"
  },
  {
   "work": "Symposium",
@@ -157,7 +337,17 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1322,
-  "file": "readings/15.json"
+  "file": "readings/33.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 9 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1112,
+  "file": "readings/34.json"
  },
  {
   "work": "Meditations",
@@ -167,7 +357,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1119,
-  "file": "readings/16.json"
+  "file": "readings/35.json"
  },
  {
   "work": "Enchiridion",
@@ -177,7 +367,27 @@
   "url": "https://classics.mit.edu/Epictetus/epicench.html",
   "minutes": 5,
   "words": 1158,
-  "file": "readings/17.json"
+  "file": "readings/36.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 10 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1107,
+  "file": "readings/37.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 7 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1183,
+  "file": "readings/38.json"
  },
  {
   "work": "Meditations",
@@ -187,7 +397,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1106,
-  "file": "readings/18.json"
+  "file": "readings/39.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -197,7 +407,47 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1100,
-  "file": "readings/19.json"
+  "file": "readings/40.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 11 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1115,
+  "file": "readings/41.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 5 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1160,
+  "file": "readings/42.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 8 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1229,
+  "file": "readings/43.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 12 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 6,
+  "words": 1340,
+  "file": "readings/44.json"
  },
  {
   "work": "Meditations",
@@ -207,7 +457,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1167,
-  "file": "readings/20.json"
+  "file": "readings/45.json"
  },
  {
   "work": "Apology",
@@ -217,7 +467,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1103,
-  "file": "readings/21.json"
+  "file": "readings/46.json"
  },
  {
   "work": "Crito",
@@ -227,7 +477,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 5,
   "words": 1106,
-  "file": "readings/22.json"
+  "file": "readings/47.json"
  },
  {
   "work": "Symposium",
@@ -237,7 +487,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1122,
-  "file": "readings/23.json"
+  "file": "readings/48.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 13 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 6,
+  "words": 1244,
+  "file": "readings/49.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 9 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1268,
+  "file": "readings/50.json"
  },
  {
   "work": "Meditations",
@@ -247,7 +517,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1233,
-  "file": "readings/24.json"
+  "file": "readings/51.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 14 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 6,
+  "words": 1242,
+  "file": "readings/52.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 6 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1135,
+  "file": "readings/53.json"
  },
  {
   "work": "Meditations",
@@ -257,7 +547,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1196,
-  "file": "readings/25.json"
+  "file": "readings/54.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 10 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1212,
+  "file": "readings/55.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 15 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1205,
+  "file": "readings/56.json"
  },
  {
   "work": "Meditations",
@@ -267,7 +577,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1120,
-  "file": "readings/26.json"
+  "file": "readings/57.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -277,7 +587,37 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1169,
-  "file": "readings/27.json"
+  "file": "readings/58.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 16 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1131,
+  "file": "readings/59.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 11 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1177,
+  "file": "readings/60.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 7 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1150,
+  "file": "readings/61.json"
  },
  {
   "work": "Meditations",
@@ -287,7 +627,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1205,
-  "file": "readings/28.json"
+  "file": "readings/62.json"
  },
  {
   "work": "Symposium",
@@ -297,7 +637,37 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1253,
-  "file": "readings/29.json"
+  "file": "readings/63.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 17 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1110,
+  "file": "readings/64.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 12 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1108,
+  "file": "readings/65.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 18 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1153,
+  "file": "readings/66.json"
  },
  {
   "work": "Meditations",
@@ -307,7 +677,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1320,
-  "file": "readings/30.json"
+  "file": "readings/67.json"
  },
  {
   "work": "Enchiridion",
@@ -317,7 +687,7 @@
   "url": "https://classics.mit.edu/Epictetus/epicench.html",
   "minutes": 5,
   "words": 1181,
-  "file": "readings/31.json"
+  "file": "readings/68.json"
  },
  {
   "work": "Apology",
@@ -327,7 +697,37 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1167,
-  "file": "readings/32.json"
+  "file": "readings/69.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 19 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1102,
+  "file": "readings/70.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 13 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1149,
+  "file": "readings/71.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 8 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1170,
+  "file": "readings/72.json"
  },
  {
   "work": "Meditations",
@@ -337,7 +737,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1104,
-  "file": "readings/33.json"
+  "file": "readings/73.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 20 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1165,
+  "file": "readings/74.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 14 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1191,
+  "file": "readings/75.json"
  },
  {
   "work": "Meditations",
@@ -347,7 +767,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1113,
-  "file": "readings/34.json"
+  "file": "readings/76.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -357,7 +777,7 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1109,
-  "file": "readings/35.json"
+  "file": "readings/77.json"
  },
  {
   "work": "Symposium",
@@ -367,7 +787,17 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1128,
-  "file": "readings/36.json"
+  "file": "readings/78.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 21 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1102,
+  "file": "readings/79.json"
  },
  {
   "work": "Meditations",
@@ -377,7 +807,47 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1287,
-  "file": "readings/37.json"
+  "file": "readings/80.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 9 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1116,
+  "file": "readings/81.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 22 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1108,
+  "file": "readings/82.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 15 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1353,
+  "file": "readings/83.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 23 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1123,
+  "file": "readings/84.json"
  },
  {
   "work": "Meditations",
@@ -387,7 +857,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1171,
-  "file": "readings/38.json"
+  "file": "readings/85.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 16 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1241,
+  "file": "readings/86.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 24 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1124,
+  "file": "readings/87.json"
  },
  {
   "work": "Meditations",
@@ -397,7 +887,17 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1120,
-  "file": "readings/39.json"
+  "file": "readings/88.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 10 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1172,
+  "file": "readings/89.json"
  },
  {
   "work": "Apology",
@@ -407,7 +907,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1182,
-  "file": "readings/40.json"
+  "file": "readings/90.json"
  },
  {
   "work": "Crito",
@@ -417,7 +917,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 6,
   "words": 1313,
-  "file": "readings/41.json"
+  "file": "readings/91.json"
  },
  {
   "work": "Symposium",
@@ -427,7 +927,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1101,
-  "file": "readings/42.json"
+  "file": "readings/92.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 25 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1121,
+  "file": "readings/93.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 17 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1277,
+  "file": "readings/94.json"
  },
  {
   "work": "Meditations",
@@ -437,7 +957,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1308,
-  "file": "readings/43.json"
+  "file": "readings/95.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -447,7 +967,27 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1173,
-  "file": "readings/44.json"
+  "file": "readings/96.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 26 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1115,
+  "file": "readings/97.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 18 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1315,
+  "file": "readings/98.json"
  },
  {
   "work": "Meditations",
@@ -457,7 +997,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1104,
-  "file": "readings/45.json"
+  "file": "readings/99.json"
  },
  {
   "work": "Enchiridion",
@@ -467,7 +1007,27 @@
   "url": "https://classics.mit.edu/Epictetus/epicench.html",
   "minutes": 5,
   "words": 1108,
-  "file": "readings/46.json"
+  "file": "readings/100.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 27 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 6,
+  "words": 1217,
+  "file": "readings/101.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 11 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 6,
+  "words": 1373,
+  "file": "readings/102.json"
  },
  {
   "work": "Meditations",
@@ -477,7 +1037,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1135,
-  "file": "readings/47.json"
+  "file": "readings/103.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 28 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1133,
+  "file": "readings/104.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 19 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1101,
+  "file": "readings/105.json"
  },
  {
   "work": "Symposium",
@@ -487,7 +1067,17 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1184,
-  "file": "readings/48.json"
+  "file": "readings/106.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 29 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1100,
+  "file": "readings/107.json"
  },
  {
   "work": "Meditations",
@@ -497,7 +1087,37 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1174,
-  "file": "readings/49.json"
+  "file": "readings/108.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 20 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1143,
+  "file": "readings/109.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 12 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1166,
+  "file": "readings/110.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 30 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1209,
+  "file": "readings/111.json"
  },
  {
   "work": "Meditations",
@@ -507,7 +1127,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1123,
-  "file": "readings/50.json"
+  "file": "readings/112.json"
  },
  {
   "work": "Apology",
@@ -517,7 +1137,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1154,
-  "file": "readings/51.json"
+  "file": "readings/113.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -527,7 +1147,27 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1189,
-  "file": "readings/52.json"
+  "file": "readings/114.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 31 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1118,
+  "file": "readings/115.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 21 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1235,
+  "file": "readings/116.json"
  },
  {
   "work": "Meditations",
@@ -537,7 +1177,37 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1120,
-  "file": "readings/53.json"
+  "file": "readings/117.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 32 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1152,
+  "file": "readings/118.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 13 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1207,
+  "file": "readings/119.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 22 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1247,
+  "file": "readings/120.json"
  },
  {
   "work": "Meditations",
@@ -547,7 +1217,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1209,
-  "file": "readings/54.json"
+  "file": "readings/121.json"
  },
  {
   "work": "Symposium",
@@ -557,7 +1227,37 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1267,
-  "file": "readings/55.json"
+  "file": "readings/122.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 33 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1160,
+  "file": "readings/123.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 34 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1115,
+  "file": "readings/124.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 23 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1224,
+  "file": "readings/125.json"
  },
  {
   "work": "Meditations",
@@ -567,7 +1267,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1257,
-  "file": "readings/56.json"
+  "file": "readings/126.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 14 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1102,
+  "file": "readings/127.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 35 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1102,
+  "file": "readings/128.json"
  },
  {
   "work": "Meditations",
@@ -577,7 +1297,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1146,
-  "file": "readings/57.json"
+  "file": "readings/129.json"
  },
  {
   "work": "Enchiridion",
@@ -587,7 +1307,17 @@
   "url": "https://classics.mit.edu/Epictetus/epicench.html",
   "minutes": 5,
   "words": 1198,
-  "file": "readings/58.json"
+  "file": "readings/130.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 24 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1146,
+  "file": "readings/131.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -597,7 +1327,17 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1108,
-  "file": "readings/59.json"
+  "file": "readings/132.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 36 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1159,
+  "file": "readings/133.json"
  },
  {
   "work": "Meditations",
@@ -607,7 +1347,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1157,
-  "file": "readings/60.json"
+  "file": "readings/134.json"
  },
  {
   "work": "Apology",
@@ -617,7 +1357,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1106,
-  "file": "readings/61.json"
+  "file": "readings/135.json"
  },
  {
   "work": "Crito",
@@ -627,7 +1367,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 6,
   "words": 1339,
-  "file": "readings/62.json"
+  "file": "readings/136.json"
  },
  {
   "work": "Symposium",
@@ -637,7 +1377,37 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1138,
-  "file": "readings/63.json"
+  "file": "readings/137.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 37 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1136,
+  "file": "readings/138.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 25 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1127,
+  "file": "readings/139.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 15 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1104,
+  "file": "readings/140.json"
  },
  {
   "work": "Meditations",
@@ -647,7 +1417,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1245,
-  "file": "readings/64.json"
+  "file": "readings/141.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 38 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1103,
+  "file": "readings/142.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 26 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1276,
+  "file": "readings/143.json"
  },
  {
   "work": "Meditations",
@@ -657,7 +1447,47 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1111,
-  "file": "readings/65.json"
+  "file": "readings/144.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 39 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1103,
+  "file": "readings/145.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 40 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1126,
+  "file": "readings/146.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 27 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1137,
+  "file": "readings/147.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 16 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 6,
+  "words": 1212,
+  "file": "readings/148.json"
  },
  {
   "work": "Meditations",
@@ -667,7 +1497,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1203,
-  "file": "readings/66.json"
+  "file": "readings/149.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -677,7 +1507,7 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 6,
   "words": 1252,
-  "file": "readings/67.json"
+  "file": "readings/150.json"
  },
  {
   "work": "Symposium",
@@ -687,7 +1517,17 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1105,
-  "file": "readings/68.json"
+  "file": "readings/151.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 41 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1100,
+  "file": "readings/152.json"
  },
  {
   "work": "Meditations",
@@ -697,7 +1537,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1120,
-  "file": "readings/69.json"
+  "file": "readings/153.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 28 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1301,
+  "file": "readings/154.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 42 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1110,
+  "file": "readings/155.json"
  },
  {
   "work": "Meditations",
@@ -707,7 +1567,17 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1143,
-  "file": "readings/70.json"
+  "file": "readings/156.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 17 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1145,
+  "file": "readings/157.json"
  },
  {
   "work": "Apology",
@@ -717,7 +1587,27 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 6,
   "words": 1270,
-  "file": "readings/71.json"
+  "file": "readings/158.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 43 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1122,
+  "file": "readings/159.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 29 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1276,
+  "file": "readings/160.json"
  },
  {
   "work": "Meditations",
@@ -727,7 +1617,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1284,
-  "file": "readings/72.json"
+  "file": "readings/161.json"
  },
  {
   "work": "Enchiridion",
@@ -737,7 +1627,27 @@
   "url": "https://classics.mit.edu/Epictetus/epicench.html",
   "minutes": 6,
   "words": 1235,
-  "file": "readings/73.json"
+  "file": "readings/162.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 44 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1115,
+  "file": "readings/163.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 30 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1393,
+  "file": "readings/164.json"
  },
  {
   "work": "Symposium",
@@ -747,7 +1657,17 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1316,
-  "file": "readings/74.json"
+  "file": "readings/165.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 45 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1136,
+  "file": "readings/166.json"
  },
  {
   "work": "Meditations",
@@ -757,7 +1677,17 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1137,
-  "file": "readings/75.json"
+  "file": "readings/167.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 18 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1154,
+  "file": "readings/168.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -767,7 +1697,27 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1177,
-  "file": "readings/76.json"
+  "file": "readings/169.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 46 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1100,
+  "file": "readings/170.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 31 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1152,
+  "file": "readings/171.json"
  },
  {
   "work": "Meditations",
@@ -777,7 +1727,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1162,
-  "file": "readings/77.json"
+  "file": "readings/172.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 47 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1107,
+  "file": "readings/173.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 32 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1176,
+  "file": "readings/174.json"
  },
  {
   "work": "Meditations",
@@ -787,7 +1757,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1162,
-  "file": "readings/78.json"
+  "file": "readings/175.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 19 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1112,
+  "file": "readings/176.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 48 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1101,
+  "file": "readings/177.json"
  },
  {
   "work": "Meditations",
@@ -797,7 +1787,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1177,
-  "file": "readings/79.json"
+  "file": "readings/178.json"
  },
  {
   "work": "Apology",
@@ -807,7 +1797,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1166,
-  "file": "readings/80.json"
+  "file": "readings/179.json"
  },
  {
   "work": "Crito",
@@ -817,7 +1807,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 2,
   "words": 462,
-  "file": "readings/81.json"
+  "file": "readings/180.json"
  },
  {
   "work": "Symposium",
@@ -827,7 +1817,27 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1119,
-  "file": "readings/82.json"
+  "file": "readings/181.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 49 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1111,
+  "file": "readings/182.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 33 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1289,
+  "file": "readings/183.json"
  },
  {
   "work": "Meditations",
@@ -837,7 +1847,37 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1301,
-  "file": "readings/83.json"
+  "file": "readings/184.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 50 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1176,
+  "file": "readings/185.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 34 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1135,
+  "file": "readings/186.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 20 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 6,
+  "words": 1249,
+  "file": "readings/187.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -847,7 +1887,17 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1159,
-  "file": "readings/84.json"
+  "file": "readings/188.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 51 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1106,
+  "file": "readings/189.json"
  },
  {
   "work": "Meditations",
@@ -857,7 +1907,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1163,
-  "file": "readings/85.json"
+  "file": "readings/190.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 52 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1115,
+  "file": "readings/191.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 35 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1315,
+  "file": "readings/192.json"
  },
  {
   "work": "Meditations",
@@ -867,7 +1937,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1275,
-  "file": "readings/86.json"
+  "file": "readings/193.json"
  },
  {
   "work": "Enchiridion",
@@ -877,7 +1947,7 @@
   "url": "https://classics.mit.edu/Epictetus/epicench.html",
   "minutes": 7,
   "words": 1431,
-  "file": "readings/87.json"
+  "file": "readings/194.json"
  },
  {
   "work": "Symposium",
@@ -887,7 +1957,37 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
   "words": 1327,
-  "file": "readings/88.json"
+  "file": "readings/195.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 53 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1104,
+  "file": "readings/196.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 21 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1170,
+  "file": "readings/197.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 36 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1340,
+  "file": "readings/198.json"
  },
  {
   "work": "Meditations",
@@ -897,7 +1997,17 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1137,
-  "file": "readings/89.json"
+  "file": "readings/199.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 54 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1126,
+  "file": "readings/200.json"
  },
  {
   "work": "Meditations",
@@ -907,7 +2017,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1110,
-  "file": "readings/90.json"
+  "file": "readings/201.json"
  },
  {
   "work": "Apology",
@@ -917,7 +2027,37 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 3,
   "words": 729,
-  "file": "readings/91.json"
+  "file": "readings/202.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 55 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1207,
+  "file": "readings/203.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 37 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1179,
+  "file": "readings/204.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 22 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 5,
+  "words": 1129,
+  "file": "readings/205.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -927,7 +2067,17 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1158,
-  "file": "readings/92.json"
+  "file": "readings/206.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 56 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1105,
+  "file": "readings/207.json"
  },
  {
   "work": "Meditations",
@@ -937,7 +2087,17 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1136,
-  "file": "readings/93.json"
+  "file": "readings/208.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 38 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1175,
+  "file": "readings/209.json"
  },
  {
   "work": "Symposium",
@@ -947,7 +2107,17 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1155,
-  "file": "readings/94.json"
+  "file": "readings/210.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 57 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 6,
+  "words": 1292,
+  "file": "readings/211.json"
  },
  {
   "work": "Meditations",
@@ -957,7 +2127,37 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1151,
-  "file": "readings/95.json"
+  "file": "readings/212.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 58 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1119,
+  "file": "readings/213.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 39 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 5,
+  "words": 1196,
+  "file": "readings/214.json"
+ },
+ {
+  "work": "Phaedo",
+  "part": "Part 23 of 23",
+  "author": "Plato",
+  "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
+  "url": "https://classics.mit.edu/Plato/phaedo.html",
+  "minutes": 7,
+  "words": 1512,
+  "file": "readings/215.json"
  },
  {
   "work": "Meditations",
@@ -967,7 +2167,27 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1117,
-  "file": "readings/96.json"
+  "file": "readings/216.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 59 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1111,
+  "file": "readings/217.json"
+ },
+ {
+  "work": "Discourses",
+  "part": "Part 40 of 40",
+  "author": "Epictetus",
+  "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
+  "url": "https://classics.mit.edu/Epictetus/discourses.html",
+  "minutes": 6,
+  "words": 1283,
+  "file": "readings/218.json"
  },
  {
   "work": "Meditations",
@@ -977,6 +2197,16 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 3,
   "words": 759,
-  "file": "readings/97.json"
+  "file": "readings/219.json"
+ },
+ {
+  "work": "The Republic",
+  "part": "Part 60 of 60",
+  "author": "Plato",
+  "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
+  "url": "https://classics.mit.edu/Plato/republic.html",
+  "minutes": 5,
+  "words": 1158,
+  "file": "readings/220.json"
  }
 ]
