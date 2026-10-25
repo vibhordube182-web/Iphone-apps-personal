@@ -15,6 +15,15 @@ A morning news briefing for iPhone, in the spirit of The Economist Espresso, wit
 
 One-time setup: merge to `main`, then Settings, Pages, Source: *GitHub Actions*, then run *Daily edition* once from the Actions tab.
 
+### Morning alert and icon badge (Web Push)
+
+The daily job sends a push after publishing, which shows a notification and sets the icon badge to the number of new stories. Needs two repository secrets (Settings, Secrets and variables, Actions):
+
+- `VAPID_PRIVATE_KEY`: the private half of the key whose public half is `VAPID_PUBLIC` in `web/index.html`.
+- `PUSH_SUBSCRIPTION`: the JSON from the in-app *Copy code* button (a single object, or a JSON list for several phones).
+
+Run *Daily edition* manually to send a test push. Pushes are skipped when the secrets are missing.
+
 ## Native app without a Mac
 
 GitHub's macOS servers build the app for you.
