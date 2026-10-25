@@ -262,6 +262,11 @@
     <button class="iconbtn" id="dismiss" type="button" aria-label="Dismiss"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
   </div>
 
+  <div class="banner" id="badgeAsk" hidden>
+    <p><b>Show unread stories on the icon.</b> iPhone files this under notification permission. Lyceum will not send you notifications.</p>
+    <button class="pill solid" id="badgeOn" type="button">Turn on</button>
+  </div>
+
   <section class="logos" id="logos" aria-label="Daily Logos"></section>
   <section class="reading" id="reading" aria-label="Today’s reading" hidden></section>
 
@@ -523,9 +528,19 @@
       b.dataset.shown = on ? "1" : "0";
     });
   }
+  var unread = 0;
+  function badge() {
+    if (!navigator.setAppBadge || !edition) return;
+    try {
+      var p = unread > 0 ? navigator.setAppBadge(unread) : navigator.clearAppBadge();
+      if (p && p.catch) p.catch(function () {});
+    } catch (e) {}
+  }
   function progress() {
     var read = 0;
     if (edition) edition.stories.forEach(function (s) { if (readSet[s.link]) read++; });
+    unread = total - read;
+    badge();
     $("count").textContent = total ? read + " / " + total : "";
     $("bar").style.width = total ? (read / total * 100) + "%" : "0";
   }
@@ -597,7 +612,8 @@
     if (a) markRead(a.closest(".story").dataset.link);
   });
   document.addEventListener("visibilitychange", function () {
-    if (!document.hidden && Date.now() - lastLoaded > 30 * 60 * 1000) { header(); load(); }
+    if (document.hidden) { badge(); return; }
+    if (Date.now() - lastLoaded > 30 * 60 * 1000) { header(); load(); }
   });
   var ticking = false;
   window.addEventListener("scroll", function () {
@@ -606,6 +622,14 @@
 
   var standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
   if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !standalone && !store("lyceum-banner")) $("install").hidden = false;
+  function askBadge() {
+    var can = standalone && navigator.setAppBadge && window.Notification && Notification.permission === "default";
+    $("badgeAsk").hidden = !can;
+  }
+  $("badgeOn").addEventListener("click", function () {
+    try { Notification.requestPermission().then(function () { askBadge(); badge(); }, function () { askBadge(); }); } catch (e) { askBadge(); }
+  });
+  askBadge();
   $("dismiss").addEventListener("click", function () { $("install").hidden = true; store("lyceum-banner", 1); });
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
