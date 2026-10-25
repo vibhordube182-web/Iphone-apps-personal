@@ -371,7 +371,7 @@
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
     <div><button class="pill" id="diagLink" type="button" style="margin-top:10px">Launch diagnostics</button></div>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-10-25 d</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-10-25 e</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -964,8 +964,9 @@ function lyceumMain() {
   }
   setTimeout(hideSplash, 2500);
 }
-// Paint the black launch screen first; the heavy work (building the edition) starts one frame later.
-requestAnimationFrame(function () { requestAnimationFrame(function () { setTimeout(lyceumMain, 0); }); });
+// Paint the black launch screen first; the heavy work (building the edition) waits until iOS has finished
+// its own opening animation (about half a second in), while the launch screen covers the page.
+setTimeout(lyceumMain, Math.max(0, 500 - performance.now()));
 </script>
 </body>
 </html>
