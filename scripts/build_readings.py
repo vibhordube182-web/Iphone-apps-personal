@@ -75,7 +75,7 @@ WORKS = [
          end=r"(?i)^(?:THE\s+)?ENCH[EI]+RIDION\b", heading=None, first_heading=None, cap=40, run_in_titles=True,
          url="https://classics.mit.edu/Epictetus/discourses.html",
          why="Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations."),
-    dict(key="seneca", work="Letters to Lucilius", author="Seneca", ids=[], search="Seneca",
+    dict(key="seneca", work="Letters to Lucilius", author="Seneca", ids=[56075], search="seneca moral letters lucilius",
          find_title=r"(?i)letters|epistul|lucilius", title_hint=r"(?i)Seneca|Lucilius|Epistul",
          start=r"(?i)seneca (?:greets|to|sends greetings to) (?:his friend )?lucilius|greetings from seneca|seneca (?:wishes )?health to lucilius",
          end=None, heading=None, first_heading=None, cap=40,
@@ -157,26 +157,47 @@ def split_long(p, limit=320):
 
 
 def find_ids(query, title_re):
-    """Look an ebook up by title on Project Gutenberg's catalogue API, most downloaded first."""
+    """Look an ebook up by title: Gutenberg's own search page first, the gutendex API as a fallback."""
     import urllib.parse
-    url = "https://gutendex.com/books/?languages=en&search=" + urllib.parse.quote(query)
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; Lyceum/1.0)"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        results = json.load(r)["results"]
-    hits = [x for x in results if re.search(title_re, x["title"], re.I)]
-    hits.sort(key=lambda x: -x.get("download_count", 0))
-    print(f"[find] '{query}': " + "; ".join(f"{x['id']} {x['title'][:60]!r} ({x.get('download_count')})" for x in hits[:6]))
-    return [x["id"] for x in hits[:4]]
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; Lyceum/1.0)"}
+    found = []
+    try:
+        url = "https://www.gutenberg.org/ebooks/search/?query=" + urllib.parse.quote_plus(query)
+        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=25) as r:
+            page = r.read().decode("utf-8", errors="replace")
+        for m in re.finditer(r'<li class="booklink">(.*?)</li>', page, re.S):
+            blk = m.group(1)
+            idm = re.search(r"/ebooks/(\d+)", blk); tm = re.search(r'<span class="title">(.*?)</span>', blk, re.S)
+            if idm and tm and re.search(title_re, tm.group(1), re.I):
+                found.append((int(idm.group(1)), re.sub(r"\s+", " ", tm.group(1)).strip()))
+        print(f"[find] gutenberg search '{query}': {found[:6]}")
+    except Exception as e:
+        print(f"[find] gutenberg search failed: {e}")
+    if not found:
+        try:
+            url = "https://gutendex.com/books/?languages=en&search=" + urllib.parse.quote(query)
+            with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as r:
+                results = json.load(r)["results"]
+            hits = sorted((x for x in results if re.search(title_re, x["title"], re.I)), key=lambda x: -x.get("download_count", 0))
+            found = [(x["id"], x["title"][:60]) for x in hits]
+            print(f"[find] gutendex '{query}': {found[:6]}")
+        except Exception as e:
+            print(f"[find] gutendex failed: {e}")
+    return [n for n, _ in found[:4]]
 
 
 def build_work(cfg):
     last = None
-    ids = cfg["ids"] or find_ids(cfg["search"], cfg.get("find_title", cfg["title_hint"]))
-    for n in ids:
-        try:
-            return build_from(cfg, n)
-        except Exception as e:
-            last = e; print(f"[{cfg['key']}] ebook {n} rejected: {e}")
+    tried = []
+    for stage in ("configured", "search"):
+        ids = cfg["ids"] if stage == "configured" else (
+            [n for n in find_ids(cfg["search"], cfg.get("find_title", cfg["title_hint"])) if n not in tried] if cfg.get("search") else [])
+        for n in ids:
+            tried.append(n)
+            try:
+                return build_from(cfg, n)
+            except Exception as e:
+                last = e; print(f"[{cfg['key']}] ebook {n} rejected: {e}")
     raise last or RuntimeError("no candidate ebooks found")
 
 
