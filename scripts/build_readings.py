@@ -62,6 +62,25 @@ WORKS = [
          start=r"Concerning the things about which you ask to be informed", end=None, heading=None,
          first_heading=None, cap=15, url="https://classics.mit.edu/Plato/symposium.html",
          why="A dinner party at which each guest gives a speech about love."),
+    dict(key="republic", work="The Republic", author="Plato", ids=[1497], title_hint="Republic",
+         start=r"I went down yesterday to the Piraeus with Glaucon", end=None, heading=None,
+         first_heading=None, cap=60, url="https://classics.mit.edu/Plato/republic.html",
+         why="Plato’s great dialogue on justice, the soul and the ideal city."),
+    dict(key="phaedo", work="Phaedo", author="Plato", ids=[1658], title_hint="Phaedo",
+         start=r"Were you yourself, Phaedo, in the prison with Socrates", end=None, heading=None,
+         first_heading=None, cap=None, url="https://classics.mit.edu/Plato/phaedo.html",
+         why="Socrates’ last day: a conversation about the soul and death, ending with the hemlock."),
+    dict(key="discourses", work="Discourses", author="Epictetus", ids=[10661], title_hint=r"Discourses",
+         start=r"(?i)of all the faculties", start_alt=r"(?i)things which are in our power",
+         end=r"(?i)^(?:THE\s+)?ENCH[EI]+RIDION\b", heading=None, first_heading=None, cap=40,
+         url="https://classics.mit.edu/Epictetus/discourses.html",
+         why="Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations."),
+    dict(key="seneca", work="Letters to Lucilius", author="Seneca", ids=[], search="Seneca letters Lucilius",
+         title_hint=r"Seneca|Lucilius|Stoic",
+         start=r"(?i)seneca (?:greets|to|sends greetings to) (?:his friend )?lucilius|greetings from seneca|seneca (?:wishes )?health to lucilius",
+         end=None, heading=None, first_heading=None, cap=40,
+         url="https://en.wikisource.org/wiki/Moral_letters_to_Lucilius",
+         why="Practical letters on time, friendship, fear and death from the Stoic statesman Seneca."),
 ]
 
 ROMAN = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100}
@@ -137,9 +156,23 @@ def split_long(p, limit=320):
     return out
 
 
+def find_ids(query, title_re):
+    """Look an ebook up by title on Project Gutenberg's catalogue API, most downloaded first."""
+    import urllib.parse
+    url = "https://gutendex.com/books/?languages=en&search=" + urllib.parse.quote(query)
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; Lyceum/1.0)"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        results = json.load(r)["results"]
+    hits = [x for x in results if re.search(title_re, x["title"], re.I)]
+    hits.sort(key=lambda x: -x.get("download_count", 0))
+    print(f"[find] '{query}': " + "; ".join(f"{x['id']} {x['title'][:60]!r} ({x.get('download_count')})" for x in hits[:6]))
+    return [x["id"] for x in hits[:4]]
+
+
 def build_work(cfg):
     last = None
-    for n in cfg["ids"]:
+    ids = cfg["ids"] or find_ids(cfg["search"], cfg["title_hint"])
+    for n in ids:
         try:
             return build_from(cfg, n)
         except Exception as e:
