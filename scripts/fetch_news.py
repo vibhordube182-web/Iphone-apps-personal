@@ -7,23 +7,67 @@ from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
+GN = "https://news.google.com/rss/search?hl=en-AU&gl=AU&ceid=AU:en&q="
+BANDS = "%22Led+Zeppelin%22+OR+%22Foo+Fighters%22+OR+%22Red+Hot+Chili+Peppers%22+OR+%22Tool%22+band+OR+%22System+of+a+Down%22+OR+Beatles+OR+%22Elton+John%22+OR+%22Elvis%22"
+MUSK = "SpaceX+OR+Tesla+OR+xAI+OR+Neuralink+OR+Starlink+OR+%22The+Boring+Company%22"
+BRYAN = "%22Bryan+Johnson%22+OR+%22Blueprint%22+longevity"
+
+# (realm, group, how many stories the group contributes), in display order.
+GROUPS = [
+    ("polis", "polis", 3),
+    ("oikos", "australia", 2),
+    ("oikos", "india", 2),
+    ("techne", "techne", 2),
+    ("kosmos", "kosmos", 2),
+    ("oikonomia", "economy", 2),
+    ("arete", "arete", 2),
+    ("sophia", "sophia", 1),
+    ("schole", "music", 2),
+    ("schole", "football", 1),
+    ("schole", "youtube", 1),
+]
+
+# (group, source name, url). A source name of "*" takes the publisher from the item (Google News).
 FEEDS = [
     ("polis", "BBC World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
     ("polis", "The Guardian", "https://www.theguardian.com/world/rss"),
     ("polis", "Al Jazeera", "https://www.aljazeera.com/xml/rss/all.xml"),
     ("polis", "DW", "https://rss.dw.com/xml/rss-en-all"),
+    ("australia", "ABC News", "https://www.abc.net.au/news/feed/51120/rss.xml"),
+    ("australia", "The Guardian", "https://www.theguardian.com/australia-news/rss"),
+    ("australia", "The Age", "https://www.theage.com.au/rss/feed.xml"),
+    ("india", "The Hindu", "https://www.thehindu.com/news/national/feeder/default.rss"),
+    ("india", "Times of India", "https://timesofindia.indiatimes.com/rssfeedstopstories.cms"),
+    ("india", "Indian Express", "https://indianexpress.com/section/india/feed/"),
     ("techne", "BBC Technology", "https://feeds.bbci.co.uk/news/technology/rss.xml"),
     ("techne", "Ars Technica", "https://feeds.arstechnica.com/arstechnica/index"),
     ("techne", "The Verge", "https://www.theverge.com/rss/index.xml"),
-    ("techne", "The Guardian", "https://www.theguardian.com/technology/rss"),
-    ("agora", "BBC News", "https://feeds.bbci.co.uk/news/rss.xml"),
-    ("agora", "NPR", "https://feeds.npr.org/1001/rss.xml"),
-    ("agora", "The Guardian", "https://www.theguardian.com/uk-news/rss"),
-    ("oikonomia", "BBC Business", "https://feeds.bbci.co.uk/news/business/rss.xml"),
-    ("oikonomia", "The Guardian", "https://www.theguardian.com/business/rss"),
+    ("techne", "TechCrunch", "https://techcrunch.com/feed/"),
+    ("kosmos", "SpaceNews", "https://spacenews.com/feed/"),
+    ("kosmos", "Electrek", "https://electrek.co/feed/"),
+    ("kosmos", "*", GN + MUSK),
+    ("economy", "BBC Business", "https://feeds.bbci.co.uk/news/business/rss.xml"),
+    ("economy", "The Guardian", "https://www.theguardian.com/business/rss"),
+    ("arete", "*", GN + BRYAN),
+    ("arete", "Fight Aging!", "https://www.fightaging.org/feed/"),
     ("sophia", "Aeon", "https://aeon.co/feed.rss"),
+    ("sophia", "Daily Stoic", "https://dailystoic.com/feed/"),
+    ("sophia", "Farnam Street", "https://fs.blog/feed/"),
+    ("music", "Louder", "https://www.loudersound.com/feeds/all"),
+    ("music", "Ultimate Classic Rock", "https://ultimateclassicrock.com/feed/"),
+    ("music", "*", GN + BANDS),
+    ("football", "BBC Football", "https://feeds.bbci.co.uk/sport/football/rss.xml"),
+    ("football", "The Guardian", "https://www.theguardian.com/football/rss"),
+    ("youtube", "PewDiePie", "https://www.youtube.com/feeds/videos.xml?channel_id=UC-lHJZR3Gqxm24_Vd_AJ5Yw"),
 ]
-LIMITS = {"polis": 4, "techne": 3, "agora": 3, "oikonomia": 2, "sophia": 1}
+
+CITIES = [("Melbourne", -37.81, 144.96), ("Mumbai", 19.08, 72.88)]
+WMO = {0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog", 48: "Fog",
+       51: "Drizzle", 53: "Drizzle", 55: "Drizzle", 56: "Freezing drizzle", 57: "Freezing drizzle",
+       61: "Rain", 63: "Rain", 65: "Heavy rain", 66: "Freezing rain", 67: "Freezing rain",
+       71: "Snow", 73: "Snow", 75: "Heavy snow", 77: "Snow", 80: "Showers", 81: "Showers",
+       82: "Heavy showers", 85: "Snow showers", 86: "Snow showers", 95: "Thunderstorm",
+       96: "Thunderstorm", 99: "Thunderstorm"}
 
 
 def clean(text):
@@ -80,7 +124,7 @@ def pick_image(el, raw_html):
 
 
 def fetch(feed):
-    realm, name, url = feed
+    group, name, url = feed
     req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=20) as r:
@@ -105,9 +149,16 @@ def fetch(feed):
                 f[tag] = c.text or ""
                 if tag != "title":
                     f["raw"] = f.get("raw", "") + (c.text or "")
+            elif tag == "source" and c.text and c.text.strip():
+                f["publisher"] = c.text.strip()
             elif tag in ("pubDate", "published", "updated", "date") and "date" not in f:
                 f["date"] = parse_date((c.text or "").strip())
         title = clean(f.get("title"))
+        source = name
+        if name == "*":
+            source = f.get("publisher") or "Google News"
+            if title.endswith(" - " + source):
+                title = title[: -len(source) - 3]
         link = f.get("link", "")
         if not title or not link.startswith("http"):
             continue
@@ -121,7 +172,7 @@ def fetch(feed):
             image = image.replace("http://", "https://", 1)
             if "ichef.bbci.co.uk" in image and re.search(r"/(standard|news)/\d+/", image):
                 alt, image = image, re.sub(r"/(standard|news)/\d+/", r"/\1/800/", image)
-        out.append({"realm": realm, "source": name, "title": title, "summary": summary,
+        out.append({"group": group, "source": source, "title": title, "summary": summary,
                     "link": link, "date": d, "image": image, "image_alt": alt})
     out.sort(key=lambda s: s["date"], reverse=True)
     return out
@@ -131,13 +182,28 @@ def tokens(t):
     return {w for w in re.split(r"[^a-z0-9]+", t.lower()) if len(w) > 2}
 
 
+def weather():
+    out = []
+    for city, lat, lon in CITIES:
+        url = ("https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s"
+               "&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1" % (lat, lon))
+        try:
+            with urllib.request.urlopen(url, timeout=20) as r:
+                d = json.load(r)["daily"]
+            out.append({"city": city, "hi": round(d["temperature_2m_max"][0]), "lo": round(d["temperature_2m_min"][0]),
+                        "desc": WMO.get(d["weather_code"][0], "")})
+        except Exception as e:
+            print(f"skip weather {city}: {e}", file=sys.stderr)
+    return out
+
+
 def main():
     with ThreadPoolExecutor(8) as ex:
         results = list(ex.map(fetch, FEEDS))
     cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
     stories, seen = [], []
-    for realm, limit in LIMITS.items():
-        queues = [r for f, r in zip(FEEDS, results) if f[0] == realm]
+    for realm, group, limit in GROUPS:
+        queues = [r for f, r in zip(FEEDS, results) if f[0] == group]
         fresh = [[s for s in q if s["date"] > cutoff] for q in queues]
         if sum(map(len, fresh)) >= limit:
             queues = fresh
@@ -152,15 +218,18 @@ def main():
             if any(len(words & o) / max(1, len(words | o)) > 0.5 for o in seen):
                 continue
             seen.append(words)
+            cand["realm"] = realm
+            cand.pop("group", None)
             stories.append(cand)
             picked += 1
     if not stories:
         sys.exit("no stories fetched; keeping previous edition")
     for s in stories:
         s["date"] = s["date"].astimezone(timezone.utc).isoformat()
-    maxims = json.loads(Path("web/maxims.json").read_text())
     Path("web/news.json").write_text(json.dumps(
-        {"generated": datetime.now(timezone.utc).isoformat(), "stories": stories, "maxims": maxims},
+        {"generated": datetime.now(timezone.utc).isoformat(), "stories": stories, "weather": weather(),
+         "maxims": json.loads(Path("web/maxims.json").read_text()),
+         "reading": json.loads(Path("web/reading.json").read_text())},
         ensure_ascii=False, indent=1))
     print(f"wrote {len(stories)} stories")
 
