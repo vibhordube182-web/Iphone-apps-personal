@@ -1,15 +1,11 @@
 name: Daily edition
 
-# Rebuilds the news edition four times a day (6am, 12pm, 5pm, 9pm Melbourne time),
-# publishes the Lyceum web app to GitHub Pages and sends the push alert.
+# Runs every hour. Each run refreshes the news and publishes the site; the push step then sends an
+# alert to every phone for which it is currently 6am, 12pm, 5pm or 9pm in that phone's own timezone
+# (the timezone travels inside the PUSH_SUBSCRIPTION code, so alerts follow you when you travel).
 on:
   schedule:
-    # Melbourne is UTC+11 in summer and UTC+10 in winter. Cron is UTC only, so each time is
-    # listed for both offsets and the "Check Melbourne time" step lets only the right one through.
-    - cron: "7 19,20 * * *"   # 6am
-    - cron: "7 1,2 * * *"     # 12pm
-    - cron: "7 6,7 * * *"     # 5pm
-    - cron: "7 10,11 * * *"   # 9pm
+    - cron: "7 * * * *"
   push:
     branches: [main]
     paths: ["web/**", "scripts/**", ".github/workflows/daily-edition.yml"]
@@ -31,38 +27,25 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Check Melbourne time
-        id: gate
-        run: |
-          hour=$(TZ=Australia/Melbourne date +%-H)
-          if [ "${{ github.event_name }}" != "schedule" ]; then go=true
-          else case "$hour" in 6|12|17|21) go=true ;; *) go=false ;; esac; fi
-          echo "Melbourne hour: $hour, run: $go"
-          echo "go=$go" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
-        if: steps.gate.outputs.go == 'true'
       - uses: actions/setup-python@v5
-        if: steps.gate.outputs.go == 'true'
         with:
           python-version: "3.12"
       - name: Fetch the news
-        if: steps.gate.outputs.go == 'true'
         run: python scripts/fetch_news.py
       - uses: actions/configure-pages@v5
-        if: steps.gate.outputs.go == 'true'
       - uses: actions/upload-pages-artifact@v3
-        if: steps.gate.outputs.go == 'true'
         with:
           path: web
       - id: deployment
-        if: steps.gate.outputs.go == 'true'
         uses: actions/deploy-pages@v4
 
       - name: Send alert
-        if: steps.gate.outputs.go == 'true' && github.event_name != 'push'
+        if: github.event_name != 'push'
         env:
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
           PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+          EVENT: ${{ github.event_name }}
         run: |
           pip install pywebpush
           python scripts/send_push.py

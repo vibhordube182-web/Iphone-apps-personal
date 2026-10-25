@@ -17,7 +17,7 @@ One-time setup: merge to `main`, then Settings, Pages, Source: *GitHub Actions*,
 
 ### Morning alert and icon badge (Web Push)
 
-The job runs four times a day (6am, 12pm, 5pm, 9pm Melbourne time; see `daily-edition.yml`). Each run refreshes the news, publishes the site and sends a motivational push (messages in `scripts/send_push.py`), and the phone sets the icon badge to the number of unread stories. Needs two repository secrets (Settings, Secrets and variables, Actions):
+The job runs every hour. Each run refreshes the news, publishes the site and sends a motivational push (messages in `scripts/send_push.py`) to every phone for which it is 6am, 12pm, 5pm or 9pm in that phone's own timezone, which travels inside the `PUSH_SUBSCRIPTION` code (a code with no timezone is treated as Melbourne). When the app notices a new timezone it shows the new code and the link to the secret page. The phone sets the icon badge to the number of unread stories. Needs two repository secrets (Settings, Secrets and variables, Actions):
 
 - `VAPID_PRIVATE_KEY`: the private half of the key whose public half is `VAPID_PUBLIC` in `web/index.html`.
 - `PUSH_SUBSCRIPTION`: the JSON from the in-app *Copy code* button (a single object, or a JSON list for several phones).
