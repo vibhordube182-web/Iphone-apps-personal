@@ -12,7 +12,7 @@
   #splash { position: fixed; inset: auto 0 0 0; height: var(--sh, 100vh); z-index: 200; display: grid; place-items: center; background: #000; transition: opacity .5s ease, visibility 0s linear .5s; will-change: opacity; transform: translateZ(0); backface-visibility: hidden; }
   #splash.off { opacity: 0; visibility: hidden; }
   /* the logo waits for iOS to finish opening the app (plain black until then), then fades in */
-  #splash svg, #splash .name { opacity: 0; animation: splashIn .4s ease .9s forwards; }
+  #splash svg, #splash .name { opacity: 0; animation: splashIn .4s ease .7s forwards; }
   @keyframes splashIn { to { opacity: 1; } }
   #splash svg { width: 22vw; height: auto; fill: #faf6ec; display: block; }
   #splash .name { position: absolute; left: 0; right: 0; bottom: calc(var(--sb, 0px) + 38px); text-align: center; font-family: "Cinzel Splash", "Cinzel", Georgia, serif; font-weight: 700; font-size: 15px; letter-spacing: .42em; padding-left: .42em; color: #faf6ec; line-height: 1; }
@@ -764,7 +764,7 @@
   }
 
   /* ---- load ---- */
-  var SPLASH_HOLD = 1900;   // ms before the launch screen starts to fade, counted from the start of the page (it also waits for the first draw)
+  var SPLASH_HOLD = 1700;   // ms before the launch screen starts to fade, counted from the start of the page (it also waits for the first draw)
   var splashQueued = false, splashGone = false, afterQueue = [];
   function afterSplash(fn) { if (splashGone) fn(); else afterQueue.push(fn); }
   function hideSplash() {
