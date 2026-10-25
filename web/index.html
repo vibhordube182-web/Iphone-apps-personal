@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="en" class="booting">
+<html lang="en" class="booting" style="background:#000">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="dark light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>
   /* Launch screen: black, temple in the middle, app name at the bottom. It matches the
@@ -756,6 +757,7 @@
       fontsSettled(function () {
         var sp = $("splash");
         document.documentElement.classList.remove("booting");
+        document.documentElement.style.background = "";
         if (sp) sp.classList.add("off");
         // keep the main thread idle while it fades, then do everything that was waiting
         setTimeout(function () {
