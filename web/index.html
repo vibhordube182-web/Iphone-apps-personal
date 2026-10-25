@@ -104,9 +104,9 @@
   .brief { font-family: var(--ui); font-size: .76rem; letter-spacing: .04em; color: color-mix(in srgb, var(--ivory) 62%, transparent); margin: 14px 0 18px; min-height: 1.1em; }
   .masthead .key { opacity: .75; }
   .cities { display: flex; justify-content: center; gap: 0; margin: 22px auto 24px; max-width: 360px; font-family: var(--ui); }
-  .city { flex: 1; padding: 0 12px; text-align: center; }
+  .city { flex: 1; min-width: 0; padding: 0 8px; text-align: center; }
   .city + .city { border-left: 1px solid color-mix(in srgb, var(--ivory) 22%, transparent); }
-  .city .cn { font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--brass); font-variant-numeric: tabular-nums; }
+  .city .cn { font-size: .62rem; font-weight: 700; letter-spacing: .1em; white-space: nowrap; text-transform: uppercase; color: var(--brass); font-variant-numeric: tabular-nums; }
   .city .cw { font-size: .8rem; color: color-mix(in srgb, var(--ivory) 80%, transparent); margin-top: 2px; }
 
   /* ---------- Sticky bar ---------- */
@@ -336,7 +336,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-10-25 e</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-10-25 f</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -415,7 +415,7 @@ function lyceumMain() {
       });
     }
     CITIES.forEach(function (c, i) {
-      var t = new Date().toLocaleTimeString("en-AU", { timeZone: c.tz, hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase();
+      var t = new Date().toLocaleTimeString("en-AU", { timeZone: c.tz, hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase().replace(/\s/g, "\u00A0");
       var w = weather.filter(function (x) { return x.city === c.label; })[0];
       box.children[i].children[0].textContent = c.label + " · " + t;
       box.children[i].children[1].textContent = w ? w.lo + "°–" + w.hi + "°  " + w.desc : " ";
