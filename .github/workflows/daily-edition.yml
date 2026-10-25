@@ -10,6 +10,11 @@ on:
     branches: [main]
     paths: ["web/**", "scripts/**", ".github/workflows/daily-edition.yml"]
   workflow_dispatch:
+    inputs:
+      send_alert:
+        description: "Send the push alert to connected phones"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -41,7 +46,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Send alert
-        if: github.event_name != 'push'
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.send_alert)
         env:
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
           PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
