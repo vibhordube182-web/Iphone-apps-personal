@@ -1,5 +1,7 @@
-// Network-first for pages and the edition, so updates arrive immediately and Lyceum still opens offline.
-const CACHE = "lyceum-v6";
+// Opens instantly from the phone: the app shell, readings and fonts are served from the cache while a
+// fresh copy is fetched in the background (stale-while-revalidate). The edition itself is network-first
+// with a short timeout, because the page already paints the last saved edition on its own.
+const CACHE = "lyceum-v7";
 const FILES = ["./", "index.html", "manifest.webmanifest", "mark-192.png", "mark-touch.png"];
 
 self.addEventListener("install", (e) => {
@@ -11,15 +13,44 @@ self.addEventListener("activate", (e) => {
       .then(() => self.clients.claim())
   );
 });
+
+function keyFor(url) { return url.origin + url.pathname; }
+
+async function staleWhileRevalidate(request, key) {
+  const cache = await caches.open(CACHE);
+  const hit = await cache.match(key);
+  const network = fetch(request).then((r) => {
+    if (r && (r.ok || r.type === "opaque")) cache.put(key, r.clone());
+    return r;
+  }).catch(() => null);
+  return hit || (await network) || (await cache.match("index.html")) || Response.error();
+}
+
+async function networkFirst(request, key, ms) {
+  const cache = await caches.open(CACHE);
+  try {
+    const r = await Promise.race([
+      fetch(request),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("slow")), ms)),
+    ]);
+    if (r && r.ok) cache.put(key, r.clone());
+    return r;
+  } catch (_) {
+    return (await cache.match(key)) || fetch(request).catch(() => Response.error());
+  }
+}
+
 self.addEventListener("fetch", (e) => {
-  const url = new URL(e.request.url);
-  if (e.request.method !== "GET" || url.origin !== location.origin) return;
-  e.respondWith(
-    fetch(e.request).then((r) => {
-      if (r.ok) { const copy = r.clone(); caches.open(CACHE).then((c) => c.put(url.origin + url.pathname, copy)); }
-      return r;
-    }).catch(() => caches.match(url.origin + url.pathname).then((hit) => hit || caches.match("index.html")))
-  );
+  const req = e.request;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.origin === location.origin) {
+    if (url.pathname.endsWith("news.json")) { e.respondWith(networkFirst(req, keyFor(url), 4000)); return; }
+    const key = req.mode === "navigate" ? new URL("index.html", location.href).href : keyFor(url);
+    e.respondWith(staleWhileRevalidate(req, key));
+  } else if (/(^|\.)fonts\.(googleapis|gstatic)\.com$/.test(url.hostname)) {
+    e.respondWith(staleWhileRevalidate(req, req.url));
+  }
 });
 
 function readList() {
