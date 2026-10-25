@@ -772,36 +772,24 @@
   }
 
   /* ---- load ---- */
-  var SPLASH_HOLD = 1000;   // ms the launch screen stays fully visible, counted from the start of the page
+  var SPLASH_HOLD = 50;   // ms before the launch screen starts to fade, counted from the start of the page (it also waits for the first draw)
   var splashQueued = false, splashGone = false, afterQueue = [];
   function afterSplash(fn) { if (splashGone) fn(); else afterQueue.push(fn); }
-  function fontsSettled(cb) {
-    var done = false, t0 = Date.now();
-    function go() { if (!done) { done = true; cb(); } }
-    setTimeout(go, 700);                                   // never wait long
-    (function poll() {
-      if (window.__fcss || Date.now() - t0 > 500) {
-        setTimeout(function () { (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(go, go); }, 60);
-      } else setTimeout(poll, 30);
-    })();
-  }
   function hideSplash() {
     if (splashQueued) return;
     splashQueued = true;
     setTimeout(function () {
-      fontsSettled(function () {
-        var sp = $("splash");
-        document.documentElement.classList.remove("booting");
-        document.documentElement.style.background = "";
-        if (sp) sp.classList.add("off");
-        // keep the main thread idle while it fades, then do everything that was waiting
-        setTimeout(function () {
-          if (sp && sp.parentNode) sp.parentNode.removeChild(sp);
-          splashGone = true;
-          var q = afterQueue; afterQueue = [];
-          q.forEach(function (fn) { try { fn(); } catch (e) {} });
-        }, 650);
-      });
+      var sp = $("splash");
+      document.documentElement.classList.remove("booting");
+      document.documentElement.style.background = "";
+      if (sp) sp.classList.add("off");
+      // keep the main thread idle while it fades, then do everything that was waiting
+      setTimeout(function () {
+        if (sp && sp.parentNode) sp.parentNode.removeChild(sp);
+        splashGone = true;
+        var q = afterQueue; afterQueue = [];
+        q.forEach(function (fn) { try { fn(); } catch (e) {} });
+      }, 650);
     }, Math.max(0, SPLASH_HOLD - performance.now()));
   }
 
