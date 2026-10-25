@@ -84,6 +84,11 @@
   .dateline::before, .dateline::after { content: ""; height: 1px; width: 38px; background: currentColor; opacity: .5; }
   .greeting { margin: 22px 0 0; }
   .greeting .greek { font-family: var(--greek); font-size: 1.9rem; font-weight: 500; line-height: 1.1; }
+  .gloss { font-family: var(--ui); font-size: .64rem; font-weight: 500; font-style: normal; letter-spacing: .05em; text-transform: none; color: var(--muted); }
+  .greeting .gloss { color: color-mix(in srgb, var(--ivory) 62%, transparent); margin-top: 2px; font-size: .68rem; }
+  .realm-head .gk { display: flex; align-items: baseline; gap: 7px; margin-top: 1px; }
+  .realm-head .gk b { font-family: var(--greek); font-weight: 500; font-size: 1rem; color: var(--tint); }
+  .logos .gloss { display: block; margin-top: 4px; letter-spacing: .04em; }
   .greeting .english { font-size: .98rem; color: color-mix(in srgb, var(--ivory) 72%, transparent); margin-top: 4px; }
   .brief { font-family: var(--ui); font-size: .76rem; letter-spacing: .04em; color: color-mix(in srgb, var(--ivory) 62%, transparent); margin: 14px 0 18px; min-height: 1.1em; }
   .masthead .key { opacity: .75; }
@@ -273,7 +278,7 @@
     </svg>
     <h1 class="brand">LYCEUM</h1>
     <div class="dateline" id="date"></div>
-    <div class="greeting"><div class="greek" id="greek"></div><div class="english" id="english"></div></div>
+    <div class="greeting"><div class="greek" id="greek"></div><div class="gloss" id="gloss"></div><div class="english" id="english"></div></div>
     <div class="cities" id="cities"></div>
     <div class="brief" id="brief"></div>
   </div>
@@ -313,7 +318,7 @@
   <footer id="footer" hidden>
     <svg class="key" aria-hidden="true"><rect width="100%" height="20" fill="url(#key-gold)"/></svg>
     <div class="done">That is all for now.</div>
-    <div class="chaire" id="chaire">Χαῖρε — until tomorrow.</div>
+    <div class="chaire" id="chaire">Χαῖρε</div><div class="gloss" id="chaireGloss" style="margin-top:2px">“farewell”</div>
     <div class="know">γνῶθι σεαυτόν · know thyself</div>
     <div class="src" id="sources"></div>
     <div class="updated" id="updated"></div>
@@ -339,14 +344,14 @@
   var NAME = "Vibhor";
   var CITIES = [{ label: "Melbourne", tz: "Australia/Melbourne" }, { label: "Mumbai", tz: "Asia/Kolkata" }];
   var REALMS = {
-    polis:     { name: "Polis",     greek: "Πόλις",     sub: "Geopolitics & the world",       mark: "Π" },
-    oikos:     { name: "Oikos",     greek: "Οἶκος",     sub: "Home & away: Australia, India", mark: "Ο" },
-    techne:    { name: "Techne",    greek: "Τέχνη",     sub: "Technology & AI",               mark: "Τ" },
-    kosmos:    { name: "Kosmos",    greek: "Κόσμος",    sub: "Space, EVs & the Musk orbit",   mark: "Κ" },
-    oikonomia: { name: "Oikonomia", greek: "Οἰκονομία", sub: "Markets & business",            mark: "Χ" },
-    arete:     { name: "Arete",     greek: "Ἀρετή",     sub: "Discipline & longevity",        mark: "Α" },
-    sophia:    { name: "Sophia",    greek: "Σοφία",     sub: "Ideas worth your time",         mark: "Σ" },
-    schole:    { name: "Schole",    greek: "Σχολή",     sub: "Rock, football & play",         mark: "Φ" }
+    polis:     { name: "Polis",     greek: "Πόλις",     gloss: "city-state", sub: "Geopolitics & the world",       mark: "Π" },
+    oikos:     { name: "Oikos",     greek: "Οἶκος",     gloss: "household, home", sub: "Home & away: Australia, India", mark: "Ο" },
+    techne:    { name: "Techne",    greek: "Τέχνη",     gloss: "craft, art", sub: "Technology & AI",               mark: "Τ" },
+    kosmos:    { name: "Kosmos",    greek: "Κόσμος",    gloss: "order, the world", sub: "Space, EVs & the Musk orbit",   mark: "Κ" },
+    oikonomia: { name: "Oikonomia", greek: "Οἰκονομία", gloss: "household management", sub: "Markets & business",            mark: "Χ" },
+    arete:     { name: "Arete",     greek: "Ἀρετή",     gloss: "excellence, virtue", sub: "Discipline & longevity",        mark: "Α" },
+    sophia:    { name: "Sophia",    greek: "Σοφία",     gloss: "wisdom", sub: "Ideas worth your time",         mark: "Σ" },
+    schole:    { name: "Schole",    greek: "Σχολή",     gloss: "leisure", sub: "Rock, football & play",         mark: "Φ" }
   };
   var ORDER = ["polis", "oikos", "techne", "kosmos", "oikonomia", "arete", "sophia", "schole"];
   var BOOK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M4 19V5.5M8 7h8"/></svg>';
@@ -380,10 +385,12 @@
   function header() {
     var now = new Date(), h = now.getHours();
     $("date").textContent = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
-    var g = h >= 4 && h < 12 ? ["Καλημέρα", "Good morning"] : h >= 12 && h < 18 ? ["Χαῖρε", "Good afternoon"] : ["Καλησπέρα", "Good evening"];
+    var g = h >= 4 && h < 12 ? ["Καλημέρα", "good morning"] : h >= 12 && h < 18 ? ["Χαῖρε", "greetings"] : ["Καλησπέρα", "good evening"];
     $("greek").textContent = g[0] + ", " + NAME;
-    $("english").textContent = g[1] + ". Here is what matters today.";
-    $("chaire").textContent = "Χαῖρε, " + NAME + " — until tomorrow.";
+    $("gloss").textContent = "“" + g[1] + ", " + NAME + "”";
+    $("english").textContent = "Here is what matters today.";
+    $("chaire").textContent = "Χαῖρε, " + NAME;
+    $("chaireGloss").textContent = "“farewell, " + NAME + "”  ·  until tomorrow";
     clocks();
   }
   var weather = [];
@@ -440,6 +447,7 @@
     box.textContent = "";
     box.appendChild(el("div", "wm", "λόγος")).setAttribute("aria-hidden", "true");
     box.appendChild(el("div", "eyebrow", "The Daily Logos"));
+    box.appendChild(el("span", "gloss", "λόγος  ·  “word, reason”"));
     box.appendChild(el("blockquote", null, "“" + m.text + "”"));
     box.appendChild(el("div", "author", "— " + m.author));
     box.appendChild(document.createElement("hr"));
@@ -483,7 +491,8 @@
     var k = document.createElementNS("http://www.w3.org/2000/svg", "svg"); k.setAttribute("class", "key"); k.setAttribute("aria-hidden", "true");
     k.innerHTML = '<rect width="100%" height="20" fill="url(#key-gold)"/>'; end.appendChild(k);
     end.appendChild(el("h2", null, "That is today’s reading."));
-    end.appendChild(el("p", null, "Χαῖρε — well read."));
+    end.appendChild(el("p", null, "Χαῖρε"));
+    var fg = el("span", "gloss", "“farewell”  ·  well read"); fg.style.cssText = "display:block;margin:-14px 0 18px"; end.appendChild(fg);
     end.appendChild(pill("Mark as read", "solid", finishReading));
     var full = el("a", "full", "Read the full text on the web"); full.href = r.url; full.target = "_blank"; full.rel = "noopener";
     end.appendChild(full);
@@ -611,8 +620,8 @@
       var head = el("div", "realm-head");
       head.appendChild(el("div", "mark", r.mark)).setAttribute("aria-hidden", "true");
       var t = el("div"), h2 = el("h2", null, r.name);
-      h2.appendChild(el("span", null, r.greek));
-      t.appendChild(h2); t.appendChild(el("p", null, r.sub));
+      var gk = el("div", "gk"); gk.appendChild(el("b", null, r.greek)); gk.appendChild(el("span", "gloss", "“" + r.gloss + "”"));
+      t.appendChild(h2); t.appendChild(gk); t.appendChild(el("p", null, r.sub));
       head.appendChild(t);
       sec.appendChild(head);
       list.forEach(function (s, k) {
