@@ -1,6 +1,6 @@
 // Network-first for pages and the edition, so updates arrive immediately and Lyceum still opens offline.
-const CACHE = "lyceum-v3";
-const FILES = ["./", "index.html", "manifest.webmanifest", "emblem-192.png", "emblem-touch.png"];
+const CACHE = "lyceum-v4";
+const FILES = ["./", "index.html", "manifest.webmanifest", "glyph-192.png", "glyph-touch.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
