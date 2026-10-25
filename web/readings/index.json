@@ -1,0 +1,682 @@
+[
+ {
+  "work": "Meditations",
+  "part": "Book 1",
+  "author": "Marcus Aurelius",
+  "why": "Marcus lists what he owes to each person who shaped him. Who shaped you?",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1317,
+  "file": "readings/0.json"
+ },
+ {
+  "work": "Apology",
+  "part": "Part 1 of 8",
+  "author": "Plato",
+  "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
+  "url": "https://classics.mit.edu/Plato/apology.html",
+  "minutes": 6,
+  "words": 1425,
+  "file": "readings/1.json"
+ },
+ {
+  "work": "Crito",
+  "part": "Part 1 of 4",
+  "author": "Plato",
+  "why": "Socrates, in prison, explains why he will not escape.",
+  "url": "https://classics.mit.edu/Plato/crito.html",
+  "minutes": 6,
+  "words": 1347,
+  "file": "readings/2.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 1 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 5,
+  "words": 1202,
+  "file": "readings/3.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 1",
+  "author": "Marcus Aurelius",
+  "why": "Marcus lists what he owes to each person who shaped him. Who shaped you?",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 9,
+  "words": 1884,
+  "file": "readings/4.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 1–2",
+  "author": "Marcus Aurelius",
+  "why": "Marcus lists what he owes to each person who shaped him. Who shaped you?",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1275,
+  "file": "readings/5.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 2",
+  "author": "Marcus Aurelius",
+  "why": "Opens with a plan for meeting difficult people. Useful before any meeting.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1301,
+  "file": "readings/6.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 2 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 6,
+  "words": 1280,
+  "file": "readings/7.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 2–3",
+  "author": "Marcus Aurelius",
+  "why": "Opens with a plan for meeting difficult people. Useful before any meeting.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 7,
+  "words": 1614,
+  "file": "readings/8.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 3",
+  "author": "Marcus Aurelius",
+  "why": "Time, duty and keeping a clear mind as life moves on.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1228,
+  "file": "readings/9.json"
+ },
+ {
+  "work": "Apology",
+  "part": "Part 2 of 8",
+  "author": "Plato",
+  "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
+  "url": "https://classics.mit.edu/Plato/apology.html",
+  "minutes": 6,
+  "words": 1226,
+  "file": "readings/10.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 3–4",
+  "author": "Marcus Aurelius",
+  "why": "Time, duty and keeping a clear mind as life moves on.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 7,
+  "words": 1631,
+  "file": "readings/11.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 3 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 12,
+  "words": 2707,
+  "file": "readings/12.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 4",
+  "author": "Marcus Aurelius",
+  "why": "Retreating into your own mind, and the brevity of life.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 7,
+  "words": 1441,
+  "file": "readings/13.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 4",
+  "author": "Marcus Aurelius",
+  "why": "Retreating into your own mind, and the brevity of life.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1354,
+  "file": "readings/14.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 4",
+  "author": "Marcus Aurelius",
+  "why": "Retreating into your own mind, and the brevity of life.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1228,
+  "file": "readings/15.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 4 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 7,
+  "words": 1457,
+  "file": "readings/16.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 4–5",
+  "author": "Marcus Aurelius",
+  "why": "Retreating into your own mind, and the brevity of life.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1309,
+  "file": "readings/17.json"
+ },
+ {
+  "work": "Apology",
+  "part": "Part 3 of 8",
+  "author": "Plato",
+  "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
+  "url": "https://classics.mit.edu/Plato/apology.html",
+  "minutes": 6,
+  "words": 1226,
+  "file": "readings/18.json"
+ },
+ {
+  "work": "Crito",
+  "part": "Part 2 of 4",
+  "author": "Plato",
+  "why": "Socrates, in prison, explains why he will not escape.",
+  "url": "https://classics.mit.edu/Plato/crito.html",
+  "minutes": 6,
+  "words": 1227,
+  "file": "readings/19.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 5",
+  "author": "Marcus Aurelius",
+  "why": "Starts with getting out of bed: the case for doing your work.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 7,
+  "words": 1512,
+  "file": "readings/20.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 5",
+  "author": "Marcus Aurelius",
+  "why": "Starts with getting out of bed: the case for doing your work.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1355,
+  "file": "readings/21.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 5 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 11,
+  "words": 2506,
+  "file": "readings/22.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 5",
+  "author": "Marcus Aurelius",
+  "why": "Starts with getting out of bed: the case for doing your work.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1357,
+  "file": "readings/23.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 5–6",
+  "author": "Marcus Aurelius",
+  "why": "Starts with getting out of bed: the case for doing your work.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 5,
+  "words": 1206,
+  "file": "readings/24.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 6",
+  "author": "Marcus Aurelius",
+  "why": "Reason, reputation and acting for the common good.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1319,
+  "file": "readings/25.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 6 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 7,
+  "words": 1593,
+  "file": "readings/26.json"
+ },
+ {
+  "work": "Apology",
+  "part": "Part 4 of 8",
+  "author": "Plato",
+  "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
+  "url": "https://classics.mit.edu/Plato/apology.html",
+  "minutes": 6,
+  "words": 1268,
+  "file": "readings/27.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 6",
+  "author": "Marcus Aurelius",
+  "why": "Reason, reputation and acting for the common good.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1248,
+  "file": "readings/28.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 6",
+  "author": "Marcus Aurelius",
+  "why": "Reason, reputation and acting for the common good.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1410,
+  "file": "readings/29.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 6–7",
+  "author": "Marcus Aurelius",
+  "why": "Reason, reputation and acting for the common good.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 7,
+  "words": 1471,
+  "file": "readings/30.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 7 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 6,
+  "words": 1372,
+  "file": "readings/31.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 7",
+  "author": "Marcus Aurelius",
+  "why": "Practical notes on anger, pain and living with nature.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1275,
+  "file": "readings/32.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 7",
+  "author": "Marcus Aurelius",
+  "why": "Practical notes on anger, pain and living with nature.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 7,
+  "words": 1541,
+  "file": "readings/33.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 7",
+  "author": "Marcus Aurelius",
+  "why": "Practical notes on anger, pain and living with nature.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1369,
+  "file": "readings/34.json"
+ },
+ {
+  "work": "Apology",
+  "part": "Part 5 of 8",
+  "author": "Plato",
+  "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
+  "url": "https://classics.mit.edu/Plato/apology.html",
+  "minutes": 7,
+  "words": 1531,
+  "file": "readings/35.json"
+ },
+ {
+  "work": "Crito",
+  "part": "Part 3 of 4",
+  "author": "Plato",
+  "why": "Socrates, in prison, explains why he will not escape.",
+  "url": "https://classics.mit.edu/Plato/crito.html",
+  "minutes": 6,
+  "words": 1210,
+  "file": "readings/36.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 8 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 8,
+  "words": 1677,
+  "file": "readings/37.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 7–8",
+  "author": "Marcus Aurelius",
+  "why": "Practical notes on anger, pain and living with nature.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1362,
+  "file": "readings/38.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 8",
+  "author": "Marcus Aurelius",
+  "why": "Includes the idea of the mind as an inner citadel.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1238,
+  "file": "readings/39.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 8",
+  "author": "Marcus Aurelius",
+  "why": "Includes the idea of the mind as an inner citadel.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1225,
+  "file": "readings/40.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 9 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 7,
+  "words": 1629,
+  "file": "readings/41.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 8",
+  "author": "Marcus Aurelius",
+  "why": "Includes the idea of the mind as an inner citadel.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1243,
+  "file": "readings/42.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 8",
+  "author": "Marcus Aurelius",
+  "why": "Includes the idea of the mind as an inner citadel.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1270,
+  "file": "readings/43.json"
+ },
+ {
+  "work": "Apology",
+  "part": "Part 6 of 8",
+  "author": "Plato",
+  "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
+  "url": "https://classics.mit.edu/Plato/apology.html",
+  "minutes": 6,
+  "words": 1277,
+  "file": "readings/44.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 8–9",
+  "author": "Marcus Aurelius",
+  "why": "Includes the idea of the mind as an inner citadel.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1272,
+  "file": "readings/45.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 10 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 7,
+  "words": 1531,
+  "file": "readings/46.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 9",
+  "author": "Marcus Aurelius",
+  "why": "Justice, mortality and our common nature.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1236,
+  "file": "readings/47.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 9",
+  "author": "Marcus Aurelius",
+  "why": "Justice, mortality and our common nature.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1285,
+  "file": "readings/48.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 9",
+  "author": "Marcus Aurelius",
+  "why": "Justice, mortality and our common nature.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1291,
+  "file": "readings/49.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 11 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 6,
+  "words": 1216,
+  "file": "readings/50.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 9–10",
+  "author": "Marcus Aurelius",
+  "why": "Justice, mortality and our common nature.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1212,
+  "file": "readings/51.json"
+ },
+ {
+  "work": "Apology",
+  "part": "Part 7 of 8",
+  "author": "Plato",
+  "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
+  "url": "https://classics.mit.edu/Plato/apology.html",
+  "minutes": 7,
+  "words": 1535,
+  "file": "readings/52.json"
+ },
+ {
+  "work": "Crito",
+  "part": "Part 4 of 4",
+  "author": "Plato",
+  "why": "Socrates, in prison, explains why he will not escape.",
+  "url": "https://classics.mit.edu/Plato/crito.html",
+  "minutes": 7,
+  "words": 1563,
+  "file": "readings/53.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 10",
+  "author": "Marcus Aurelius",
+  "why": "Includes the line about being a good person instead of arguing about it.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 8,
+  "words": 1669,
+  "file": "readings/54.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 10",
+  "author": "Marcus Aurelius",
+  "why": "Includes the line about being a good person instead of arguing about it.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1293,
+  "file": "readings/55.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 12 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 7,
+  "words": 1638,
+  "file": "readings/56.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 10",
+  "author": "Marcus Aurelius",
+  "why": "Includes the line about being a good person instead of arguing about it.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1255,
+  "file": "readings/57.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 10",
+  "author": "Marcus Aurelius",
+  "why": "Includes the line about being a good person instead of arguing about it.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1415,
+  "file": "readings/58.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 10–11",
+  "author": "Marcus Aurelius",
+  "why": "Includes the line about being a good person instead of arguing about it.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1220,
+  "file": "readings/59.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 13 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 7,
+  "words": 1592,
+  "file": "readings/60.json"
+ },
+ {
+  "work": "Apology",
+  "part": "Part 8 of 8",
+  "author": "Plato",
+  "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
+  "url": "https://classics.mit.edu/Plato/apology.html",
+  "minutes": 9,
+  "words": 1895,
+  "file": "readings/61.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 11",
+  "author": "Marcus Aurelius",
+  "why": "On the rational soul, and how to look at life from outside it.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 10,
+  "words": 2263,
+  "file": "readings/62.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Books 11–12",
+  "author": "Marcus Aurelius",
+  "why": "On the rational soul, and how to look at life from outside it.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 7,
+  "words": 1455,
+  "file": "readings/63.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 12",
+  "author": "Marcus Aurelius",
+  "why": "The last book: leaving the stage with good grace.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1229,
+  "file": "readings/64.json"
+ },
+ {
+  "work": "Symposium",
+  "part": "Part 14 of 14",
+  "author": "Plato",
+  "why": "A dinner party at which each guest gives a speech about love.",
+  "url": "https://classics.mit.edu/Plato/symposium.html",
+  "minutes": 3,
+  "words": 677,
+  "file": "readings/65.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 12",
+  "author": "Marcus Aurelius",
+  "why": "The last book: leaving the stage with good grace.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 6,
+  "words": 1297,
+  "file": "readings/66.json"
+ },
+ {
+  "work": "Meditations",
+  "part": "Book 12",
+  "author": "Marcus Aurelius",
+  "why": "The last book: leaving the stage with good grace.",
+  "url": "https://classics.mit.edu/Antoninus/meditations.html",
+  "minutes": 4,
+  "words": 932,
+  "file": "readings/67.json"
+ }
+]
