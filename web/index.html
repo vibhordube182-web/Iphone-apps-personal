@@ -24,7 +24,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lyceum">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0b1d3d" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1320x2868.png">
 <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1206x2622.png">
 <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1290x2796.png">
@@ -366,7 +367,7 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-function lyceumMain() {
+(function () {
   var NAME = "Vibhor";
   var CITIES = [{ label: "Melbourne", tz: "Australia/Melbourne" }, { label: "Mumbai", tz: "Asia/Kolkata" }];
   var REALMS = {
@@ -917,13 +918,6 @@ function lyceumMain() {
     load();                                  // first ever launch: there is nothing to show yet
   }
   setTimeout(hideSplash, 2500);
-}
-// First frame first: let the browser paint the black launch screen, then do the heavy work.
-(function () {
-  var started = false;
-  function go() { if (!started) { started = true; lyceumMain(); } }
-  requestAnimationFrame(function () { setTimeout(go, 0); });
-  setTimeout(go, 300);   // safety net in case frames are throttled
 })();
 </script>
 </body>
