@@ -6,8 +6,8 @@
 <title>Lyceum</title>
 <meta name="description" content="A morning news briefing with Greek philosophy.">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="glyph-192.png">
-<link rel="apple-touch-icon" sizes="180x180" href="glyph-touch.png">
+<link rel="icon" type="image/png" href="mark-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="mark-touch.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lyceum">
@@ -307,13 +307,25 @@
   var BOOK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M4 19V5.5M8 7h8"/></svg>';
   var SHARE_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
   var $ = function (id) { return document.getElementById(id); };
-  var lastLoaded = 0, edition = null, readSet = {}, total = 0, sections = [];
+  var lastLoaded = 0, edition = null, readSet = {}, readList = [], total = 0, sections = [];
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
     if (text != null) e.textContent = text;
     return e;
+  }
+  function idbPut(key, val) {
+    try {
+      var r = indexedDB.open("lyceum", 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore("kv"); };
+      r.onsuccess = function () { try { r.result.transaction("kv", "readwrite").objectStore("kv").put(val, key); } catch (e) {} };
+    } catch (e) {}
+  }
+  function saveRead() {
+    readList = readList.slice(-500);
+    store("lyceum-read", { links: readList });
+    idbPut("read", readList);
   }
   function store(key, val) {
     try { if (val === undefined) return JSON.parse(localStorage.getItem(key)); localStorage.setItem(key, JSON.stringify(val)); } catch (e) { return null; }
@@ -548,8 +560,8 @@
   }
   function markRead(link) {
     if (readSet[link]) return;
-    readSet[link] = 1;
-    store("lyceum-read", { id: edition.generated, links: Object.keys(readSet) });
+    readSet[link] = 1; readList.push(link);
+    saveRead();
     recordDay();
     var a = document.querySelector('.story[data-link="' + (window.CSS && CSS.escape ? CSS.escape(link) : link) + '"]');
     if (a) { a.classList.add("read"); a.querySelector(".num").textContent = "✓"; }
@@ -578,8 +590,9 @@
       .then(function (data) {
         edition = data; total = (data.stories || []).length;
         var saved = store("lyceum-read");
-        readSet = {};
-        if (saved && saved.id === data.generated) saved.links.forEach(function (l) { readSet[l] = 1; });
+        readSet = {}; readList = (saved && saved.links) || [];
+        readList.forEach(function (l) { readSet[l] = 1; });
+        idbPut("read", readList);
         weather = data.weather || [];
         clocks();
         renderMaxim(data.maxims);
