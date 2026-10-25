@@ -11,7 +11,7 @@
  },
  {
   "work": "Enchiridion",
-  "part": "Part 1 of 7",
+  "part": "Part 1 of 6",
   "author": "Epictetus",
   "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
   "url": "https://classics.mit.edu/Epictetus/epicench.html",
@@ -26,7 +26,7 @@
   "why": "Socrates defends a life of questioning before the Athenian jury that will condemn him.",
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 6,
-  "words": 1261,
+  "words": 1247,
   "file": "readings/2.json"
  },
  {
@@ -36,7 +36,7 @@
   "why": "Socrates, in prison, explains why he will not escape.",
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 5,
-  "words": 1127,
+  "words": 1125,
   "file": "readings/3.json"
  },
  {
@@ -66,7 +66,7 @@
   "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
-  "words": 1120,
+  "words": 1116,
   "file": "readings/6.json"
  },
  {
@@ -86,7 +86,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1143,
+  "words": 1103,
   "file": "readings/8.json"
  },
  {
@@ -116,7 +116,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1206,
+  "words": 1203,
   "file": "readings/11.json"
  },
  {
@@ -166,7 +166,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1192,
+  "words": 1189,
   "file": "readings/16.json"
  },
  {
@@ -186,7 +186,7 @@
   "why": "A dinner party at which each guest gives a speech about love.",
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
-  "words": 1233,
+  "words": 1212,
   "file": "readings/18.json"
  },
  {
@@ -206,7 +206,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1322,
+  "words": 1305,
   "file": "readings/20.json"
  },
  {
@@ -276,7 +276,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1143,
+  "words": 1121,
   "file": "readings/27.json"
  },
  {
@@ -316,7 +316,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1279,
+  "words": 1268,
   "file": "readings/31.json"
  },
  {
@@ -360,16 +360,6 @@
   "file": "readings/35.json"
  },
  {
-  "work": "Enchiridion",
-  "part": "Part 2 of 7",
-  "author": "Epictetus",
-  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
-  "url": "https://classics.mit.edu/Epictetus/epicench.html",
-  "minutes": 5,
-  "words": 1158,
-  "file": "readings/36.json"
- },
- {
   "work": "The Republic",
   "part": "Part 10 of 60",
   "author": "Plato",
@@ -377,7 +367,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1107,
-  "file": "readings/37.json"
+  "file": "readings/36.json"
  },
  {
   "work": "Discourses",
@@ -386,8 +376,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1183,
-  "file": "readings/38.json"
+  "words": 1176,
+  "file": "readings/37.json"
  },
  {
   "work": "Meditations",
@@ -397,6 +387,16 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1106,
+  "file": "readings/38.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 2 of 6",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1158,
   "file": "readings/39.json"
  },
  {
@@ -435,8 +435,8 @@
   "author": "Epictetus",
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
-  "minutes": 6,
-  "words": 1229,
+  "minutes": 5,
+  "words": 1197,
   "file": "readings/43.json"
  },
  {
@@ -506,7 +506,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1268,
+  "words": 1265,
   "file": "readings/50.json"
  },
  {
@@ -536,7 +536,7 @@
   "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
-  "words": 1135,
+  "words": 1130,
   "file": "readings/53.json"
  },
  {
@@ -555,8 +555,8 @@
   "author": "Epictetus",
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
-  "minutes": 6,
-  "words": 1212,
+  "minutes": 5,
+  "words": 1205,
   "file": "readings/55.json"
  },
  {
@@ -606,7 +606,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1177,
+  "words": 1173,
   "file": "readings/60.json"
  },
  {
@@ -656,7 +656,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1108,
+  "words": 1103,
   "file": "readings/65.json"
  },
  {
@@ -680,16 +680,6 @@
   "file": "readings/67.json"
  },
  {
-  "work": "Enchiridion",
-  "part": "Part 3 of 7",
-  "author": "Epictetus",
-  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
-  "url": "https://classics.mit.edu/Epictetus/epicench.html",
-  "minutes": 5,
-  "words": 1181,
-  "file": "readings/68.json"
- },
- {
   "work": "Apology",
   "part": "Part 4 of 10",
   "author": "Plato",
@@ -697,7 +687,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1167,
-  "file": "readings/69.json"
+  "file": "readings/68.json"
  },
  {
   "work": "The Republic",
@@ -707,7 +697,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1102,
-  "file": "readings/70.json"
+  "file": "readings/69.json"
  },
  {
   "work": "Discourses",
@@ -716,8 +706,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1149,
-  "file": "readings/71.json"
+  "words": 1143,
+  "file": "readings/70.json"
  },
  {
   "work": "Phaedo",
@@ -727,7 +717,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
   "words": 1170,
-  "file": "readings/72.json"
+  "file": "readings/71.json"
  },
  {
   "work": "Meditations",
@@ -737,7 +727,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1104,
-  "file": "readings/73.json"
+  "file": "readings/72.json"
  },
  {
   "work": "The Republic",
@@ -747,7 +737,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1165,
-  "file": "readings/74.json"
+  "file": "readings/73.json"
  },
  {
   "work": "Discourses",
@@ -756,8 +746,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1191,
-  "file": "readings/75.json"
+  "words": 1188,
+  "file": "readings/74.json"
  },
  {
   "work": "Meditations",
@@ -767,6 +757,16 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1113,
+  "file": "readings/75.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 3 of 6",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1181,
   "file": "readings/76.json"
  },
  {
@@ -836,7 +836,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1353,
+  "words": 1328,
   "file": "readings/83.json"
  },
  {
@@ -866,7 +866,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1241,
+  "words": 1236,
   "file": "readings/86.json"
  },
  {
@@ -896,7 +896,7 @@
   "why": "Socrates’ last day: a conversation about the soul and death, ending with the hemlock.",
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
-  "words": 1172,
+  "words": 1170,
   "file": "readings/89.json"
  },
  {
@@ -916,7 +916,7 @@
   "why": "Socrates, in prison, explains why he will not escape.",
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 6,
-  "words": 1313,
+  "words": 1310,
   "file": "readings/91.json"
  },
  {
@@ -946,7 +946,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1277,
+  "words": 1272,
   "file": "readings/94.json"
  },
  {
@@ -986,7 +986,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1315,
+  "words": 1304,
   "file": "readings/98.json"
  },
  {
@@ -1000,16 +1000,6 @@
   "file": "readings/99.json"
  },
  {
-  "work": "Enchiridion",
-  "part": "Part 4 of 7",
-  "author": "Epictetus",
-  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
-  "url": "https://classics.mit.edu/Epictetus/epicench.html",
-  "minutes": 5,
-  "words": 1108,
-  "file": "readings/100.json"
- },
- {
   "work": "The Republic",
   "part": "Part 27 of 60",
   "author": "Plato",
@@ -1017,7 +1007,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 6,
   "words": 1217,
-  "file": "readings/101.json"
+  "file": "readings/100.json"
  },
  {
   "work": "Phaedo",
@@ -1027,7 +1017,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 6,
   "words": 1373,
-  "file": "readings/102.json"
+  "file": "readings/101.json"
  },
  {
   "work": "Meditations",
@@ -1037,7 +1027,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1135,
-  "file": "readings/103.json"
+  "file": "readings/102.json"
  },
  {
   "work": "The Republic",
@@ -1047,7 +1037,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1133,
-  "file": "readings/104.json"
+  "file": "readings/103.json"
  },
  {
   "work": "Discourses",
@@ -1057,7 +1047,7 @@
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
   "words": 1101,
-  "file": "readings/105.json"
+  "file": "readings/104.json"
  },
  {
   "work": "Symposium",
@@ -1067,7 +1057,7 @@
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
   "words": 1184,
-  "file": "readings/106.json"
+  "file": "readings/105.json"
  },
  {
   "work": "The Republic",
@@ -1077,7 +1067,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1100,
-  "file": "readings/107.json"
+  "file": "readings/106.json"
  },
  {
   "work": "Meditations",
@@ -1087,7 +1077,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1174,
-  "file": "readings/108.json"
+  "file": "readings/107.json"
  },
  {
   "work": "Discourses",
@@ -1096,8 +1086,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1143,
-  "file": "readings/109.json"
+  "words": 1119,
+  "file": "readings/108.json"
  },
  {
   "work": "Phaedo",
@@ -1107,7 +1097,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
   "words": 1166,
-  "file": "readings/110.json"
+  "file": "readings/109.json"
  },
  {
   "work": "The Republic",
@@ -1117,7 +1107,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1209,
-  "file": "readings/111.json"
+  "file": "readings/110.json"
  },
  {
   "work": "Meditations",
@@ -1127,6 +1117,16 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1123,
+  "file": "readings/111.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 4 of 6",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1108,
   "file": "readings/112.json"
  },
  {
@@ -1166,7 +1166,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1235,
+  "words": 1233,
   "file": "readings/116.json"
  },
  {
@@ -1206,7 +1206,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1247,
+  "words": 1243,
   "file": "readings/120.json"
  },
  {
@@ -1225,8 +1225,8 @@
   "author": "Plato",
   "why": "A dinner party at which each guest gives a speech about love.",
   "url": "https://classics.mit.edu/Plato/symposium.html",
-  "minutes": 6,
-  "words": 1267,
+  "minutes": 5,
+  "words": 1110,
   "file": "readings/122.json"
  },
  {
@@ -1255,8 +1255,8 @@
   "author": "Epictetus",
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
-  "minutes": 6,
-  "words": 1224,
+  "minutes": 5,
+  "words": 1208,
   "file": "readings/125.json"
  },
  {
@@ -1300,24 +1300,14 @@
   "file": "readings/129.json"
  },
  {
-  "work": "Enchiridion",
-  "part": "Part 5 of 7",
-  "author": "Epictetus",
-  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
-  "url": "https://classics.mit.edu/Epictetus/epicench.html",
-  "minutes": 5,
-  "words": 1198,
-  "file": "readings/130.json"
- },
- {
   "work": "Discourses",
   "part": "Part 24 of 40",
   "author": "Epictetus",
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1146,
-  "file": "readings/131.json"
+  "words": 1122,
+  "file": "readings/130.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -1327,7 +1317,7 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1108,
-  "file": "readings/132.json"
+  "file": "readings/131.json"
  },
  {
   "work": "The Republic",
@@ -1337,7 +1327,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1159,
-  "file": "readings/133.json"
+  "file": "readings/132.json"
  },
  {
   "work": "Meditations",
@@ -1347,7 +1337,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1157,
-  "file": "readings/134.json"
+  "file": "readings/133.json"
  },
  {
   "work": "Apology",
@@ -1357,7 +1347,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1106,
-  "file": "readings/135.json"
+  "file": "readings/134.json"
  },
  {
   "work": "Crito",
@@ -1367,7 +1357,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 6,
   "words": 1339,
-  "file": "readings/136.json"
+  "file": "readings/135.json"
  },
  {
   "work": "Symposium",
@@ -1376,8 +1366,8 @@
   "why": "A dinner party at which each guest gives a speech about love.",
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
-  "words": 1138,
-  "file": "readings/137.json"
+  "words": 1119,
+  "file": "readings/136.json"
  },
  {
   "work": "The Republic",
@@ -1387,7 +1377,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1136,
-  "file": "readings/138.json"
+  "file": "readings/137.json"
  },
  {
   "work": "Discourses",
@@ -1396,8 +1386,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1127,
-  "file": "readings/139.json"
+  "words": 1107,
+  "file": "readings/138.json"
  },
  {
   "work": "Phaedo",
@@ -1407,7 +1397,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
   "words": 1104,
-  "file": "readings/140.json"
+  "file": "readings/139.json"
  },
  {
   "work": "Meditations",
@@ -1417,7 +1407,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1245,
-  "file": "readings/141.json"
+  "file": "readings/140.json"
  },
  {
   "work": "The Republic",
@@ -1427,7 +1417,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1103,
-  "file": "readings/142.json"
+  "file": "readings/141.json"
  },
  {
   "work": "Discourses",
@@ -1436,8 +1426,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1276,
-  "file": "readings/143.json"
+  "words": 1266,
+  "file": "readings/142.json"
  },
  {
   "work": "Meditations",
@@ -1447,7 +1437,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1111,
-  "file": "readings/144.json"
+  "file": "readings/143.json"
  },
  {
   "work": "The Republic",
@@ -1457,7 +1447,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1103,
-  "file": "readings/145.json"
+  "file": "readings/144.json"
  },
  {
   "work": "The Republic",
@@ -1467,7 +1457,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1126,
-  "file": "readings/146.json"
+  "file": "readings/145.json"
  },
  {
   "work": "Discourses",
@@ -1476,8 +1466,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1137,
-  "file": "readings/147.json"
+  "words": 1118,
+  "file": "readings/146.json"
  },
  {
   "work": "Phaedo",
@@ -1487,7 +1477,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 6,
   "words": 1212,
-  "file": "readings/148.json"
+  "file": "readings/147.json"
  },
  {
   "work": "Meditations",
@@ -1497,6 +1487,16 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1203,
+  "file": "readings/148.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 5 of 6",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 5,
+  "words": 1198,
   "file": "readings/149.json"
  },
  {
@@ -1516,7 +1516,7 @@
   "why": "A dinner party at which each guest gives a speech about love.",
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
-  "words": 1105,
+  "words": 1116,
   "file": "readings/151.json"
  },
  {
@@ -1546,7 +1546,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1301,
+  "words": 1289,
   "file": "readings/154.json"
  },
  {
@@ -1606,7 +1606,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1276,
+  "words": 1266,
   "file": "readings/160.json"
  },
  {
@@ -1620,16 +1620,6 @@
   "file": "readings/161.json"
  },
  {
-  "work": "Enchiridion",
-  "part": "Part 6 of 7",
-  "author": "Epictetus",
-  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
-  "url": "https://classics.mit.edu/Epictetus/epicench.html",
-  "minutes": 6,
-  "words": 1235,
-  "file": "readings/162.json"
- },
- {
   "work": "The Republic",
   "part": "Part 44 of 60",
   "author": "Plato",
@@ -1637,7 +1627,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1115,
-  "file": "readings/163.json"
+  "file": "readings/162.json"
  },
  {
   "work": "Discourses",
@@ -1646,8 +1636,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1393,
-  "file": "readings/164.json"
+  "words": 1380,
+  "file": "readings/163.json"
  },
  {
   "work": "Symposium",
@@ -1656,8 +1646,8 @@
   "why": "A dinner party at which each guest gives a speech about love.",
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 6,
-  "words": 1316,
-  "file": "readings/165.json"
+  "words": 1211,
+  "file": "readings/164.json"
  },
  {
   "work": "The Republic",
@@ -1667,7 +1657,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1136,
-  "file": "readings/166.json"
+  "file": "readings/165.json"
  },
  {
   "work": "Meditations",
@@ -1677,7 +1667,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1137,
-  "file": "readings/167.json"
+  "file": "readings/166.json"
  },
  {
   "work": "Phaedo",
@@ -1687,7 +1677,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
   "words": 1154,
-  "file": "readings/168.json"
+  "file": "readings/167.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -1697,7 +1687,7 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1177,
-  "file": "readings/169.json"
+  "file": "readings/168.json"
  },
  {
   "work": "The Republic",
@@ -1707,7 +1697,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1100,
-  "file": "readings/170.json"
+  "file": "readings/169.json"
  },
  {
   "work": "Discourses",
@@ -1717,7 +1707,7 @@
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
   "words": 1152,
-  "file": "readings/171.json"
+  "file": "readings/170.json"
  },
  {
   "work": "Meditations",
@@ -1727,7 +1717,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1162,
-  "file": "readings/172.json"
+  "file": "readings/171.json"
  },
  {
   "work": "The Republic",
@@ -1737,7 +1727,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1107,
-  "file": "readings/173.json"
+  "file": "readings/172.json"
  },
  {
   "work": "Discourses",
@@ -1746,8 +1736,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1176,
-  "file": "readings/174.json"
+  "words": 1158,
+  "file": "readings/173.json"
  },
  {
   "work": "Meditations",
@@ -1757,7 +1747,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1162,
-  "file": "readings/175.json"
+  "file": "readings/174.json"
  },
  {
   "work": "Phaedo",
@@ -1767,7 +1757,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
   "words": 1112,
-  "file": "readings/176.json"
+  "file": "readings/175.json"
  },
  {
   "work": "The Republic",
@@ -1777,7 +1767,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1101,
-  "file": "readings/177.json"
+  "file": "readings/176.json"
  },
  {
   "work": "Meditations",
@@ -1787,7 +1777,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1177,
-  "file": "readings/178.json"
+  "file": "readings/177.json"
  },
  {
   "work": "Apology",
@@ -1797,7 +1787,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 5,
   "words": 1166,
-  "file": "readings/179.json"
+  "file": "readings/178.json"
  },
  {
   "work": "Crito",
@@ -1807,7 +1797,7 @@
   "url": "https://classics.mit.edu/Plato/crito.html",
   "minutes": 2,
   "words": 462,
-  "file": "readings/180.json"
+  "file": "readings/179.json"
  },
  {
   "work": "Symposium",
@@ -1815,9 +1805,9 @@
   "author": "Plato",
   "why": "A dinner party at which each guest gives a speech about love.",
   "url": "https://classics.mit.edu/Plato/symposium.html",
-  "minutes": 5,
-  "words": 1119,
-  "file": "readings/181.json"
+  "minutes": 6,
+  "words": 1261,
+  "file": "readings/180.json"
  },
  {
   "work": "The Republic",
@@ -1827,7 +1817,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1111,
-  "file": "readings/182.json"
+  "file": "readings/181.json"
  },
  {
   "work": "Discourses",
@@ -1837,7 +1827,7 @@
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
   "words": 1289,
-  "file": "readings/183.json"
+  "file": "readings/182.json"
  },
  {
   "work": "Meditations",
@@ -1847,7 +1837,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 6,
   "words": 1301,
-  "file": "readings/184.json"
+  "file": "readings/183.json"
  },
  {
   "work": "The Republic",
@@ -1857,7 +1847,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1176,
-  "file": "readings/185.json"
+  "file": "readings/184.json"
  },
  {
   "work": "Discourses",
@@ -1866,8 +1856,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1135,
-  "file": "readings/186.json"
+  "words": 1123,
+  "file": "readings/185.json"
  },
  {
   "work": "Phaedo",
@@ -1877,6 +1867,16 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 6,
   "words": 1249,
+  "file": "readings/186.json"
+ },
+ {
+  "work": "Enchiridion",
+  "part": "Part 6 of 6",
+  "author": "Epictetus",
+  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
+  "url": "https://classics.mit.edu/Epictetus/epicench.html",
+  "minutes": 6,
+  "words": 1318,
   "file": "readings/187.json"
  },
  {
@@ -1926,7 +1926,7 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1315,
+  "words": 1314,
   "file": "readings/192.json"
  },
  {
@@ -1940,24 +1940,14 @@
   "file": "readings/193.json"
  },
  {
-  "work": "Enchiridion",
-  "part": "Part 7 of 7",
-  "author": "Epictetus",
-  "why": "Epictetus’s handbook for living: short, practical rules for staying calm and free.",
-  "url": "https://classics.mit.edu/Epictetus/epicench.html",
-  "minutes": 7,
-  "words": 1431,
-  "file": "readings/194.json"
- },
- {
   "work": "Symposium",
   "part": "Part 14 of 15",
   "author": "Plato",
   "why": "A dinner party at which each guest gives a speech about love.",
   "url": "https://classics.mit.edu/Plato/symposium.html",
-  "minutes": 6,
-  "words": 1327,
-  "file": "readings/195.json"
+  "minutes": 5,
+  "words": 1148,
+  "file": "readings/194.json"
  },
  {
   "work": "The Republic",
@@ -1967,7 +1957,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1104,
-  "file": "readings/196.json"
+  "file": "readings/195.json"
  },
  {
   "work": "Phaedo",
@@ -1977,7 +1967,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
   "words": 1170,
-  "file": "readings/197.json"
+  "file": "readings/196.json"
  },
  {
   "work": "Discourses",
@@ -1987,7 +1977,7 @@
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
   "words": 1340,
-  "file": "readings/198.json"
+  "file": "readings/197.json"
  },
  {
   "work": "Meditations",
@@ -1997,7 +1987,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1137,
-  "file": "readings/199.json"
+  "file": "readings/198.json"
  },
  {
   "work": "The Republic",
@@ -2007,7 +1997,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1126,
-  "file": "readings/200.json"
+  "file": "readings/199.json"
  },
  {
   "work": "Meditations",
@@ -2017,7 +2007,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1110,
-  "file": "readings/201.json"
+  "file": "readings/200.json"
  },
  {
   "work": "Apology",
@@ -2027,7 +2017,7 @@
   "url": "https://classics.mit.edu/Plato/apology.html",
   "minutes": 3,
   "words": 729,
-  "file": "readings/202.json"
+  "file": "readings/201.json"
  },
  {
   "work": "The Republic",
@@ -2036,8 +2026,8 @@
   "why": "Plato’s great dialogue on justice, the soul and the ideal city.",
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
-  "words": 1207,
-  "file": "readings/203.json"
+  "words": 1202,
+  "file": "readings/202.json"
  },
  {
   "work": "Discourses",
@@ -2046,8 +2036,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1179,
-  "file": "readings/204.json"
+  "words": 1161,
+  "file": "readings/203.json"
  },
  {
   "work": "Phaedo",
@@ -2057,7 +2047,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 5,
   "words": 1129,
-  "file": "readings/205.json"
+  "file": "readings/204.json"
  },
  {
   "work": "Nicomachean Ethics",
@@ -2067,7 +2057,7 @@
   "url": "https://classics.mit.edu/Aristotle/nicomachaen.html",
   "minutes": 5,
   "words": 1158,
-  "file": "readings/206.json"
+  "file": "readings/205.json"
  },
  {
   "work": "The Republic",
@@ -2077,7 +2067,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1105,
-  "file": "readings/207.json"
+  "file": "readings/206.json"
  },
  {
   "work": "Meditations",
@@ -2087,7 +2077,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1136,
-  "file": "readings/208.json"
+  "file": "readings/207.json"
  },
  {
   "work": "Discourses",
@@ -2096,8 +2086,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
-  "words": 1175,
-  "file": "readings/209.json"
+  "words": 1171,
+  "file": "readings/208.json"
  },
  {
   "work": "Symposium",
@@ -2106,8 +2096,8 @@
   "why": "A dinner party at which each guest gives a speech about love.",
   "url": "https://classics.mit.edu/Plato/symposium.html",
   "minutes": 5,
-  "words": 1155,
-  "file": "readings/210.json"
+  "words": 1115,
+  "file": "readings/209.json"
  },
  {
   "work": "The Republic",
@@ -2117,7 +2107,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 6,
   "words": 1292,
-  "file": "readings/211.json"
+  "file": "readings/210.json"
  },
  {
   "work": "Meditations",
@@ -2127,7 +2117,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1151,
-  "file": "readings/212.json"
+  "file": "readings/211.json"
  },
  {
   "work": "The Republic",
@@ -2137,7 +2127,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1119,
-  "file": "readings/213.json"
+  "file": "readings/212.json"
  },
  {
   "work": "Discourses",
@@ -2147,7 +2137,7 @@
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 5,
   "words": 1196,
-  "file": "readings/214.json"
+  "file": "readings/213.json"
  },
  {
   "work": "Phaedo",
@@ -2157,7 +2147,7 @@
   "url": "https://classics.mit.edu/Plato/phaedo.html",
   "minutes": 7,
   "words": 1512,
-  "file": "readings/215.json"
+  "file": "readings/214.json"
  },
  {
   "work": "Meditations",
@@ -2167,7 +2157,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 5,
   "words": 1117,
-  "file": "readings/216.json"
+  "file": "readings/215.json"
  },
  {
   "work": "The Republic",
@@ -2177,7 +2167,7 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1111,
-  "file": "readings/217.json"
+  "file": "readings/216.json"
  },
  {
   "work": "Discourses",
@@ -2186,8 +2176,8 @@
   "why": "Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations.",
   "url": "https://classics.mit.edu/Epictetus/discourses.html",
   "minutes": 6,
-  "words": 1283,
-  "file": "readings/218.json"
+  "words": 1274,
+  "file": "readings/217.json"
  },
  {
   "work": "Meditations",
@@ -2197,7 +2187,7 @@
   "url": "https://classics.mit.edu/Antoninus/meditations.html",
   "minutes": 3,
   "words": 759,
-  "file": "readings/219.json"
+  "file": "readings/218.json"
  },
  {
   "work": "The Republic",
@@ -2207,6 +2197,6 @@
   "url": "https://classics.mit.edu/Plato/republic.html",
   "minutes": 5,
   "words": 1158,
-  "file": "readings/220.json"
+  "file": "readings/219.json"
  }
 ]
