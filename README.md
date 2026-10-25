@@ -11,7 +11,7 @@ A morning news briefing for iPhone, in the spirit of The Economist Espresso, wit
 
 ## Web app (no Mac, no signing)
 
-`web/` is an installable web app version of Lyceum. A GitHub Action (`daily-edition.yml`) fetches the feeds every morning and publishes it to GitHub Pages. Open the Pages URL in Safari on your iPhone, tap Share, then Add to Home Screen.
+`web/` is an installable web app version of Lyceum, personalised for its owner (Melbourne/Mumbai news and weather, Musk-orbit and longevity sections, rock and football, a daily Greek reading and a streak). Edit `GROUPS`/`FEEDS` in `scripts/fetch_news.py` and `NAME`/`CITIES` in `web/index.html` to retune it. A GitHub Action (`daily-edition.yml`) fetches the feeds every morning and publishes it to GitHub Pages. Open the Pages URL in Safari on your iPhone, tap Share, then Add to Home Screen.
 
 One-time setup: merge to `main`, then Settings, Pages, Source: *GitHub Actions*, then run *Daily edition* once from the Actions tab.
 

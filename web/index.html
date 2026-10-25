@@ -21,7 +21,7 @@
      Serif for reading, system sans for interface chrome, Cinzel for the brand only. */
   :root {
     --paper: #eef0ec; --card: #fafaf7; --ink: #0f1b33; --muted: #566074; --rule: #d6dad4;
-    --aegean: #1b4b82; --gold: #7c5f1a; --clay: #a33f23; --olive: #52632c;
+    --aegean: #1b4b82; --gold: #7c5f1a; --clay: #a33f23; --olive: #52632c; --teal: #0e6f69; --violet: #5a4aa8; --plum: #98386f;
     --bar: rgba(238, 240, 236, 0.84); --shadow: 0 1px 2px rgba(15, 27, 51, .06), 0 8px 24px -12px rgba(15, 27, 51, .18);
     --navy: #0b1d3d; --navy-2: #16396a; --ivory: #f3efe3; --brass: #e0c57a;
     --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
@@ -34,14 +34,14 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --paper: #0a1222; --card: #111b32; --ink: #ece9de; --muted: #98a3b9; --rule: #212e4c;
-      --aegean: #8db8ea; --gold: #ddbd6a; --clay: #ea926c; --olive: #afc17d;
+      --aegean: #8db8ea; --gold: #ddbd6a; --clay: #ea926c; --olive: #afc17d; --teal: #5fc4b8; --violet: #aa9ef2; --plum: #e68cbf;
       --bar: rgba(10, 18, 34, 0.84); --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
     --paper: #0a1222; --card: #111b32; --ink: #ece9de; --muted: #98a3b9; --rule: #212e4c;
-    --aegean: #8db8ea; --gold: #ddbd6a; --clay: #ea926c; --olive: #afc17d;
+    --aegean: #8db8ea; --gold: #ddbd6a; --clay: #ea926c; --olive: #afc17d; --teal: #5fc4b8; --violet: #aa9ef2; --plum: #e68cbf;
     --bar: rgba(10, 18, 34, 0.84); --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
     color-scheme: dark;
   }
@@ -86,7 +86,12 @@
   .greeting .greek { font-family: var(--greek); font-size: 1.9rem; font-weight: 500; line-height: 1.1; }
   .greeting .english { font-size: .98rem; color: color-mix(in srgb, var(--ivory) 72%, transparent); margin-top: 4px; }
   .brief { font-family: var(--ui); font-size: .76rem; letter-spacing: .04em; color: color-mix(in srgb, var(--ivory) 62%, transparent); margin: 14px 0 18px; min-height: 1.1em; }
-  .masthead .key { color: var(--brass); opacity: .75; }
+  .masthead .key { opacity: .75; }
+  .cities { display: flex; justify-content: center; gap: 0; margin: 4px auto 0; max-width: 360px; font-family: var(--ui); }
+  .city { flex: 1; padding: 0 12px; text-align: center; }
+  .city + .city { border-left: 1px solid color-mix(in srgb, var(--ivory) 22%, transparent); }
+  .city .cn { font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--brass); font-variant-numeric: tabular-nums; }
+  .city .cw { font-size: .8rem; color: color-mix(in srgb, var(--ivory) 80%, transparent); margin-top: 2px; }
 
   /* ---------- Sticky bar ---------- */
   .bar {
@@ -133,10 +138,23 @@
   .logos hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--rule) 20%, var(--rule) 80%, transparent); margin: 18px 0 14px; }
   .logos .lens { margin: 8px auto 0; max-width: 34ch; font-size: .98rem; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
 
+  /* ---------- Today's reading ---------- */
+  .reading { margin-top: 14px; padding: 16px 18px; border-radius: 16px; background: var(--card); border: 1px solid var(--rule); display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 14px; align-items: start; }
+  .reading .ico { grid-row: 1 / span 3; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--olive) 16%, var(--card)); color: var(--olive); }
+  .reading .ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .reading h3 { margin: 2px 0 0; font-size: 1.12rem; line-height: 1.25; font-weight: 650; }
+  .reading .by { font-family: var(--ui); font-size: .72rem; color: var(--muted); margin: 0; }
+  .reading .why { margin: 4px 0 0; font-size: .95rem; line-height: 1.42; color: var(--muted); }
+  .reading .acts { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule); background: none; font-family: var(--ui); font-size: .8rem; font-weight: 600; color: var(--ink); cursor: pointer; transition: transform .15s, background .2s; }
+  .pill:active { transform: scale(.95); }
+  .pill.solid { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .pill.done { background: var(--olive); border-color: var(--olive); color: var(--paper); }
+
   /* ---------- Realms & stories ---------- */
   .realm { scroll-margin-top: calc(var(--bar-h) + env(safe-area-inset-top, 0px) + 6px); }
-  .polis { --tint: var(--clay); } .techne { --tint: var(--aegean); } .agora { --tint: var(--gold); }
-  .oikonomia { --tint: var(--olive); } .sophia { --tint: var(--muted); }
+  .polis { --tint: var(--clay); } .oikos { --tint: var(--teal); } .techne { --tint: var(--aegean); } .kosmos { --tint: var(--violet); }
+  .oikonomia { --tint: var(--gold); } .arete { --tint: var(--olive); } .sophia { --tint: var(--muted); } .schole { --tint: var(--plum); }
   .realm-head { display: flex; align-items: center; gap: 13px; margin: 38px 0 4px; }
   .mark { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-family: var(--greek); font-size: 1.65rem; font-weight: 500; color: var(--paper); background: var(--tint); box-shadow: 0 0 0 4px color-mix(in srgb, var(--tint) 18%, transparent); }
   .realm-head h2 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.22rem; letter-spacing: .1em; line-height: 1.1; }
@@ -219,6 +237,7 @@
     <h1 class="brand">LYCEUM</h1>
     <div class="dateline" id="date"></div>
     <div class="greeting"><div class="greek" id="greek"></div><div class="english" id="english"></div></div>
+    <div class="cities" id="cities"></div>
     <div class="brief" id="brief"></div>
   </div>
   <svg class="key" aria-hidden="true"><rect width="100%" height="20" fill="url(#key-brass)"/></svg>
@@ -244,6 +263,7 @@
   </div>
 
   <section class="logos" id="logos" aria-label="Daily Logos"></section>
+  <section class="reading" id="reading" aria-label="Today’s reading" hidden></section>
 
   <div id="edition">
     <div class="skel"><i></i><i></i><i></i></div>
@@ -254,7 +274,7 @@
   <footer id="footer" hidden>
     <svg class="key" aria-hidden="true"><rect width="100%" height="20" fill="url(#key-gold)"/></svg>
     <div class="done">That is all for now.</div>
-    <div class="chaire">Χαῖρε — until tomorrow.</div>
+    <div class="chaire" id="chaire">Χαῖρε — until tomorrow.</div>
     <div class="know">γνῶθι σεαυτόν · know thyself</div>
     <div class="src" id="sources"></div>
     <div class="updated" id="updated"></div>
@@ -264,14 +284,20 @@
 
 <script>
 (function () {
+  var NAME = "Vibhor";
+  var CITIES = [{ label: "Melbourne", tz: "Australia/Melbourne" }, { label: "Mumbai", tz: "Asia/Kolkata" }];
   var REALMS = {
-    polis:     { name: "Polis",     greek: "Πόλις",     sub: "Geopolitics & the world", mark: "Π" },
-    techne:    { name: "Techne",    greek: "Τέχνη",     sub: "Technology & craft",      mark: "Τ" },
-    agora:     { name: "Agora",     greek: "Ἀγορά",     sub: "Current affairs",         mark: "Α" },
-    oikonomia: { name: "Oikonomia", greek: "Οἰκονομία", sub: "Markets & the economy",   mark: "Ο" },
-    sophia:    { name: "Sophia",    greek: "Σοφία",     sub: "Ideas worth your time",   mark: "Σ" }
+    polis:     { name: "Polis",     greek: "Πόλις",     sub: "Geopolitics & the world",       mark: "Π" },
+    oikos:     { name: "Oikos",     greek: "Οἶκος",     sub: "Home & away: Australia, India", mark: "Ο" },
+    techne:    { name: "Techne",    greek: "Τέχνη",     sub: "Technology & AI",               mark: "Τ" },
+    kosmos:    { name: "Kosmos",    greek: "Κόσμος",    sub: "Space, EVs & the Musk orbit",   mark: "Κ" },
+    oikonomia: { name: "Oikonomia", greek: "Οἰκονομία", sub: "Markets & business",            mark: "Χ" },
+    arete:     { name: "Arete",     greek: "Ἀρετή",     sub: "Discipline & longevity",        mark: "Α" },
+    sophia:    { name: "Sophia",    greek: "Σοφία",     sub: "Ideas worth your time",         mark: "Σ" },
+    schole:    { name: "Schole",    greek: "Σχολή",     sub: "Rock, football & play",         mark: "Φ" }
   };
-  var ORDER = ["polis", "techne", "agora", "oikonomia", "sophia"];
+  var ORDER = ["polis", "oikos", "techne", "kosmos", "oikonomia", "arete", "sophia", "schole"];
+  var BOOK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M4 19V5.5M8 7h8"/></svg>';
   var SHARE_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
   var $ = function (id) { return document.getElementById(id); };
   var lastLoaded = 0, edition = null, readSet = {}, total = 0, sections = [];
@@ -291,8 +317,44 @@
     var now = new Date(), h = now.getHours();
     $("date").textContent = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
     var g = h >= 4 && h < 12 ? ["Καλημέρα", "Good morning"] : h >= 12 && h < 18 ? ["Χαῖρε", "Good afternoon"] : ["Καλησπέρα", "Good evening"];
-    $("greek").textContent = g[0];
+    $("greek").textContent = g[0] + ", " + NAME;
     $("english").textContent = g[1] + ". Here is what matters today.";
+    $("chaire").textContent = "Χαῖρε, " + NAME + " — until tomorrow.";
+    clocks();
+  }
+  var weather = [];
+  function clocks() {
+    var box = $("cities");
+    if (!box.children.length) {
+      CITIES.forEach(function (c) {
+        var d = el("div", "city"); d.appendChild(el("div", "cn")); d.appendChild(el("div", "cw")); box.appendChild(d);
+      });
+    }
+    CITIES.forEach(function (c, i) {
+      var t = new Date().toLocaleTimeString("en-AU", { timeZone: c.tz, hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase();
+      var w = weather.filter(function (x) { return x.city === c.label; })[0];
+      box.children[i].children[0].textContent = c.label + " · " + t;
+      box.children[i].children[1].textContent = w ? w.lo + "°–" + w.hi + "°  " + w.desc : " ";
+    });
+  }
+  function dayKey(d) { d = d || new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function dayNumber() { var d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+  function recordDay() {
+    var days = store("lyceum-days") || [], k = dayKey();
+    if (days.indexOf(k) < 0) { days.push(k); store("lyceum-days", days.slice(-400)); }
+    brief();
+  }
+  function streak() {
+    var set = {}, n = 0, d = new Date();
+    (store("lyceum-days") || []).forEach(function (k) { set[k] = 1; });
+    if (!set[dayKey(d)]) d.setDate(d.getDate() - 1);
+    while (set[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  var briefBase = "";
+  function brief() {
+    var n = streak();
+    $("brief").textContent = briefBase + (n ? " · " + n + "-day streak" : "");
   }
   function ago(iso) {
     var m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
@@ -319,6 +381,32 @@
     box.appendChild(document.createElement("hr"));
     box.appendChild(el("div", "eyebrow", "A lens for today’s news"));
     box.appendChild(el("p", "lens", m.lens));
+  }
+
+  /* ---- today's reading ---- */
+  function renderReading(list) {
+    var box = $("reading");
+    if (!list || !list.length) { box.hidden = true; return; }
+    var r = list[dayNumber() % list.length], done = store("lyceum-reading") === dayKey();
+    box.hidden = false; box.textContent = "";
+    var ico = el("div", "ico"); ico.innerHTML = BOOK_SVG; box.appendChild(ico);
+    var head = el("div"); head.appendChild(el("div", "eyebrow", "Today’s reading")); box.appendChild(head);
+    box.appendChild(el("h3", null, r.work + " · " + r.part));
+    box.appendChild(el("p", "by", r.author + " · about " + r.minutes + " min"));
+    box.appendChild(el("p", "why", r.why));
+    var acts = el("div", "acts");
+    var open = el("a", "pill solid", "Open the text"); open.href = r.url; open.target = "_blank"; open.rel = "noopener";
+    var tick = el("button", "pill" + (done ? " done" : ""), done ? "✓ Read today" : "Mark as read"); tick.type = "button";
+    tick.addEventListener("click", function () {
+      var now = store("lyceum-reading") === dayKey();
+      store("lyceum-reading", now ? "" : dayKey());
+      if (!now) recordDay();
+      renderReading(list);
+    });
+    acts.appendChild(open); acts.appendChild(tick);
+    box.appendChild(acts);
+    // the grid places the first two children (icon, eyebrow) in row 1; the rest flow in column 2
+    [].slice.call(box.children, 1).forEach(function (c) { c.style.gridColumn = "2"; });
   }
 
   /* ---- stories ---- */
@@ -445,6 +533,7 @@
     if (readSet[link]) return;
     readSet[link] = 1;
     store("lyceum-read", { id: edition.generated, links: Object.keys(readSet) });
+    recordDay();
     var a = document.querySelector('.story[data-link="' + (window.CSS && CSS.escape ? CSS.escape(link) : link) + '"]');
     if (a) { a.classList.add("read"); a.querySelector(".num").textContent = "✓"; }
     progress();
@@ -474,12 +563,16 @@
         var saved = store("lyceum-read");
         readSet = {};
         if (saved && saved.id === data.generated) saved.links.forEach(function (l) { readSet[l] = 1; });
+        weather = data.weather || [];
+        clocks();
         renderMaxim(data.maxims);
+        renderReading(data.reading);
         renderStories(data.stories || []);
         renderChips();
         progress();
         var w = (data.stories || []).reduce(function (a, s) { return a + words(s.title) + words(s.summary); }, 0);
-        $("brief").textContent = total + " stories · about " + Math.max(2, Math.round(w / 200)) + " min to read";
+        briefBase = total + " stories · about " + Math.max(2, Math.round(w / 200)) + " min to read";
+        brief();
         var names = {};
         (data.stories || []).forEach(function (s) { names[s.source] = 1; });
         $("sources").textContent = "Sources: " + Object.keys(names).sort().join(", ") + ".";
@@ -497,6 +590,7 @@
   }
 
   header();
+  setInterval(clocks, 30000);
   $("refresh").addEventListener("click", function () { header(); load(); });
   $("edition").addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest("a.cover");
