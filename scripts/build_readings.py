@@ -41,16 +41,16 @@ WORKS = [
     dict(key="enchiridion", work="Enchiridion", author="Epictetus", ids=[45109, 10661], title_hint=r"Ench[ei]+ridion",
          start=r"(?i)there are things which are within our power|of things some are in our power|some things are (?:in|within) our (?:control|power)|some things are up to us",
          start_alt=r"^(?:I|1)\.\s+\S",
-         end=r"^(FRAGMENTS|NOTES|FOOTNOTES)\b", heading=None, first_heading=None, cap=None,
+         end=r"(?i)^(FRAGMENTS|NOTES|FOOTNOTES|THE LIBERAL ARTS PRESS)\b", heading=None, first_heading=None, cap=None,
          url="https://classics.mit.edu/Epictetus/epicench.html",
          why="Epictetus’s handbook for living: short, practical rules for staying calm and free."),
     dict(key="apology", work="Apology", author="Plato", ids=[1656], title_hint="Apology",
          start=r"How you, O Athenians, have been affected by my accusers", end=None, heading=None,
-         first_heading=None, cap=None, url="https://classics.mit.edu/Plato/apology.html",
+         first_heading=None, cap=None, strip_marginalia=True, url="https://classics.mit.edu/Plato/apology.html",
          why="Socrates defends a life of questioning before the Athenian jury that will condemn him."),
     dict(key="crito", work="Crito", author="Plato", ids=[1657], title_hint="Crito",
          start=r"Why have you come at this hour, Crito", end=None, heading=None, first_heading=None, cap=None,
-         url="https://classics.mit.edu/Plato/crito.html",
+         strip_marginalia=True, url="https://classics.mit.edu/Plato/crito.html",
          why="Socrates, in prison, explains why he will not escape."),
     dict(key="ethics", work="Nicomachean Ethics", author="Aristotle", ids=[8438], title_hint="Ethics",
          start=r"(?i)every art,? and every (?:scientific )?(?:inquiry|investigation|science)|every art and every inquiry",
@@ -60,23 +60,23 @@ WORKS = [
          why="Aristotle on happiness, and on virtue as something you build by practice."),
     dict(key="symposium", work="Symposium", author="Plato", ids=[1600], title_hint="Symposium",
          start=r"Concerning the things about which you ask to be informed", end=None, heading=None,
-         first_heading=None, cap=15, url="https://classics.mit.edu/Plato/symposium.html",
+         first_heading=None, cap=15, strip_marginalia=True, url="https://classics.mit.edu/Plato/symposium.html",
          why="A dinner party at which each guest gives a speech about love."),
     dict(key="republic", work="The Republic", author="Plato", ids=[1497], title_hint="Republic",
          start=r"I went down yesterday to the Piraeus with Glaucon", end=None, heading=None,
-         first_heading=None, cap=60, url="https://classics.mit.edu/Plato/republic.html",
+         first_heading=None, cap=60, strip_marginalia=True, url="https://classics.mit.edu/Plato/republic.html",
          why="Plato’s great dialogue on justice, the soul and the ideal city."),
     dict(key="phaedo", work="Phaedo", author="Plato", ids=[1658], title_hint="Phaedo",
          start=r"Were you yourself, Phaedo, in the prison with Socrates", end=None, heading=None,
-         first_heading=None, cap=None, url="https://classics.mit.edu/Plato/phaedo.html",
+         first_heading=None, cap=None, strip_marginalia=True, url="https://classics.mit.edu/Plato/phaedo.html",
          why="Socrates’ last day: a conversation about the soul and death, ending with the hemlock."),
     dict(key="discourses", work="Discourses", author="Epictetus", ids=[10661], title_hint=r"Discourses",
          start=r"(?i)of all the faculties", start_alt=r"(?i)things which are in our power",
-         end=r"(?i)^(?:THE\s+)?ENCH[EI]+RIDION\b", heading=None, first_heading=None, cap=40,
+         end=r"(?i)^(?:THE\s+)?ENCH[EI]+RIDION\b", heading=None, first_heading=None, cap=40, run_in_titles=True,
          url="https://classics.mit.edu/Epictetus/discourses.html",
          why="Epictetus’s classroom talks, recorded by his student Arrian: Stoic practice for everyday situations."),
-    dict(key="seneca", work="Letters to Lucilius", author="Seneca", ids=[], search="Seneca letters Lucilius",
-         title_hint=r"Seneca|Lucilius|Stoic",
+    dict(key="seneca", work="Letters to Lucilius", author="Seneca", ids=[], search="Seneca",
+         find_title=r"(?i)letters|epistul|lucilius", title_hint=r"(?i)Seneca|Lucilius|Epistul",
          start=r"(?i)seneca (?:greets|to|sends greetings to) (?:his friend )?lucilius|greetings from seneca|seneca (?:wishes )?health to lucilius",
          end=None, heading=None, first_heading=None, cap=40,
          url="https://en.wikisource.org/wiki/Moral_letters_to_Lucilius",
@@ -171,13 +171,13 @@ def find_ids(query, title_re):
 
 def build_work(cfg):
     last = None
-    ids = cfg["ids"] or find_ids(cfg["search"], cfg["title_hint"])
+    ids = cfg["ids"] or find_ids(cfg["search"], cfg.get("find_title", cfg["title_hint"]))
     for n in ids:
         try:
             return build_from(cfg, n)
         except Exception as e:
             last = e; print(f"[{cfg['key']}] ebook {n} rejected: {e}")
-    raise last
+    raise last or RuntimeError("no candidate ebooks found")
 
 
 def build_from(cfg, n):
@@ -216,6 +216,15 @@ def build_from(cfg, n):
             heading = h; headings_seen.append(h); items.append({"h": h}); continue
         if len(p) < 3 or re.fullmatch(r"[A-Z .,]{3,}", p) and len(p) < 40:
             continue
+        if cfg.get("strip_marginalia"):
+            # Jowett's marginal summaries sit in the text as "(Capitalised note.)"
+            p = re.sub(r"\s*\((?=[A-Z])[^()]{3,140}\.\)", "", p)
+            p = re.sub(r"\s+([;,:])", r"\1", p).strip()
+        if cfg.get("run_in_titles"):
+            m = re.match(r"^([A-Z][A-Z ,'’;:()\-]{8,}?)\.?\s*[—-]+\s*(.+)$", p)
+            if m:
+                t = m.group(1).strip().capitalize()
+                items.append({"h": t}); p = m.group(2)
         items.extend(split_long(smart(p)))
     words = sum(len(i.split()) for i in items if isinstance(i, str))
     print(f"[{cfg['key']}] paragraphs={len(items)} words={words} headings={headings_seen}")
