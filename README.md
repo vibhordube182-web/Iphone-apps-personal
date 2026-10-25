@@ -9,7 +9,13 @@ A morning news briefing for iPhone, in the spirit of The Economist Espresso, wit
 - No backend or API keys: live RSS feeds are fetched on-device and cached for offline reading.
 - Light and dark mode, Greek-key ornament, serif typography.
 
-## Install without a Mac
+## Web app (no Mac, no signing)
+
+`web/` is an installable web app version of Lyceum. A GitHub Action (`daily-edition.yml`) fetches the feeds every morning and publishes it to GitHub Pages. Open the Pages URL in Safari on your iPhone, tap Share, then Add to Home Screen.
+
+One-time setup: merge to `main`, then Settings, Pages, Source: *GitHub Actions*, then run *Daily edition* once from the Actions tab.
+
+## Native app without a Mac
 
 GitHub's macOS servers build the app for you.
 
