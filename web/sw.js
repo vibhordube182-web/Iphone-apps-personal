@@ -1,11 +1,11 @@
 // Opens instantly from the phone: the app shell, readings and fonts are served from the cache while a
 // fresh copy is fetched in the background (stale-while-revalidate). The edition itself is network-first
 // with a short timeout, because the page already paints the last saved edition on its own.
-const CACHE = "lyceum-v7";
+const CACHE = "lyceum-v8";
 const FILES = ["./", "index.html", "manifest.webmanifest", "mark-192.png", "mark-touch.png"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(
@@ -19,7 +19,8 @@ function keyFor(url) { return url.origin + url.pathname; }
 async function staleWhileRevalidate(request, key) {
   const cache = await caches.open(CACHE);
   const hit = await cache.match(key);
-  const network = fetch(request).then((r) => {
+  // "reload" skips the phone's own HTTP cache, which can hold an old copy of the page for 10 minutes
+  const network = fetch(request.mode === "navigate" ? new Request(request.url, { cache: "reload" }) : request).then((r) => {
     if (r && (r.ok || r.type === "opaque")) cache.put(key, r.clone());
     return r;
   }).catch(() => null);
