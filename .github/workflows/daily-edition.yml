@@ -37,3 +37,12 @@ jobs:
           path: web
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Send morning alert
+        if: github.event_name != 'push'
+        env:
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+        run: |
+          pip install pywebpush
+          python scripts/send_push.py
