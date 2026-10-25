@@ -8,7 +8,7 @@ import json, re, sys, time, urllib.request
 from pathlib import Path
 
 WORDS_PER_MIN = 220
-TARGET = 1200          # words per passage (about 5.5 minutes)
+TARGET = 1100          # words per passage (about 5 minutes; passages run 1,100-1,400)
 MIN_LAST = 450         # a shorter remainder is merged into the previous passage
 OUT = Path("web/readings")
 
@@ -39,7 +39,8 @@ WORKS = [
          url="https://classics.mit.edu/Antoninus/meditations.html",
          why="Marcus Aurelius wrote these private notes to himself while leading Rome’s armies. Read one passage slowly."),
     dict(key="enchiridion", work="Enchiridion", author="Epictetus", ids=[45109, 10661], title_hint="Enchiridion",
-         start=r"Of things some are in our power|Some things are in our control|Some things are in our power",
+         start=r"(?i)of things some are in our power|some things are (?:in|within) our (?:control|power)|some things are up to us",
+         start_alt=r"^(?:I|1)\.\s+\S",
          end=r"^(FRAGMENTS|NOTES|FOOTNOTES)\b", heading=None, first_heading=None, cap=None,
          url="https://classics.mit.edu/Epictetus/epicench.html",
          why="Epictetus’s handbook for living: short, practical rules for staying calm and free."),
@@ -52,7 +53,8 @@ WORKS = [
          url="https://classics.mit.edu/Plato/crito.html",
          why="Socrates, in prison, explains why he will not escape."),
     dict(key="ethics", work="Nicomachean Ethics", author="Aristotle", ids=[8438], title_hint="Ethics",
-         start=r"Every art and every inquiry, and similarly every action and pursuit", end=None,
+         start=r"(?i)every art,? and every (?:scientific )?(?:inquiry|investigation|science)|every art and every inquiry",
+         start_alt=r"(?i)aim at some good|aims, it is thought, at some good", end=None,
          heading=r"^BOOK\s+([IVXL]+)\.?$", first_heading="Book 1", cap=12,
          url="https://classics.mit.edu/Aristotle/nicomachaen.html",
          why="Aristotle on happiness, and on virtue as something you build by practice."),
@@ -119,15 +121,47 @@ def paragraphs(raw):
     return out
 
 
+def split_long(p, limit=320):
+    """Split a very long paragraph at sentence ends so it reads well on a phone."""
+    if len(p.split()) <= limit:
+        return [p]
+    sentences = re.split(r"(?<=[.!?;:”’])\s+(?=[“‘A-Z])", p)
+    n = -(-len(p.split()) // 260)
+    target = len(p.split()) / n
+    out, cur, cw = [], [], 0
+    for sen in sentences:
+        cur.append(sen); cw += len(sen.split())
+        if cw >= target and len(out) < n - 1:
+            out.append(" ".join(cur)); cur, cw = [], 0
+    if cur: out.append(" ".join(cur))
+    return out
+
+
 def build_work(cfg):
-    n, raw = download(cfg["ids"])
+    last = None
+    for n in cfg["ids"]:
+        try:
+            return build_from(cfg, n)
+        except Exception as e:
+            last = e; print(f"[{cfg['key']}] ebook {n} rejected: {e}")
+    raise last
+
+
+def build_from(cfg, n):
+    n, raw = download([n])
     head = " | ".join([l.strip() for l in raw.split("\n")[:25] if l.strip()][:6])
     print(f"[{cfg['key']}] ebook {n}: {head[:200]}")
     if cfg["title_hint"].lower() not in raw[:4000].lower():
         raise RuntimeError(f"title '{cfg['title_hint']}' not near top of ebook {n}")
     paras = paragraphs(raw)
     start = next((i for i, p in enumerate(paras) if re.search(cfg["start"], p)), None)
+    if start is None and cfg.get("start_alt"):
+        start = next((i for i, p in enumerate(paras) if re.search(cfg["start_alt"], p)), None)
+        if start is not None: print(f"[{cfg['key']}] used fallback start at paragraph {start}: {paras[start][:100]!r}")
     if start is None:
+        print(f"[{cfg['key']}] start phrase not found; paragraphs near the top:")
+        for k, p in enumerate(paras[:60]):
+            if len(p) > 60: print(f"    {k}: {p[:110]!r}")
         raise RuntimeError("start phrase not found")
     end = len(paras)
     if cfg["end"]:
@@ -149,7 +183,7 @@ def build_work(cfg):
             heading = h; headings_seen.append(h); items.append({"h": h}); continue
         if len(p) < 3 or re.fullmatch(r"[A-Z .,]{3,}", p) and len(p) < 40:
             continue
-        items.append(smart(p))
+        items.extend(split_long(smart(p)))
     words = sum(len(i.split()) for i in items if isinstance(i, str))
     print(f"[{cfg['key']}] paragraphs={len(items)} words={words} headings={headings_seen}")
 
