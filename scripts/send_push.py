@@ -51,9 +51,20 @@ SLOTS = {
 }
 
 
+SLOT_HOURS = (6, 12, 17, 21)   # local hours at which a scheduled run sends
+DEFAULT_TZ = "Australia/Melbourne"
+
+
 def slot_for(now):
     h = now.hour
     return "morning" if h < 10 else "midday" if h < 15 else "evening" if h < 19 else "night"
+
+
+def local_now(tz_name):
+    try:
+        return datetime.now(ZoneInfo(tz_name or DEFAULT_TZ))
+    except Exception:
+        return datetime.now(ZoneInfo(DEFAULT_TZ))
 
 
 def main():
@@ -73,22 +84,27 @@ def main():
         subs = [subs]
     edition = json.loads(Path("web/news.json").read_text())
     stories = edition["stories"]
-    now = datetime.now(ZoneInfo("Australia/Melbourne"))
-    slot = slot_for(now)
-    title, messages = SLOTS[slot]
-    payload = json.dumps({
-        "title": title,
-        "body": messages[(now.timetuple().tm_yday + now.hour) % len(messages)],
-        "count": len(stories),
-        "tag": "lyceum-" + slot,
-        "generated": edition["generated"],
-    }, ensure_ascii=False)
+    scheduled = os.environ.get("EVENT") == "schedule"
 
     for i, sub in enumerate(subs):
+        # "tz" is added by the app's connection code; the push service must not see it.
+        now = local_now(sub.pop("tz", None))
+        if scheduled and now.hour not in SLOT_HOURS:
+            print(f"Device {i + 1}: {now:%H:%M} local, not an alert hour; skipping.")
+            continue
+        slot = slot_for(now)
+        title, messages = SLOTS[slot]
+        payload = json.dumps({
+            "title": title,
+            "body": messages[(now.timetuple().tm_yday + now.hour) % len(messages)],
+            "count": len(stories),
+            "tag": "lyceum-" + slot,
+            "generated": edition["generated"],
+        }, ensure_ascii=False)
         try:
             webpush(subscription_info=sub, data=payload, vapid_private_key=vapid,
                     vapid_claims={"sub": SITE}, ttl=6 * 3600)
-            print(f"Pushed to device {i + 1}.")
+            print(f"Pushed to device {i + 1} ({slot}, {now:%H:%M} local).")
         except WebPushException as e:
             status = getattr(e.response, "status_code", None)
             print(f"::warning::Push to device {i + 1} failed ({status}): {e}")
