@@ -1,5 +1,5 @@
 // Offline shell + image cache. The TMDB API and the sync database are never cached.
-const CACHE = "ashkey-v6", IMG = "ashkey-img-v1";
+const CACHE = "ashkey-v7", IMG = "ashkey-img-v1";
 const FILES = ["./", "index.html", "style.css", "app.js", "taste.js", "tmdb.js", "sync.js", "manifest.webmanifest", "icon-192.png", "icon-touch.png"];
 self.addEventListener("install", (e) => e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: "reload" })))).then(() => self.skipWaiting())));
 self.addEventListener("activate", (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE && k !== IMG).map((k) => caches.delete(k)))).then(() => self.clients.claim())));

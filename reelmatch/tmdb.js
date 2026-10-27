@@ -86,7 +86,11 @@ export class TMDB {
     const headers = {};
     if (this.key.startsWith("eyJ")) headers.Authorization = "Bearer " + this.key; else url.searchParams.set("api_key", this.key);
     for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-    const r = await fetch(url, { headers });
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 12000);
+    let r;
+    try { r = await fetch(url, { headers, signal: ctl.signal }); }
+    catch (e) { throw new Error(e.name === "AbortError" ? "TMDB timed out" : "Network error"); }
+    finally { clearTimeout(timer); }
     if (r.status === 401) throw new Error("TMDB rejected the API key. Check it in Settings.");
     if (!r.ok) throw new Error("TMDB error " + r.status);
     return r.json();

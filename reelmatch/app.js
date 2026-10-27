@@ -82,7 +82,10 @@ async function ensureDetails(id, maxAgeH = 12) {
   const m = movies.get(id);
   if (m && m.detailsAt && Date.now() - m.detailsAt < maxAgeH * 3.6e6) return m;
   if (inflight.has(id)) return inflight.get(id);
-  const p = tmdb.details(id).then((d) => { const merged = remember(d); onDetails(merged); return merged; }).catch(() => m || null).finally(() => inflight.delete(id));
+  const attempt = async (n) => { try { return await tmdb.details(id); } catch (e) { if (n < 2 && !/API key/.test(e.message)) { await sleep(1200 * (n + 1)); return attempt(n + 1); } throw e; } };
+  const p = attempt(0).then((d) => { const merged = remember(d); delete merged.detailsErr; onDetails(merged); return merged; })
+    .catch(() => { const cur = movies.get(id); if (cur) { cur.detailsErr = true; onDetails(cur); } return cur || null; })
+    .finally(() => inflight.delete(id));
   inflight.set(id, p);
   return p;
 }
@@ -155,7 +158,7 @@ async function fillDeck() {
 
 /* ============ deck rendering + gestures ============ */
 function provHtml(m) {
-  if (!m.providers) return `<span class="skel"></span>`;
+  if (!m.providers) return m.detailsErr ? `<span class="none">Couldn't load streaming info</span>` : `<span class="skel"></span>`;
   const s = streamers(m);
   if (s.length) return `<span class="lbl">Stream</span>` + s.slice(0, 6).map((p) => `<img src="${logo(p.logo)}" alt="${esc(p.name)}" title="${esc(p.name)}">`).join("");
   const rb = [...m.providers.rent, ...m.providers.buy];
@@ -186,6 +189,7 @@ function onDetails(m) {
   if (c) c.innerHTML = infoHtml(m);
   if (document.querySelector("#overlay .sheet") && openSheetId === m.id) buildSheet();
   if (tab === "matches") scheduleMatches();
+  if (tab === "likes") scheduleLikes();
 }
 function renderDeck() {
   const box = $("#deck");
@@ -305,7 +309,7 @@ function buildSheet() {
   const p = m.providers;
   const group = (label, list, note) => list && list.length ? `<div class="pgroup"><div class="l">${label}</div><div class="pitems">${list.map((x) => `<div class="pit"><img src="${logo(x.logo)}" alt="">${esc(x.name)}${note ? ` <span class="muted">${note}</span>` : ""}</div>`).join("")}</div></div>` : "";
   let where;
-  if (!p) where = `<span class="skel"></span>`;
+  if (!p) where = m.detailsErr ? `<p class="muted">Couldn't load streaming info.</p><button class="btn alt sm" data-a="retry">Try again</button>` : `<span class="skel"></span>`;
   else {
     where = group("Included with subscription", p.flatrate) + group("Free", p.free, "") + group("Free with ads", p.ads) + group("Rent", p.rent) + group("Buy", p.buy);
     if (!where) where = `<p class="muted">Not available to stream, rent or buy in Australia right now.</p>`;
@@ -314,7 +318,8 @@ function buildSheet() {
   const isMatch = mySwipes.get(m.id)?.r > 0 && (theirSwipes.get(m.id) || theirSwipes.get(String(m.id)))?.r > 0;
   const bar = openSheetMode === "deck"
     ? `<button class="act nope" data-a="n"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="act super" data-a="s"><svg viewBox="0 0 24 24" class="fill"><path d="m12 3 2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.3 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z"/></svg></button><button class="act like" data-a="l"><svg viewBox="0 0 24 24" class="fill"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg></button>`
-    : isMatch ? `<button class="btn sm ${watched.has(m.id) ? "alt" : ""}" data-a="w">${watched.has(m.id) ? "Mark as not watched" : "✓ We've watched it"}</button>` : "";
+    : (isMatch ? `<button class="btn sm ${watched.has(m.id) ? "alt" : ""}" data-a="w">${watched.has(m.id) ? "Mark as not watched" : "✓ We've watched it"}</button>` : "")
+      + (openSheetMode === "likes" ? `<button class="btn sm alt" data-a="rm">Remove from my likes</button>` : "");
   const root = document.createElement("div");
   root.innerHTML = `<div class="scrim" data-a="x"></div><div class="sheet">
     <button class="x" data-a="x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
@@ -332,6 +337,8 @@ function buildSheet() {
   ov.onclick = (e) => {
     const a = e.target.closest("[data-a]")?.dataset.a; if (!a || !$(".sheet", ov)) return;
     if (a === "x") return closeSheet();
+    if (a === "retry") { delete m.detailsErr; buildSheet(); return ensureDetails(m.id, 0); }
+    if (a === "rm") { removeLike(m.id); return closeSheet(); }
     if (a === "w") { toggleWatched(m.id); return buildSheet(); }
     const r = a === "l" ? T.LIKE : a === "n" ? T.NOPE : T.SUPER;
     closeSheet(); const c = $(`.card[data-id="${m.id}"]`);
@@ -341,6 +348,11 @@ function buildSheet() {
 function closeSheet() { openSheetId = null; $("#overlay").innerHTML = ""; $("#overlay").classList.add("hidden"); if (popupQueue.length) showMatchPopup(popupQueue.shift()); }
 function toggleWatched(id) {
   const on = !watched.has(id); on ? watched.add(id) : watched.delete(id); room.watched(id, on); if (tab === "matches") renderMatches();
+}
+function removeLike(id) {
+  mySwipes.delete(id); lsSet("rm_swipes_" + cfg.code, [...mySwipes]); room.unswipe(id);
+  seenMatches.delete(id); lsSet("rm_seenm_" + cfg.code, [...seenMatches]);
+  toast("Removed. It can show up in your deck again."); renderLikes(); updateBadge(); fillDeck();
 }
 
 /* ============ matches tab ============ */
@@ -394,6 +406,49 @@ function pickForUs() {
   tick();
 }
 
+/* ============ My likes tab ============ */
+let likeFilter = "all", likeTimer, detailQueue = [], detailActive = 0;
+const scheduleLikes = () => { clearTimeout(likeTimer); likeTimer = setTimeout(() => tab === "likes" && !openSheetId && renderLikes(), 200); };
+function loadDetailsGently(ids) { // a few at a time, so a long list doesn't flood TMDB
+  for (const id of ids) if (!detailQueue.includes(id)) detailQueue.push(id);
+  const next = () => {
+    while (detailActive < 3 && detailQueue.length) {
+      const id = detailQueue.shift(), m = movies.get(id);
+      if (m && m.detailsAt && Date.now() - m.detailsAt < 24 * 3.6e6) continue;
+      detailActive++; ensureDetails(id, 24).finally(() => { detailActive--; next(); });
+    }
+  };
+  next();
+}
+function renderLikes() {
+  const v = $("#v-likes"), scrollTop = v.scrollTop;
+  const mine = [...mySwipes.entries()].filter(([, r]) => r.r > 0).sort((a, b) => b[1].r - a[1].r || (b[1].t || 0) - (a[1].t || 0)).map(([id, r]) => ({ id: Number(id), super: r.r > 1 }))
+    .sort((a, b) => 0).filter((x) => movies.get(x.id));
+  // newest first, super-likes pinned on top
+  mine.sort((a, b) => (b.super - a.super) || ((mySwipes.get(b.id).t || 0) - (mySwipes.get(a.id).t || 0)));
+  loadDetailsGently(mine.slice(0, 60).map((x) => x.id));
+  const counts = new Map(); let none = 0;
+  for (const x of mine) { const s = streamers(movies.get(x.id)); if (movies.get(x.id).providers && !s.length) none++; s.forEach((p) => counts.set(p.id, { p, n: (counts.get(p.id)?.n || 0) + 1 })); }
+  const chips = [`<button class="chip ${likeFilter === "all" ? "on" : ""}" data-lf="all">All ${mine.length}</button>`]
+    .concat([...counts.values()].sort((a, b) => b.n - a.n).map(({ p, n }) => `<button class="chip ${likeFilter == p.id ? "on" : ""}" data-lf="${p.id}"><img src="${logo(p.logo)}" alt="">${esc(p.name)} ${n}</button>`));
+  if (none) chips.push(`<button class="chip ${likeFilter === "none" ? "on" : ""}" data-lf="none">Rent/buy only ${none}</button>`);
+  const shown = mine.filter((x) => {
+    const s = streamers(movies.get(x.id));
+    return likeFilter === "all" || (likeFilter === "none" ? movies.get(x.id).providers && !s.length : s.some((p) => String(p.id) === String(likeFilter)));
+  });
+  const theirs = (id) => theirSwipes.get(id) || theirSwipes.get(String(id));
+  const rows = shown.map((x) => {
+    const m = movies.get(x.id), s = streamers(m), t = theirs(x.id);
+    const pv = !m.providers ? (m.detailsErr ? `<span>Couldn't load streaming info</span>` : `<span class="skel"></span>`) : s.length ? s.slice(0, 5).map((p) => `<img src="${logo(p.logo)}" alt="${esc(p.name)}">`).join("") + `<span>${esc(s.slice(0, 2).map((p) => p.name).join(", "))}</span>` : `<span>${[...m.providers.rent, ...m.providers.buy].length ? "Rent / buy only" : "Not available in AU"}</span>`;
+    const badge = t && t.r > 0 ? `<span class="love max">♥ Matched</span>` : x.super ? `<span class="love">★ Super</span>` : "";
+    return `<div class="row" data-id="${x.id}"><img class="th" src="${poster(m.poster, "w342")}" alt="" loading="lazy">
+      <div><div class="t">${esc(m.title)}</div><div class="m">${m.year} · ${esc(genreNames(m, 2).join(", "))} · ★ ${m.vote.toFixed(1)}</div><div class="pv">${pv}</div></div>${badge}</div>`;
+  }).join("");
+  v.innerHTML = `<h1 class="page">My likes</h1><p class="sub">${mine.length ? `Everything you've liked, ${mine.filter((x) => x.super).length} super-liked. Tap one for details or to remove it.` : "Nothing yet. Movies you like will collect here."}</p>
+    ${mine.length ? `<div class="chips">${chips.join("")}</div>` : ""}${rows}`;
+  v.scrollTop = scrollTop;
+}
+
 /* ============ Us tab ============ */
 function bars(profile) {
   if (!profile || profile.n < 5) return `<p class="muted">Needs a few more swipes.</p>`;
@@ -422,7 +477,7 @@ async function renderUs() {
   <div class="card2"><h3>Room</h3><p style="margin-top:0">Room code <b style="user-select:text">${esc(cfg.code)}</b>${room.enabled ? "" : " · <span class='muted'>sync is off (solo mode)</span>"}</p>
     ${room.enabled ? `<button class="btn alt" id="invite">Share invite link</button><div style="height:8px"></div>` : ""}
     <button class="btn alt" id="redo">Redo my swipes</button><div style="height:8px"></div><button class="btn alt" id="leave">Leave room / change settings</button>
-    <p class="credit" id="dbg">Build 6 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
+    <p class="credit" id="dbg">Build 7 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
   if (settings.onlyStreaming && !providerList) loadProviders();
   showDebug();
 }
@@ -486,6 +541,8 @@ async function syncNow() {
       seedRecommendations();
     }
   } catch (_) { /* offline */ }
+  deck.slice(0, 3).forEach((m) => { const c = movies.get(m.id); if (c && !c.providers && !inflight.has(m.id)) { delete c.detailsErr; ensureDetails(m.id); } });
+  if (openSheetId != null) { const c = movies.get(openSheetId); if (c && !c.providers && !inflight.has(c.id)) { delete c.detailsErr; ensureDetails(c.id, 0); } }
   updateStatus(); updateBadge();
 }
 function updateStatus() {
@@ -510,8 +567,9 @@ window.addEventListener("online", () => room && syncNow());
 function setTab(t) {
   tab = t;
   $$(".tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
-  $("#v-swipe").classList.toggle("hidden", t !== "swipe"); $("#v-matches").classList.toggle("hidden", t !== "matches"); $("#v-us").classList.toggle("hidden", t !== "us");
+  $("#v-swipe").classList.toggle("hidden", t !== "swipe"); $("#v-matches").classList.toggle("hidden", t !== "matches"); $("#v-likes").classList.toggle("hidden", t !== "likes"); $("#v-us").classList.toggle("hidden", t !== "us");
   if (t === "matches") { renderMatches(); matches().forEach((x) => seenMatches.add(x.id)); lsSet("rm_seenm_" + cfg.code, [...seenMatches]); }
+  if (t === "likes") renderLikes();
   if (t === "us") renderUs();
   updateBadge();
 }
@@ -528,6 +586,10 @@ function bind() {
     const f = e.target.closest("[data-f]"); if (f) { svcFilter = f.dataset.f; return renderMatches(); }
     if (e.target.closest("#pick")) return pickForUs();
     const r = e.target.closest(".row"); if (r) openSheet(Number(r.dataset.id), "match");
+  };
+  $("#v-likes").onclick = (e) => {
+    const f = e.target.closest("[data-lf]"); if (f) { likeFilter = f.dataset.lf; return renderLikes(); }
+    const r = e.target.closest(".row"); if (r) openSheet(Number(r.dataset.id), "likes");
   };
   $("#v-us").onclick = (e) => {
     const t = e.target.closest("button"); if (!t) return;

@@ -70,6 +70,12 @@ const assert = (c, m) => { if (!c) { console.error("FAIL:", m); process.exitCode
     await a.click('[data-tab="swipe"]'); await a.screenshot({ path: "/tmp/rm-swipe.png" });
     await clear(a); await a.click('[data-tab="matches"]'); await a.waitForSelector(".row"); await a.screenshot({ path: "/tmp/rm-matches.png" });
     await clear(a); await a.click('[data-tab="us"]'); await a.screenshot({ path: "/tmp/rm-us.png" });
+    await clear(a); await a.click('[data-tab="likes"]'); await a.waitForSelector("#v-likes .row");
+    const nl = await a.locator("#v-likes .row").count(); assert(nl >= 8, `My likes lists ${nl} liked movies`);
+    await a.waitForSelector("#v-likes .row .pv img"); assert(true, "likes rows show streaming logos");
+    await a.click("#v-likes .row"); await a.waitForSelector(".sheet [data-a=rm]"); await a.click(".sheet [data-a=rm]"); await a.waitForTimeout(400);
+    assert((await a.locator("#v-likes .row").count()) === nl - 1, "remove from likes works");
+    await a.screenshot({ path: "/tmp/rm-likes.png" });
     // drag gesture
     await clear(a); await a.click('[data-tab="swipe"]'); await a.waitForSelector('.card[data-pos="0"]:not(.fly)');
     const box = await a.locator('.card[data-pos="0"]').boundingBox(); const id0 = await a.getAttribute('.card[data-pos="0"]', "data-id");
