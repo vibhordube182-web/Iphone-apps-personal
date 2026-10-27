@@ -13,7 +13,7 @@ input, select { font: inherit; }
 svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 svg.fill { fill: currentColor; stroke: none; }
 
-#app { display: flex; flex-direction: column; height: 100dvh; padding-top: var(--top); }
+#app { position: fixed; inset: 0; display: flex; flex-direction: column; padding-top: var(--top); background: var(--bg); }
 .top { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 6px; }
 .logo { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
 .logo b { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
