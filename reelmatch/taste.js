@@ -1,4 +1,4 @@
-// ReelMatch taste engine. Pure functions only (no DOM, no network) so it can be unit-tested in Node.
+// AshKey taste engine. Pure functions only (no DOM, no network) so it can be unit-tested in Node.
 //
 // Pipeline for every card you see:
 //   1. Each person's swipes are folded into a TASTE PROFILE: a smoothed, recency-weighted, mean-centred

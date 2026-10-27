@@ -63,4 +63,4 @@ http.createServer((req, res) => {
   if (!f.startsWith(dir) || f.includes("data.json") || f.endsWith("server.js") || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end("not found"); }
   res.writeHead(200, { "Content-Type": MIME[path.extname(f)] || "application/octet-stream", "Cache-Control": "no-cache" });
   fs.createReadStream(f).pipe(res);
-}).listen(PORT, () => console.log(`ReelMatch on http://localhost:${PORT}  (sync database at /db)`));
+}).listen(PORT, () => console.log(`AshKey Entertainment on http://localhost:${PORT}  (sync database at /db)`));
