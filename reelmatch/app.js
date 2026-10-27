@@ -434,7 +434,7 @@ const inviteLink = () => location.origin + location.pathname + "#i=" + inviteCod
 const inviteCode = () => b64.enc({ k: cfg.key, d: cfg.db, c: cfg.code });
 async function shareInvite() {
   const url = inviteLink();
-  try { if (navigator.share) return await navigator.share({ title: "ReelMatch", text: `Join my ReelMatch room`, url }); } catch (_) { return; }
+  try { if (navigator.share) return await navigator.share({ title: "AshKey Entertainment", text: `Join our AshKey Entertainment room`, url }); } catch (_) { return; }
   try { await navigator.clipboard.writeText(url); toast("Invite link copied"); } catch (_) { prompt("Copy this invite link", url); }
 }
 function applySettings(rebuild) {
@@ -548,7 +548,7 @@ async function showSetup(error = "") {
   let mode = parseInvite(location.hash.slice(1)) || old.invited ? "join" : "new";
   const pre = parseInvite(location.hash.slice(1));
   const draw = () => {
-    s.innerHTML = `<div class="logo">Reel<b>Match</b></div><p class="muted" style="margin-top:0">Swipe movies together. See what you both want to watch.</p>
+    s.innerHTML = `<div class="logo">Ash<b>Key</b><small>Entertainment</small></div><p class="muted" style="margin-top:0">Swipe movies together. See what you both want to watch.</p>
     <label class="field"><span>Your name</span><input id="f-name" value="${esc(old.name || "")}" placeholder="e.g. Vibhor" autocomplete="off"></label>
     <div class="seg"><button data-m="new" class="${mode === "new" ? "on" : ""}">Start a room</button><button data-m="join" class="${mode === "join" ? "on" : ""}">Join partner's room</button></div>
     ${mode === "join" ? `<label class="field"><span>Invite link or code</span><input id="f-inv" value="${pre ? esc(location.href) : ""}" placeholder="Paste the invite link or code" autocapitalize="off" autocorrect="off"><small>Your partner gets this from Us → Share invite link. If you opened the link in Safari first, copy it again here: the Home Screen app keeps its own storage.</small></label>`
