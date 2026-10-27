@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="fx-82">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1b1c1f">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);margin:0}body{margin:0}</style>
+<title>FX-82 Calculator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700&family=Barlow+Semi+Condensed:wght@500;600&family=Share+Tech+Mono&display=swap">
+<style>
+  /* One-screen handheld: brand + solar strip, two-line LCD, eight rows of five keys. */
+  :root {
+    --page: #141517;
+    --case: #26282c;
+    --case-edge: #0f1011;
+    --lcd: #b9c5a6;
+    --lcd-ink: #1c2218;
+    --key-fn: #3c4046;
+    --key-fn-ink: #ecebe7;
+    --key-num: #dcdad3;
+    --key-num-ink: #1b1c1e;
+    --key-op: #b9b7b0;
+    --key-del: #c2432b;
+    --key-eq: #17181b;
+    --shift: #e3b341;
+    --label: #8f9298;
+    --display: "Share Tech Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --face: "Barlow Semi Condensed", "Avenir Next Condensed", "Arial Narrow", system-ui, sans-serif;
+    --brand: "Barlow Condensed", "Avenir Next Condensed", "Arial Narrow", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--page); color: var(--key-fn-ink);
+    font-family: var(--face); overflow: hidden; overscroll-behavior: none;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  }
+  .calc {
+    height: 100%; max-width: 440px; margin: 0 auto; box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 10px;
+    padding-block: 10px 12px;
+    padding-left: max(14px, env(safe-area-inset-left, 0px));
+    padding-right: max(14px, env(safe-area-inset-right, 0px));
+    background: linear-gradient(180deg, #2c2f34, var(--case) 30%, #222427);
+  }
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+  .brand { display: flex; flex-direction: column; min-width: 0; }
+  .model { font-family: var(--brand); font-style: italic; font-weight: 700; font-size: 30px; line-height: 1; letter-spacing: .02em; }
+  .model small { font-size: 13px; letter-spacing: .12em; color: var(--label); margin-left: 6px; font-style: normal; font-family: var(--face); font-weight: 500; }
+  .sub { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--label); margin-top: 3px; }
+  .solar {
+    width: 112px; height: 32px; border-radius: 3px; flex: none;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 21px, rgba(0,0,0,.55) 21px 22px),
+      linear-gradient(180deg, #4a3a30, #2a1f1b);
+    box-shadow: inset 0 0 0 2px #0b0b0c, inset 0 2px 6px rgba(255,255,255,.12);
+  }
+  .lcd-wrap { background: var(--case-edge); border-radius: 10px; padding: 8px; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 1px 0 rgba(255,255,255,.05); }
+  .lcd {
+    background: linear-gradient(180deg, #c3cfb0, var(--lcd) 40%, #aab796);
+    color: var(--lcd-ink); border-radius: 4px; padding: 5px 10px 8px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.35); font-family: var(--display);
+  }
+  .ind { display: flex; gap: 10px; height: 13px; font-size: 10px; letter-spacing: .08em; line-height: 13px; }
+  .ind span { opacity: .1; } .ind span.on { opacity: 1; }
+  .l1 { height: 30px; font-size: 24px; line-height: 30px; white-space: nowrap; overflow: hidden; }
+  .l1 .cur { display: inline-block; width: 2px; height: 22px; margin-bottom: -4px; background: var(--lcd-ink); animation: blink 1s steps(1) infinite; }
+  .l2 { height: 46px; font-size: 40px; line-height: 46px; text-align: right; white-space: nowrap; overflow: hidden; }
+  .l2 sup { font-size: .5em; vertical-align: .7em; line-height: 0; }
+  .l2 .x { font-size: .6em; }
+  .l2.err { font-size: 26px; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .l1 .cur { animation: none; } }
+
+  .pad {
+    flex: 1; min-height: 0; display: grid; gap: 3px 9px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(0, .8fr)) repeat(4, minmax(0, 1fr));
+  }
+  .k { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+  .k .sh { height: 12px; flex: none; font-size: 10.5px; line-height: 12px; color: var(--shift); text-align: center; white-space: nowrap; letter-spacing: .02em; }
+  .k button {
+    flex: 1; min-height: 0; border: 0; border-radius: 8px; padding: 0;
+    font: 600 17px/1 var(--face); letter-spacing: .01em; cursor: pointer;
+    background: var(--key-fn); color: var(--key-fn-ink);
+    box-shadow: 0 3px 0 #0c0d0e, inset 0 1px 0 rgba(255,255,255,.14);
+    transition: transform .04s, box-shadow .04s;
+  }
+  .k button:active { transform: translateY(2px); box-shadow: 0 1px 0 #0c0d0e, inset 0 1px 0 rgba(255,255,255,.1); filter: brightness(1.12); }
+  .k button:focus-visible { outline: 2px solid var(--shift); outline-offset: 2px; }
+  .k sup { font-size: .62em; vertical-align: .55em; line-height: 0; }
+  .k.sci button { font-size: 15px; border-radius: 7px; }
+  .k.num button { background: var(--key-num); color: var(--key-num-ink); font-size: 24px; border-radius: 10px; box-shadow: 0 3px 0 #85837d, inset 0 1px 0 rgba(255,255,255,.6); }
+  .k.num button:active { box-shadow: 0 1px 0 #85837d, inset 0 1px 0 rgba(255,255,255,.5); }
+  .k.op button { background: var(--key-op); color: var(--key-num-ink); font-size: 26px; border-radius: 10px; box-shadow: 0 3px 0 #6f6d68, inset 0 1px 0 rgba(255,255,255,.5); }
+  .k.op button:active { box-shadow: 0 1px 0 #6f6d68; }
+  .k.del button { background: var(--key-del); color: #fff; font-size: 18px; border-radius: 10px; box-shadow: 0 3px 0 #6d2214, inset 0 1px 0 rgba(255,255,255,.25); }
+  .k.del button:active { box-shadow: 0 1px 0 #6d2214; }
+  .k.eq button { background: var(--key-eq); color: #fff; font-size: 26px; border-radius: 10px; box-shadow: 0 3px 0 #000, inset 0 1px 0 rgba(255,255,255,.18); }
+  .k.eq button:active { box-shadow: 0 1px 0 #000; }
+  .k.shiftkey button { background: var(--shift); color: #231b05; box-shadow: 0 3px 0 #7d5f12, inset 0 1px 0 rgba(255,255,255,.4); }
+  .k.shiftkey.active button { background: #fff1c2; outline: 2px solid var(--shift); }
+  @media (max-height: 700px) {
+    .model { font-size: 24px; } .solar { height: 24px; }
+    .l1 { height: 26px; font-size: 21px; line-height: 26px; } .l2 { height: 40px; font-size: 34px; line-height: 40px; }
+    .k.num button, .k.op button, .k.eq button { font-size: 21px; }
+    .k .sh { height: 10px; font-size: 9.5px; line-height: 10px; }
+  }
+</style>
+</head>
+<body>
+<main class="calc" aria-label="Scientific calculator">
+  <div class="top">
+    <div class="brand">
+      <div class="model">fx-82<small>ES</small></div>
+      <div class="sub">Scientific Calculator</div>
+    </div>
+    <div class="solar" aria-hidden="true"></div>
+  </div>
+  <div class="lcd-wrap">
+    <div class="lcd" aria-live="polite">
+      <div class="ind"><span id="iS">S</span><span id="iM">M</span><span id="iD">DEG</span><span id="iR">RAD</span><span id="iG">GRA</span></div>
+      <div class="l1" id="l1"></div>
+      <div class="l2" id="l2">0</div>
+    </div>
+  </div>
+  <div class="pad" id="pad"></div>
+</main>
+<script>
+"use strict";
+var toks = [], cur = 0, res = null, evald = false, shift = false;
+var angle = "DEG", ans = 0, mem = 0, fracOn = false;
+
+/* ---------- evaluator ---------- */
+function SynErr() {} function MathErr() {}
+var DIGITS = "0123456789";
+var FUNCS = ["sin(", "cos(", "tan(", "sin⁻¹(", "cos⁻¹(", "tan⁻¹(", "log(", "ln(", "10^(", "e^(", "√(", "∛("];
+
+function fact(n) {
+  if (n < 0 || n !== Math.floor(n) || n > 69) throw new MathErr();
+  var r = 1; for (var i = 2; i <= n; i++) r *= i; return r;
+}
+function toDeg(x) {
+  var d = angle === "DEG" ? x : angle === "RAD" ? x * 180 / Math.PI : x * 0.9;
+  return Math.abs(d - Math.round(d)) < 1e-9 ? Math.round(d) : d;
+}
+function fromRad(r) { return angle === "DEG" ? r * 180 / Math.PI : angle === "RAD" ? r : r * 200 / Math.PI; }
+function applyFn(name, x) {
+  var d;
+  switch (name) {
+    case "sin(": d = toDeg(x); return d % 180 === 0 ? 0 : Math.sin(d * Math.PI / 180);
+    case "cos(": d = toDeg(x); return (d - 90) % 180 === 0 ? 0 : Math.cos(d * Math.PI / 180);
+    case "tan(": d = toDeg(x);
+      if ((d - 90) % 180 === 0) throw new MathErr();
+      return d % 180 === 0 ? 0 : Math.tan(d * Math.PI / 180);
+    case "sin⁻¹(": if (Math.abs(x) > 1) throw new MathErr(); return fromRad(Math.asin(x));
+    case "cos⁻¹(": if (Math.abs(x) > 1) throw new MathErr(); return fromRad(Math.acos(x));
+    case "tan⁻¹(": return fromRad(Math.atan(x));
+    case "log(": if (x <= 0) throw new MathErr(); return Math.log10(x);
+    case "ln(": if (x <= 0) throw new MathErr(); return Math.log(x);
+    case "10^(": return Math.pow(10, x);
+    case "e^(": return Math.exp(x);
+    case "√(": if (x < 0) throw new MathErr(); return Math.sqrt(x);
+    case "∛(": return Math.cbrt(x);
+  }
+  throw new SynErr();
+}
+function pw(a, b) {
+  if (a === 0 && b <= 0) throw new MathErr();
+  var r = Math.pow(a, b);
+  if (isNaN(r)) throw new MathErr();
+  return r;
+}
+function isStart(t) {
+  return t !== undefined && (DIGITS.indexOf(t) >= 0 && t.length === 1 || t === "." || t === "E" || t === "(" ||
+    t === "π" || t === "e" || t === "Ans" || t === "M" || FUNCS.indexOf(t) >= 0);
+}
+function evaluate(t) {
+  var i = 0;
+  function peek() { return t[i]; }
+  function expr() {
+    var v = term();
+    while (peek() === "+" || peek() === "−") { var o = t[i++], r = term(); v = o === "+" ? v + r : v - r; }
+    return v;
+  }
+  function term() {
+    var v = imp();
+    while (peek() === "×" || peek() === "÷") {
+      var o = t[i++], r = imp();
+      if (o === "÷" && r === 0) throw new MathErr();
+      v = o === "×" ? v * r : v / r;
+    }
+    return v;
+  }
+  function imp() {
+    var v = comb();
+    while (isStart(peek())) v *= comb();
+    return v;
+  }
+  function comb() {
+    var v = unary();
+    while (peek() === "nPr" || peek() === "nCr") {
+      var o = t[i++], r = unary();
+      if (v !== Math.floor(v) || r !== Math.floor(r) || v < 0 || r < 0 || r > v) throw new MathErr();
+      var out = 1;
+      if (o === "nPr") { for (var k = 0; k < r; k++) out *= (v - k); }
+      else { var rr = Math.min(r, v - r); for (var j = 1; j <= rr; j++) out = out * (v - rr + j) / j; out = Math.round(out); }
+      v = out;
+    }
+    return v;
+  }
+  function unary() {
+    if (peek() === "−") { i++; return -unary(); }
+    return power();
+  }
+  function power() {
+    var base = postfix();
+    if (peek() === "^") {
+      i++; return pw(base, powOperand());
+    }
+    if (peek() === "ˣ√") {
+      i++; var y = powOperand();
+      if (base === 0) throw new MathErr();
+      if (y < 0 && base === Math.floor(base) && Math.abs(base) % 2 === 1) return -pw(-y, 1 / base);
+      return pw(y, 1 / base);
+    }
+    return base;
+  }
+  function powOperand() {
+    if (peek() === "−") { i++; return -powOperand(); }
+    return power();
+  }
+  function postfix() {
+    var v = primary();
+    for (;;) {
+      var p = peek();
+      if (p === "!") { v = fact(v); i++; }
+      else if (p === "²") { v = v * v; i++; }
+      else if (p === "³") { v = v * v * v; i++; }
+      else if (p === "⁻¹") { if (v === 0) throw new MathErr(); v = 1 / v; i++; }
+      else return v;
+    }
+  }
+  function primary() {
+    var p = peek();
+    if (p === undefined) throw new SynErr();
+    if (DIGITS.indexOf(p) >= 0 && p.length === 1 || p === "." || p === "E") return number();
+    if (p === "π") { i++; return Math.PI; }
+    if (p === "e") { i++; return Math.E; }
+    if (p === "Ans") { i++; return ans; }
+    if (p === "M") { i++; return mem; }
+    if (p === "(") { i++; var v = expr(); if (peek() === ")") i++; return v; }
+    if (FUNCS.indexOf(p) >= 0) { i++; var a = expr(); if (peek() === ")") i++; return applyFn(p, a); }
+    throw new SynErr();
+  }
+  function number() {
+    var s = "", dot = false;
+    while (peek() !== undefined && (DIGITS.indexOf(peek()) >= 0 && peek().length === 1 || peek() === ".")) {
+      if (peek() === ".") { if (dot) throw new SynErr(); dot = true; }
+      s += t[i++];
+    }
+    if (s === "." ) throw new SynErr();
+    var m = s === "" ? 1 : parseFloat(s);
+    if (peek() === "E") {
+      i++; var neg = false;
+      if (peek() === "−") { neg = true; i++; }
+      var e = "";
+      while (peek() !== undefined && DIGITS.indexOf(peek()) >= 0 && peek().length === 1) e += t[i++];
+      if (e === "") throw new SynErr();
+      m *= Math.pow(10, neg ? -parseInt(e, 10) : parseInt(e, 10));
+    }
+    return m;
+  }
+  if (!t.length) return 0;
+  var v = expr();
+  if (i < t.length) throw new SynErr();
+  if (!isFinite(v) || Math.abs(v) >= 1e100) throw new MathErr();
+  v = Number(v.toPrecision(14));
+  return v === 0 ? 0 : v;
+}
+
+/* ---------- formatting ---------- */
+function sig(v) {            // 10 significant digits, no exponent unless needed; returns {m, e} or plain string
+  var a = Math.abs(v);
+  if (a >= 1e10 || a < 1e-9) {
+    var p = a.toExponential(9).split("e");
+    var m = p[0].replace(/\.?0+$/, "");
+    return { m: (v < 0 ? "−" : "") + m, e: parseInt(p[1], 10) };
+  }
+  var r = Number(a.toPrecision(10));
+  var s;
+  if (r < 1e-6) { var q = r.toExponential(9).split("e"); var dg = q[0].replace(".", "").replace(/0+$/, ""); s = "0." + new Array(-parseInt(q[1], 10)).join("0") + dg; }
+  else s = String(r);
+  return { s: (v < 0 ? "−" : "") + s };
+}
+function fmtNum(v) {
+  var o = sig(v);
+  return o.s !== undefined ? o.s : o.m + '<span class="x">×10</span><sup>' + (o.e < 0 ? "−" + (-o.e) : o.e) + "</sup>";
+}
+function toFrac(v) {
+  if (!isFinite(v) || v === Math.floor(v)) return null;
+  var a = Math.abs(v), h1 = 1, h0 = 0, k1 = 0, k0 = 1, x = a;
+  for (var n = 0; n < 40; n++) {
+    var ai = Math.floor(x), h = ai * h1 + h0, k = ai * k1 + k0;
+    if (k > 9999 || h > 9999) break;
+    h0 = h1; h1 = h; k0 = k1; k1 = k;
+    if (Math.abs(a - h1 / k1) < 1e-10 * Math.max(1, a)) return { neg: v < 0, n: h1, d: k1 };
+    var fr = x - ai; if (fr < 1e-12) break; x = 1 / fr;
+  }
+  return null;
+}
+function fmtFrac(f) {
+  var w = Math.floor(f.n / f.d), n = f.n - w * f.d;
+  return (f.neg ? "−" : "") + (w > 0 && n > 0 ? w + "⌟" + n + "⌟" + f.d : w > 0 ? String(w) : n + "⌟" + f.d);
+}
+var SHOW = { "E": "ᴇ", "nPr": "P", "nCr": "C" };
+function showTok(t) { return SHOW[t] || t; }
+
+/* ---------- state + render ---------- */
+function render() {
+  var h = "";
+  for (var i = 0; i <= toks.length; i++) {
+    if (i === cur && !evald) h += '<span class="cur"></span>';
+    if (i < toks.length) h += showTok(toks[i]);
+  }
+  var l1 = document.getElementById("l1");
+  l1.innerHTML = h;
+  var c = l1.querySelector(".cur");
+  if (c) l1.scrollLeft = cur >= toks.length ? l1.scrollWidth : Math.max(0, c.offsetLeft - l1.clientWidth + 40);
+  else l1.scrollLeft = 0;
+  var l2 = document.getElementById("l2"), txt = "0", err = false;
+  if (res && res.err) { txt = res.err; err = true; }
+  else if (res) {
+    var f = fracOn ? toFrac(res.v) : null;
+    txt = f ? fmtFrac(f) : fmtNum(res.v);
+  } else if (toks.length) txt = "";
+  l2.className = "l2" + (err ? " err" : "");
+  l2.innerHTML = txt;
+  var on = function (id, b) { document.getElementById(id).className = b ? "on" : ""; };
+  on("iS", shift); on("iM", mem !== 0);
+  on("iD", angle === "DEG"); on("iR", angle === "RAD"); on("iG", angle === "GRA");
+  var sk = document.querySelector(".shiftkey"); if (sk) sk.classList.toggle("active", shift);
+}
+var BINARY = ["+", "−", "×", "÷", "^", "²", "³", "⁻¹", "!", "nPr", "nCr", "ˣ√"];
+function insert(list) {
+  if (evald) {
+    if (BINARY.indexOf(list[0]) >= 0) { toks = ["Ans"]; cur = 1; } else { toks = []; cur = 0; }
+    evald = false;
+  }
+  res = null; fracOn = false;
+  toks.splice.apply(toks, [cur, 0].concat(list));
+  cur += list.length;
+}
+function calc() {
+  if (evald) return { v: ans };
+  return { v: evaluate(toks) };
+}
+function equals() {
+  try { var r = calc(); ans = r.v; res = r; evald = true; fracOn = false; }
+  catch (e) { res = { err: e instanceof MathErr ? "Math ERROR" : "Syntax ERROR" }; evald = false; if (!(e instanceof MathErr || e instanceof SynErr)) res.err = "Syntax ERROR"; }
+}
+function memAdd(sign) {
+  try { var r = calc(); mem += sign * r.v; ans = r.v; res = r; evald = true; fracOn = false; }
+  catch (e) { res = { err: e instanceof MathErr ? "Math ERROR" : "Syntax ERROR" }; evald = false; }
+}
+function special(name) {
+  switch (name) {
+    case "shift": shift = !shift; return;
+    case "ac": toks = []; cur = 0; res = null; evald = false; fracOn = false; return;
+    case "del":
+      if (evald) { evald = false; res = null; cur = toks.length; }
+      res = null; if (cur > 0) { toks.splice(cur - 1, 1); cur--; } return;
+    case "left": if (evald) { evald = false; res = null; cur = toks.length; } else { res = null; if (cur > 0) cur--; } return;
+    case "right": if (evald) { evald = false; res = null; cur = 0; } else { res = null; if (cur < toks.length) cur++; } return;
+    case "eq": equals(); return;
+    case "sd": if (res && res.v !== undefined && toFrac(res.v)) fracOn = !fracOn; return;
+    case "mode": angle = angle === "DEG" ? "RAD" : angle === "RAD" ? "GRA" : "DEG"; return;
+    case "clr": toks = []; cur = 0; res = null; evald = false; ans = 0; mem = 0; fracOn = false; return;
+    case "m+": memAdd(1); return;
+    case "m-": memAdd(-1); return;
+    case "ran": insert(String(Math.random().toFixed(3)).split("")); return;
+  }
+}
+function act(a) {
+  if (!a) return;
+  if (a.charAt(0) === "i") insert(a.slice(2).split("|"));
+  else special(a.slice(3));
+}
+
+/* ---------- keys ---------- */
+var T = function (s) { return "i:" + s; }, S = function (s) { return "sp:" + s; };
+var KEYS = [
+  ["SHIFT", "", S("shift"), "", "shiftkey"], ["MODE", "CLR", S("mode"), S("clr"), "sci"], ["◀", "", S("left"), "", "sci"], ["▶", "", S("right"), "", "sci"], ["S⇔D", "", S("sd"), "", "sci"],
+  ["x<sup>−1</sup>", "x!", T("⁻¹"), T("!"), "sci"], ["nCr", "nPr", T("nCr"), T("nPr"), "sci"], ["√", "∛", T("√("), T("∛("), "sci"], ["x<sup>2</sup>", "x<sup>3</sup>", T("²"), T("³"), "sci"], ["^", "<sup>x</sup>√", T("^"), T("ˣ√"), "sci"],
+  ["log", "10<sup>x</sup>", T("log("), T("10^("), "sci"], ["ln", "e<sup>x</sup>", T("ln("), T("e^("), "sci"], ["(−)", "e", T("−"), T("e"), "sci"], ["(", "", T("("), "", "sci"], [")", "", T(")"), "", "sci"],
+  ["sin", "sin<sup>−1</sup>", T("sin("), T("sin⁻¹("), "sci"], ["cos", "cos<sup>−1</sup>", T("cos("), T("cos⁻¹("), "sci"], ["tan", "tan<sup>−1</sup>", T("tan("), T("tan⁻¹("), "sci"], ["M+", "M−", S("m+"), S("m-"), "sci"], ["MR", "", T("M"), "", "sci"],
+  ["7", null, T("7"), "", "num"], ["8", null, T("8"), "", "num"], ["9", null, T("9"), "", "num"], ["DEL", null, S("del"), "", "del"], ["AC", null, S("ac"), "", "del"],
+  ["4", null, T("4"), "", "num"], ["5", null, T("5"), "", "num"], ["6", null, T("6"), "", "num"], ["×", null, T("×"), "", "op"], ["÷", null, T("÷"), "", "op"],
+  ["1", null, T("1"), "", "num"], ["2", null, T("2"), "", "num"], ["3", null, T("3"), "", "num"], ["+", null, T("+"), "", "op"], ["−", null, T("−"), "", "op"],
+  ["0", "", T("0"), "", "num"], [".", "Ran#", T("."), S("ran"), "num"], ["×10<sup>x</sup>", "π", T("E"), T("π"), "sci"], ["Ans", "", T("Ans"), "", "sci"], ["=", "", S("eq"), "", "eq"]
+];
+(function build() {
+  var pad = document.getElementById("pad");
+  KEYS.forEach(function (k, idx) {
+    var d = document.createElement("div");
+    d.className = "k " + k[4];
+    if (k[1] !== null) { var s = document.createElement("div"); s.className = "sh"; s.innerHTML = k[1]; d.appendChild(s); }
+    var b = document.createElement("button");
+    b.type = "button"; b.innerHTML = k[0]; b.dataset.i = idx;
+    b.setAttribute("aria-label", k[0].replace(/<[^>]+>/g, ""));
+    d.appendChild(b); pad.appendChild(d);
+  });
+  pad.addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    press(KEYS[b.dataset.i]);
+  });
+})();
+function press(k) {
+  var a = shift && k[3] ? k[3] : k[2];
+  var isShift = k[2] === S("shift");
+  if (!isShift) shift = false;
+  if (res && res.err) res = null;
+  act(a);
+  render();
+}
+
+/* ---------- keyboard ---------- */
+document.addEventListener("keydown", function (e) {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  var k = e.key, a = null;
+  if (DIGITS.indexOf(k) >= 0 && k.length === 1) a = T(k);
+  else if (k === ".") a = T(".");
+  else if (k === "+") a = T("+"); else if (k === "-") a = T("−");
+  else if (k === "*") a = T("×"); else if (k === "/") { a = T("÷"); e.preventDefault(); }
+  else if (k === "(") a = T("("); else if (k === ")") a = T(")"); else if (k === "^") a = T("^");
+  else if (k === "p") a = T("π"); else if (k === "s") a = T("sin("); else if (k === "c") a = T("cos("); else if (k === "t") a = T("tan(");
+  else if (k === "r") a = T("√("); else if (k === "!") a = T("!");
+  else if (k === "Enter" || k === "=") { a = S("eq"); e.preventDefault(); }
+  else if (k === "Backspace") a = S("del"); else if (k === "Escape") a = S("ac");
+  else if (k === "ArrowLeft") a = S("left"); else if (k === "ArrowRight") a = S("right");
+  if (a) { shift = false; if (res && res.err) res = null; act(a); render(); }
+});
+
+render();
+if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+  try { navigator.serviceWorker.register("sw.js").catch(function () {}); } catch (e) {}
+}
+</script>
+</body>
+</html>
