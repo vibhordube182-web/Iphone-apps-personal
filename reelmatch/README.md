@@ -8,7 +8,9 @@ availability, so you can pick tonight's movie.
 - **Where to watch in Australia** (Netflix, Stan, Disney+, Prime Video, Binge, Paramount+, ...), plus rent/buy, on
   the card, in the detail sheet and on every match. Data: TMDB + JustWatch.
 - **Hollywood / Bollywood slider**, and an "only things I can stream in Australia" switch with your own services.
-- **Matches tab**: filter by streaming service, mark as watched (shared), and "Pick one for us".
+- **Matches tab**: filter by streaming service, mark as watched, and **Choose for us**.
+- **Watched together**: swipe a card **down** (or tap the eye) for "already watched". It's shared, and hidden from both decks.
+- **My likes**: everything you've liked, filterable by service.
 - **It learns**: swipe, super-like (swipe up) or undo. Installable on the iPhone Home Screen, works offline for the shell.
 
 ## How the algorithm picks your next card (`taste.js`)
@@ -53,14 +55,17 @@ The repo's GitHub Pages workflow (`daily-edition.yml`) already publishes it at
 `https://<you>.github.io/<repo>/reelmatch/` once this is merged to `main` (Settings, Pages, Source: GitHub Actions).
 
 ### 4. Use it
-1. On your phone open the URL in Safari, enter your name, TMDB key and database URL, **Create room**.
-2. Tap **Us**, **Share invite link**, send it to her. The link carries the key, database URL and room code, so she
-   only types her name.
-3. Both: Share button, **Add to Home Screen**. *iPhone gotcha:* the Home Screen app has separate storage from
-   Safari, so on first launch choose **Join partner's room** and paste the invite link again. (Safari shows a
-   "Copy invite" button for this.)
+1. First phone: open the URL in Safari, enter your name and the TMDB key, leave **Room code** empty and tap
+   **Start a new room**. Your room code is on the **Us** tab.
+2. Second phone: open the same URL (or the invite link from **Us → Share invite link**), type her name and the room
+   code, tap **Join room**. She never needs the key or the database URL: the app reads the key from your private room
+   (open the app once yourself before she joins).
+3. Both: Share, **Add to Home Screen**, then on first launch enter your name and the code again (the Home Screen app
+   has its own storage separate from Safari).
+4. Re-adding or reinstalling? Use the same name: the app treats the same name in a room as the same person and
+   restores your swipes.
 
-Keep the invite link private: it contains your TMDB key.
+The first phone's TMDB key lives only in that private room, not in the repo.
 
 ## Tests
 ```sh

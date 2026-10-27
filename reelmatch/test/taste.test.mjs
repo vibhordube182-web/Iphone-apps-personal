@@ -75,3 +75,11 @@ test("two people with the same seed and empty profiles see mostly the same first
   const a = top(11), b = top(99);
   assert.ok([...a].filter((x) => b.has(x)).length >= 6, "overlap " + [...a].filter((x) => b.has(x)).length);
 });
+
+test("already-watched swipes say nothing about taste and don't count as agreement", () => {
+  const recs = Array.from({ length: 10 }, (_, i) => T.makeRecord(mk(i, { genres: [27] }), T.SEEN, i));
+  assert.equal(T.buildProfile(recs).n, 0);
+  const a = new Map(), b = new Map();
+  for (let i = 0; i < 10; i++) { a.set(i, { r: T.SEEN }); b.set(i, { r: 1 }); }
+  assert.equal(T.compatibility(a, b), null);
+});

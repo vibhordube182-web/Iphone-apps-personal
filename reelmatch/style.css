@@ -5,7 +5,7 @@
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; height: 100%; min-height: 100%; background: var(--bg); color: var(--ink); font: 15px/1.4 var(--font); overscroll-behavior: none; }
+html, body { margin: 0; height: 100%; min-height: 100%; touch-action: manipulation; background: var(--bg); color: var(--ink); font: 15px/1.4 var(--font); overscroll-behavior: none; }
 body { overflow: hidden; -webkit-user-select: none; user-select: none; }
 .hidden { display: none !important; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -55,6 +55,7 @@ main { flex: 1; min-height: 0; position: relative; }
 .stamp { position: absolute; top: 34px; padding: 4px 14px; font-size: 32px; font-weight: 900; letter-spacing: .06em; border: 4px solid; border-radius: 12px; opacity: 0; pointer-events: none; z-index: 5; }
 .stamp.like { left: 22px; color: var(--like); transform: rotate(-14deg); }
 .stamp.nope { right: 22px; color: var(--nope); transform: rotate(14deg); }
+.stamp.seen { left: 50%; bottom: 34%; top: auto; font-size: 26px; color: #c9cdf5; transform: translateX(-50%) rotate(-4deg); }
 .stamp.super { left: 50%; top: 24%; color: var(--super); transform: translateX(-50%) rotate(-6deg); }
 .empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted); padding: 30px; }
 .empty .spin { width: 38px; height: 38px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--accent); animation: rot .8s linear infinite; margin: 0 auto 14px; }
@@ -161,3 +162,13 @@ a { color: var(--accent2); }
 .pop .btns { display: flex; flex-direction: column; gap: 10px; width: min(80vw, 320px); margin-top: 18px; }
 .pick-img { width: min(56vw, 240px); aspect-ratio: 2/3; object-fit: cover; border-radius: 16px; }
 #toast { position: fixed; left: 50%; bottom: calc(var(--bot) + 90px); transform: translateX(-50%); z-index: 200; background: #fff; color: #111; padding: 10px 16px; border-radius: 99px; font-weight: 600; font-size: 14px; max-width: 90vw; box-shadow: 0 8px 30px #000a; text-align: center; }
+
+/* tonight's pick */
+.pop.pick { background: #08080c; }
+.eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+.pick .tt { font-size: 24px; font-weight: 800; letter-spacing: -.02em; margin: 18px 0 4px; }
+.pick .why { font-size: 13.5px; color: var(--muted); margin: 8px 0 2px; }
+.pick-img { box-shadow: 0 24px 60px -18px #000; animation: rise .45s cubic-bezier(.2,.8,.3,1); }
+@keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+.btn.solid { background: var(--ink); color: var(--bg); }
+.love.plain { background: var(--panel2); color: var(--muted); }

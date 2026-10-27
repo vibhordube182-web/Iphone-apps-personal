@@ -14,7 +14,7 @@ export const GENRES = {
   10749: "Romance", 878: "Sci-Fi", 10770: "TV Movie", 53: "Thriller", 10752: "War", 37: "Western",
 };
 
-export const NOPE = -1, LIKE = 1, SUPER = 2;
+export const NOPE = -1, LIKE = 1, SUPER = 2, SEEN = 0; // SEEN = "already watched": says nothing about taste
 
 const ALPHA = 2;            // smoothing: a feature seen once is trusted only ~1/3 as much as one seen often
 const DECAY = 0.997;        // per swipe; the swipe 230 swipes ago counts half
@@ -49,7 +49,7 @@ export function featuresOf(m) {
 /* ---------- taste profile ---------- */
 
 export function buildProfile(records) {
-  const recs = [...records].sort((a, b) => (a.t || 0) - (b.t || 0));
+  const recs = [...records].filter((r) => r.r !== SEEN).sort((a, b) => (a.t || 0) - (b.t || 0));
   const n = recs.length;
   let sumW = 0, sumD = 0;
   recs.forEach((rec, i) => { const d = Math.pow(DECAY, n - 1 - i); sumW += rec.r * d; sumD += d; });
@@ -194,7 +194,7 @@ export function compatibility(mine, theirs) {
   let common = 0, agree = 0;
   for (const [id, a] of mine) {
     const b = theirs.get(id);
-    if (!b) continue;
+    if (!b || a.r === SEEN || b.r === SEEN) continue;
     common++;
     if (Math.sign(a.r) === Math.sign(b.r)) agree++;
   }

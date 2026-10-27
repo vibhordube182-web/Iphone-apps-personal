@@ -62,11 +62,17 @@ const assert = (c, m) => { if (!c) { console.error("FAIL:", m); process.exitCode
     const rows = await g.locator(".row").count(); assert(rows >= 1, `matches list shows ${rows} matches`);
     await g.waitForSelector(".row .pv img"); assert(true, "match rows show streaming service");
     await g.click(".row"); await g.waitForSelector(".sheet .cast-s .cm"); assert((await g.textContent(".sheet")).includes("Where to watch in Australia"), "detail sheet with providers and cast");
-    await g.click(".sheet [data-a=w]"); await g.waitForTimeout(200); await g.click(".sheet .x"); 
-    assert((await g.locator(".row.watched").count()) === 1, "watched toggle works");
+    await g.click(".sheet [data-a=w]"); await g.waitForTimeout(200); await g.click(".sheet .x"); await g.waitForTimeout(300);
+    assert((await g.locator("#v-matches .row").count()) === rows - 1, "marking a match as watched moves it out of Matches");
+    await g.$eval('[data-tab="watched"]', (e) => e.click()); await g.waitForSelector("#v-watched .row[data-id]");
+    assert((await g.locator("#v-watched .row[data-id]").count()) === 1, "...and into Watched together");
+    await g.$eval('[data-tab="matches"]', (e) => e.click());
     await g.click("#pick"); await g.waitForSelector(".pop .btn", { timeout: 6000 }); assert(true, "pick-for-us lands on a movie");
-    await g.screenshot({ path: "/tmp/rm-pick.png" });
-    await g.screenshot({ path: "/tmp/rm-pick.png" }); await g.evaluate(() => document.querySelector(".pop [data-a=d]")?.click());
+    await g.waitForTimeout(900); await g.screenshot({ path: "/tmp/rm-pick.png" });
+    await g.$eval(".pop [data-a=i]", (e) => e.click()); await g.waitForTimeout(600);
+    assert(await g.locator(".sheet").isVisible(), "Details from the pick screen stays open");
+    await g.click(".sheet .x"); await g.waitForTimeout(300);
+    await g.waitForTimeout(900); await g.screenshot({ path: "/tmp/rm-pick.png" }); await g.evaluate(() => document.querySelector(".pop [data-a=d]")?.click());
     for (let i = 0; i < 4; i++) await a.evaluate(() => document.querySelector(".pop [data-a=k]")?.click());
     await a.$eval('[data-tab=\"swipe\"]', (e) => e.click()); await a.screenshot({ path: "/tmp/rm-swipe.png" });
     await clear(a); await a.$eval('[data-tab=\"matches\"]', (e) => e.click()); await a.waitForSelector(".row"); await a.screenshot({ path: "/tmp/rm-matches.png" });
@@ -82,9 +88,20 @@ const assert = (c, m) => { if (!c) { console.error("FAIL:", m); process.exitCode
     await h.waitForSelector('.card[data-pos="0"]'); await h.waitForTimeout(6000);
     const mem = await a.evaluate(async (c) => Object.values((await (await fetch("https://reelmatch-687be-default-rtdb.firebaseio.com/rooms/" + c + "/members.json")).json()) || {}).map((m) => m.name).sort(), code);
     assert(mem.length === 2 && mem.includes("Partner"), "same name merges: members are " + mem.join(","));
+    const counts = await a.evaluate(async (c) => Object.values((await (await fetch("https://reelmatch-687be-default-rtdb.firebaseio.com/rooms/" + c + "/swipes.json")).json()) || {}).map((o) => Object.keys(o).length).sort((x, y) => y - x), code);
+    assert(counts.length === 2 && counts[0] >= 8, "no swipes lost on the server after the merge: " + counts.join(","));
     await clear(h); await h.$eval('[data-tab=\"likes\"]', (e) => e.click()); await h.waitForTimeout(500);
     assert((await h.locator("#v-likes .row").count()) >= 1, "re-added install gets the old swipes back");
     await c3.close();
+    await clear(a); await a.$eval('[data-tab="swipe"]', (e) => e.click()); await a.waitForSelector('.card[data-pos="0"]:not(.fly)');
+    const seenId = await a.getAttribute('.card[data-pos="0"]', "data-id");
+    await a.$eval("#b-seen", (e) => e.click()); await a.waitForTimeout(500);
+    await a.$eval('[data-tab="watched"]', (e) => e.click()); await a.waitForSelector(`#v-watched .row[data-id="${seenId}"]`);
+    assert(true, "swiping down marks a movie as already watched"); await a.screenshot({ path: "/tmp/rm-watched.png" });
+    await g.waitForTimeout(5000); await clear(g); await g.$eval('[data-tab="watched"]', (e) => e.click());
+    await g.waitForSelector(`#v-watched .row[data-id="${seenId}"]`); assert(true, "partner sees it under Watched together too");
+    assert(!(await g.evaluate((id) => [...document.querySelectorAll(".card")].some((c) => c.dataset.id === id), seenId)), "watched movie is out of the partner's deck");
+    assert(/user-scalable=no/.test(await a.evaluate(() => document.querySelector("meta[name=viewport]").content)), "zoom is disabled");
     // drag gesture
     await clear(a); await a.$eval('[data-tab=\"swipe\"]', (e) => e.click()); await a.waitForSelector('.card[data-pos="0"]:not(.fly)');
     const box = await a.locator('.card[data-pos="0"]').boundingBox(); const id0 = await a.getAttribute('.card[data-pos="0"]', "data-id");
@@ -93,5 +110,5 @@ const assert = (c, m) => { if (!c) { console.error("FAIL:", m); process.exitCode
     assert(rec && rec[1].r === -1, "drag left records a nope");
     await a.click("#b-undo"); await a.waitForTimeout(300); assert((await a.getAttribute('.card[data-pos="0"]', "data-id")) === id0, "undo brings the card back");
     assert(errs.length === 0, "no console errors " + errs.join(" | "));
-  } finally { await b.close(); srv.kill(); }
+  } catch (e) { console.log("page errors:", errs); try { console.log("G BODY", await g.evaluate(() => document.body.innerText.slice(0, 300))); } catch (_) {} throw e; } finally { await b.close(); srv.kill(); }
 })().catch((e) => { console.error(e.message); process.exit(1); });
