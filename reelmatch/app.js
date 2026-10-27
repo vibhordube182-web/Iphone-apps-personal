@@ -422,8 +422,19 @@ async function renderUs() {
   <div class="card2"><h3>Room</h3><p style="margin-top:0">Room code <b style="user-select:text">${esc(cfg.code)}</b>${room.enabled ? "" : " · <span class='muted'>sync is off (solo mode)</span>"}</p>
     ${room.enabled ? `<button class="btn alt" id="invite">Share invite link</button><div style="height:8px"></div>` : ""}
     <button class="btn alt" id="redo">Redo my swipes</button><div style="height:8px"></div><button class="btn alt" id="leave">Leave room / change settings</button>
-    <p class="credit">Build 4 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
+    <p class="credit" id="dbg">Build 5 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
   if (settings.onlyStreaming && !providerList) loadProviders();
+  showDebug();
+}
+function showDebug() {
+  const d = $("#dbg"); if (!d) return;
+  const probe = document.createElement("div");
+  probe.style.cssText = "position:fixed;visibility:hidden;top:0;left:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)";
+  document.body.appendChild(probe); const cs = getComputedStyle(probe);
+  const vv = window.visualViewport, app = $("#app").getBoundingClientRect(), tabs = $(".tabs").getBoundingClientRect();
+  const info = `inner ${innerWidth}x${innerHeight} · screen ${screen.width}x${screen.height} · vv ${vv ? Math.round(vv.width) + "x" + Math.round(vv.height) : "-"} · safe ${cs.paddingTop}/${cs.paddingBottom} · app ${Math.round(app.top)}-${Math.round(app.bottom)} · tabs ${Math.round(tabs.top)}-${Math.round(tabs.bottom)} · standalone ${!!navigator.standalone} · dpr ${devicePixelRatio}`;
+  probe.remove();
+  d.insertAdjacentHTML("afterend", `<p class="credit" style="user-select:text">${info}</p>`);
 }
 async function loadProviders() {
   providerList = lsGet("rm_providers", null);
