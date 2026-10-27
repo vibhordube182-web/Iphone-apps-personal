@@ -13,7 +13,12 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="AshKey">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="stylesheet" href="style.css">
+<script>
+  // iPhone Home Screen apps can report a layout height shorter than the screen. Pin the app to the bottom edge
+  // at full screen height (same trick as the Lyceum launch screen).
+  try { if (navigator.standalone) document.documentElement.style.setProperty("--sh", Math.max(screen.height, screen.width) + "px"); } catch (e) {}
+</script>
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 <div id="app" class="hidden">
