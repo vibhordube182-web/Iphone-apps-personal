@@ -8,7 +8,7 @@ on:
     - cron: "7 * * * *"
   push:
     branches: [main]
-    paths: ["web/**", "scripts/**", ".github/workflows/daily-edition.yml"]
+    paths: ["web/**", "reelmatch/**", "scripts/**", ".github/workflows/daily-edition.yml"]
   workflow_dispatch:
     inputs:
       send_alert:
@@ -39,9 +39,14 @@ jobs:
       - name: Fetch the news
         run: python scripts/fetch_news.py
       - uses: actions/configure-pages@v5
+      - name: Assemble the site (Lyceum at the root, ReelMatch under /reelmatch/)
+        run: |
+          mkdir -p _site/reelmatch
+          cp -r web/. _site/
+          rsync -a --exclude test --exclude server.js --exclude data.json reelmatch/ _site/reelmatch/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: web
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
 
