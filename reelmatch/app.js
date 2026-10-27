@@ -422,7 +422,7 @@ async function renderUs() {
   <div class="card2"><h3>Room</h3><p style="margin-top:0">Room code <b style="user-select:text">${esc(cfg.code)}</b>${room.enabled ? "" : " · <span class='muted'>sync is off (solo mode)</span>"}</p>
     ${room.enabled ? `<button class="btn alt" id="invite">Share invite link</button><div style="height:8px"></div>` : ""}
     <button class="btn alt" id="redo">Redo my swipes</button><div style="height:8px"></div><button class="btn alt" id="leave">Leave room / change settings</button>
-    <p class="credit">Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
+    <p class="credit">Build 4 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
   if (settings.onlyStreaming && !providerList) loadProviders();
 }
 async function loadProviders() {
