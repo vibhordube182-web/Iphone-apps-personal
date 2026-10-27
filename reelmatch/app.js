@@ -28,12 +28,13 @@ function toast(msg, ms = 2600) {
 let cfg = lsGet("rm_cfg", null);            // { name, key, db, code, uid }
 let settings = Object.assign({ mix: 0.6, onlyStreaming: false, services: [] }, lsGet("rm_settings", {}));
 let tmdb, room;
-let mySwipes = new Map(), theirSwipes = new Map(), watched = new Set();
+let mySwipes = new Map(), theirSwipes = new Map(), watched = new Set(), watchedAt = new Map();
 let members = {}, partnerUid = null, partnerName = "";
 const movies = new Map();                    // id -> movie (list-level, enriched with details when loaded)
 const dirty = new Set();
 let deck = [], served = [], undoStack = [];
-let filling = false, cursor = 0, seeded = new Set(), providerList = null;
+const tomb = new Set(); // swipes deleted this session
+let lastRefillToast = 0, filling = false, cursor = 0, seeded = new Set(), providerList = null;
 const inflight = new Map();
 let seenMatches = new Set(), tab = "swipe", pollTimer, lastSyncOk = 0;
 
@@ -64,7 +65,7 @@ function flushCache() {
   if (!idb || !dirty.size) return;
   try {
     const st = idb.transaction("movies", "readwrite").objectStore("movies");
-    for (const id of dirty) { const m = movies.get(id); if (m) st.put(m); }
+    for (const id of dirty) { const m = movies.get(id); if (m) { const { detailsErr, ...clean } = m; st.put(clean); } }
   } catch (_) {}
   dirty.clear();
 }
@@ -85,7 +86,7 @@ async function ensureDetails(id, maxAgeH = 12) {
   if (inflight.has(id)) return inflight.get(id);
   const attempt = async (n) => { try { return await tmdb.details(id); } catch (e) { if (n < 2 && !/API key/.test(e.message)) { await sleep(1200 * (n + 1)); return attempt(n + 1); } throw e; } };
   const p = attempt(0).then((d) => { const merged = remember(d); delete merged.detailsErr; onDetails(merged); return merged; })
-    .catch(() => { const cur = movies.get(id); if (cur) { cur.detailsErr = true; onDetails(cur); } return cur || null; })
+    .catch(() => { const cur = movies.get(id); if (cur) { cur.detailsErr = true; cur.detailsErrAt = Date.now(); onDetails(cur, true); } return cur || null; })
     .finally(() => inflight.delete(id));
   inflight.set(id, p);
   return p;
@@ -101,7 +102,7 @@ const passes = (m) => {
 };
 function unseen() {
   const inDeck = new Set(deck.map((m) => m.id));
-  return [...movies.values()].filter((m) => poolSig(m) && m.poster && m.overview && !mySwipes.has(m.id) && !inDeck.has(m.id) && passes(m));
+  return [...movies.values()].filter((m) => poolSig(m) && m.poster && m.overview && !mySwipes.has(m.id) && !watched.has(m.id) && !inDeck.has(m.id) && passes(m));
 }
 const ctx = () => ({
   mine: T.buildProfile([...mySwipes.values()]),
@@ -135,11 +136,11 @@ async function refill() {
     await seedRecommendations();
     let guard = 0;
     while (unseen().length < 45 && guard++ < 4 && cursor < 400) {
-      const list = await tmdb.source(cursor++, filterOpts());
-      lsSet("rm_cursor_" + sig(), cursor);
+      const list = await tmdb.source(cursor, filterOpts()); // throws on failure, so the page is retried, not skipped
+      cursor++; lsSet("rm_cursor_" + sig(), cursor);
       for (const m of list) { const old = movies.get(m.id); remember(m, { sig: sig(), recCount: old && old.recCount }); added++; }
     }
-  } catch (e) { toast(e.message, 4000); if (/API key/.test(e.message)) showSetup(e.message); }
+  } catch (e) { if (/API key/.test(e.message)) { toast(e.message, 4000); showSetup(e.message); } else if (Date.now() - lastRefillToast > 30000) { lastRefillToast = Date.now(); toast("Having trouble reaching the movie database. Retrying…", 3000); } }
   filling = false;
   return added;
 }
@@ -179,18 +180,20 @@ function cardEl(m) {
   const el = document.createElement("div");
   el.className = "card"; el.dataset.id = m.id;
   el.innerHTML = `<div class="fallback">${esc(m.title)}</div><img class="poster" alt="" draggable="false" src="${poster(m.poster)}">
-    <div class="shade"></div><div class="stamp like">LIKE</div><div class="stamp nope">NOPE</div><div class="stamp super">SUPER</div>
+    <div class="shade"></div><div class="stamp like">LIKE</div><div class="stamp nope">NOPE</div><div class="stamp super">SUPER</div><div class="stamp seen">ALREADY WATCHED</div>
     <div class="info">${infoHtml(m)}</div>`;
   $(".poster", el).onerror = (e) => e.target.remove();
   attachDrag(el);
   return el;
 }
-function onDetails(m) {
+function onDetails(m, failed) {
   const c = $(`.card[data-id="${m.id}"] .info`);
   if (c) c.innerHTML = infoHtml(m);
   if (document.querySelector("#overlay .sheet") && openSheetId === m.id) buildSheet();
+  if (failed) return; // don't re-render lists on a failure: that would immediately re-request and loop
   if (tab === "matches") scheduleMatches();
   if (tab === "likes") scheduleLikes();
+  if (tab === "watched") scheduleWatched();
 }
 function renderDeck() {
   const box = $("#deck");
@@ -214,6 +217,7 @@ function attachDrag(card) {
     $(".stamp.like", card).style.opacity = Math.min(1, Math.max(0, dx / 100));
     $(".stamp.nope", card).style.opacity = Math.min(1, Math.max(0, -dx / 100));
     $(".stamp.super", card).style.opacity = dy < -30 && Math.abs(dy) > Math.abs(dx) ? Math.min(1, -dy / 110) : 0;
+    $(".stamp.seen", card).style.opacity = dy > 30 && Math.abs(dy) > Math.abs(dx) ? Math.min(1, dy / 110) : 0;
   };
   card.addEventListener("pointerdown", (e) => {
     if (card.dataset.pos !== "0" || card.classList.contains("fly")) return;
@@ -228,21 +232,26 @@ function attachDrag(card) {
     if (!on) return; on = false; card.classList.remove("drag");
     const dt = Math.max(1, Date.now() - t0), v = Math.abs(dx) / dt;
     if (Math.abs(dx) < 8 && Math.abs(dy) < 8 && dt < 400) { card.style.transform = ""; return openSheet(Number(card.dataset.id), "deck"); }
-    if (dx > 110 || (v > 0.6 && dx > 40)) fly(card, 1);
-    else if (dx < -110 || (v > 0.6 && dx < -40)) fly(card, -1);
+    const horiz = Math.abs(dx) > Math.abs(dy);
+    if (horiz && (dx > 110 || (v > 0.6 && dx > 40))) fly(card, 1);
+    else if (horiz && (dx < -110 || (v > 0.6 && dx < -40))) fly(card, -1);
     else if (dy < -120 && Math.abs(dy) > Math.abs(dx)) fly(card, 2);
+    else if (dy > 120 && Math.abs(dy) > Math.abs(dx)) fly(card, 3);
     else { card.style.transform = ""; dx = dy = 0; $$(".stamp", card).forEach((s) => (s.style.opacity = 0)); }
   };
-  card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+  card.addEventListener("pointerup", end);
+  card.addEventListener("pointercancel", () => { // a system gesture took over: snap back, never commit
+    if (!on) return; on = false; dx = dy = 0; card.classList.remove("drag"); card.style.transform = ""; $$(".stamp", card).forEach((s) => (s.style.opacity = 0));
+  });
 }
-function fly(card, r) {
+function fly(card, r) { // 1 like, -1 nope, 2 super like (up), 3 already watched (down)
   if (!card || card.classList.contains("fly")) return;
   const id = Number(card.dataset.id), m = movies.get(id);
   card.classList.remove("drag"); card.classList.add("fly");
   const W = window.innerWidth;
-  const stamp = $(r > 1 ? ".stamp.super" : r > 0 ? ".stamp.like" : ".stamp.nope", card); if (stamp) stamp.style.opacity = 1;
-  card.style.transform = r === 2 ? "translate(0,-110vh) scale(.92)" : `translate(${(r > 0 ? 1 : -1) * W * 1.4}px, 60px) rotate(${(r > 0 ? 1 : -1) * 24}deg)`;
-  setTimeout(() => { card.remove(); commitSwipe(m, r === 2 ? T.SUPER : r > 0 ? T.LIKE : T.NOPE); }, 260);
+  const stamp = $(r === 3 ? ".stamp.seen" : r === 2 ? ".stamp.super" : r > 0 ? ".stamp.like" : ".stamp.nope", card); if (stamp) stamp.style.opacity = 1;
+  card.style.transform = r === 2 ? "translate(0,-110vh) scale(.92)" : r === 3 ? "translate(0,110vh) scale(.92)" : `translate(${(r > 0 ? 1 : -1) * W * 1.4}px, 60px) rotate(${(r > 0 ? 1 : -1) * 24}deg)`;
+  setTimeout(() => { card.remove(); commitSwipe(m, r === 3 ? T.SEEN : r === 2 ? T.SUPER : r > 0 ? T.LIKE : T.NOPE); }, 260);
 }
 function topCard() { return $('.card[data-pos="0"]:not(.fly)'); }
 
@@ -250,8 +259,9 @@ function topCard() { return $('.card[data-pos="0"]:not(.fly)'); }
 function commitSwipe(m, r) {
   if (!m) return;
   const rec = T.makeRecord(movies.get(m.id) || m, r);
-  mySwipes.set(m.id, rec); lsSet("rm_swipes_" + cfg.code, [...mySwipes]);
+  tomb.delete(m.id); mySwipes.set(m.id, rec); lsSet("rm_swipes_" + cfg.code, [...mySwipes]);
   room.swipe(m.id, rec);
+  if (r === T.SEEN) { watched.add(m.id); watchedAt.set(m.id, Date.now()); room.watched(m.id, true); }
   undoStack.push(m.id);
   deck = deck.filter((x) => x.id !== m.id);
   const th = theirSwipes.get(m.id) || theirSwipes.get(String(m.id));
@@ -261,7 +271,9 @@ function commitSwipe(m, r) {
 function undo() {
   const id = undoStack.pop();
   if (id == null) return toast("Nothing to undo");
-  mySwipes.delete(id); lsSet("rm_swipes_" + cfg.code, [...mySwipes]); room.unswipe(id);
+  const th = theirSwipes.get(id) || theirSwipes.get(String(id));
+  if (mySwipes.get(id) && mySwipes.get(id).r === T.SEEN && !(th && th.r === T.SEEN)) { watched.delete(id); watchedAt.delete(id); room.watched(id, false); }
+  mySwipes.delete(id); tomb.add(id); lsSet("rm_swipes_" + cfg.code, [...mySwipes]); room.unswipe(id);
   const m = movies.get(id); if (m) { deck.unshift(m); served = served.filter((x) => x.id !== id); }
   seenMatches.delete(id); lsSet("rm_seenm_" + cfg.code, [...seenMatches]);
   renderDeck(); updateBadge();
@@ -280,14 +292,14 @@ function celebrate(ids) {
 async function showMatchPopup(id) {
   const m = (await ensureDetails(id)) || movies.get(id); if (!m) return;
   const ov = $("#overlay"); ov.classList.remove("hidden");
-  const old = $("#overlay .sheet"); if (old) old.parentElement.remove();
+  ov.innerHTML = ""; ov.onclick = null; openSheetId = null;
   const d = document.createElement("div"); d.className = "pop";
   d.innerHTML = `<h2>It's a match!</h2><img class="pp" src="${poster(m.poster)}" alt=""><div class="tt">${esc(m.title)}</div>
     <div class="meta muted">You and ${esc(partnerName || "your partner")} both want to watch this</div><div class="prov">${provHtml(m)}</div>
     <div class="btns"><button class="btn" data-a="m">See all matches</button><button class="btn alt" data-a="k">Keep swiping</button></div>`;
   ov.appendChild(d); navigator.vibrate && navigator.vibrate([60, 40, 60]);
   d.onclick = (e) => {
-    const a = e.target.dataset.a; if (!a) return;
+    e.stopPropagation(); const a = e.target.dataset.a; if (!a) return;
     d.remove(); closeOverlayIfEmpty();
     if (popupQueue.length) showMatchPopup(popupQueue.shift()); else if (a === "m") setTab("matches");
   };
@@ -316,11 +328,9 @@ function buildSheet() {
     if (!where) where = `<p class="muted">Not available to stream, rent or buy in Australia right now.</p>`;
   }
   const cast = (m.cast || []).map((c) => `<div class="cm">${c.photo ? `<img src="${profilePic(c.photo)}" alt="" loading="lazy">` : `<div class="ph"></div>`}<b>${esc(c.name)}</b><span>${esc(c.character || "")}</span></div>`).join("");
-  const isMatch = mySwipes.get(m.id)?.r > 0 && (theirSwipes.get(m.id) || theirSwipes.get(String(m.id)))?.r > 0;
   const bar = openSheetMode === "deck"
-    ? `<button class="act nope" data-a="n"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="act super" data-a="s"><svg viewBox="0 0 24 24" class="fill"><path d="m12 3 2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.3 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z"/></svg></button><button class="act like" data-a="l"><svg viewBox="0 0 24 24" class="fill"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg></button>`
-    : (isMatch ? `<button class="btn sm ${watched.has(m.id) ? "alt" : ""}" data-a="w">${watched.has(m.id) ? "Mark as not watched" : "✓ We've watched it"}</button>` : "")
-      + (openSheetMode === "likes" ? `<button class="btn sm alt" data-a="rm">Remove from my likes</button>` : "");
+    ? `<button class="act nope" data-a="n" aria-label="Nope"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><button class="act super" data-a="s" aria-label="Super like"><svg viewBox="0 0 24 24" class="fill"><path d="m12 3 2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.3 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z"/></svg></button><button class="act like" data-a="l" aria-label="Like"><svg viewBox="0 0 24 24" class="fill"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg></button><button class="act small" data-a="e" aria-label="Already watched"><svg viewBox="0 0 24 24"><path d="M3 12s3.5-6.5 9-6.5S21 12 21 12s-3.5 6.5-9 6.5S3 12 3 12z"/><circle cx="12" cy="12" r="2.6"/></svg></button>`
+    : `<button class="btn sm ${watched.has(m.id) ? "alt" : ""}" data-a="w">${watched.has(m.id) ? "Remove from watched" : "Mark as watched"}</button>` + (openSheetMode === "likes" ? `<button class="btn sm alt" data-a="rm">Remove from my likes</button>` : "");
   const root = document.createElement("div");
   root.innerHTML = `<div class="scrim" data-a="x"></div><div class="sheet">
     <button class="x" data-a="x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
@@ -331,7 +341,7 @@ function buildSheet() {
       <p class="overview">${esc(m.overview)}</p>
       <h3>Where to watch in Australia</h3>${where}<div class="credit">Streaming data by JustWatch</div>
       ${cast ? `<h3>Cast${m.directorName ? ` · Directed by ${esc(m.directorName)}` : ""}</h3><div class="cast-s">${cast}</div>` : !m.detailsAt ? `<h3>Cast</h3><span class="skel"></span>` : ""}
-      <div class="links">${m.trailer ? `<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=${m.trailer}">▶ Trailer</a>` : ""}${p && p.link ? `<a target="_blank" rel="noopener" href="${esc(p.link)}">JustWatch</a>` : ""}${m.imdb ? `<a target="_blank" rel="noopener" href="https://www.imdb.com/title/${m.imdb}/">IMDb</a>` : ""}</div>
+      <div class="links">${m.trailer ? `<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=${m.trailer}">Watch trailer</a>` : ""}${p && p.link ? `<a target="_blank" rel="noopener" href="${esc(p.link)}">JustWatch</a>` : ""}${m.imdb ? `<a target="_blank" rel="noopener" href="https://www.imdb.com/title/${m.imdb}/">IMDb</a>` : ""}</div>
     </div>${bar ? `<div class="bar2">${bar}</div>` : ""}</div>`;
   while (root.firstChild) ov.appendChild(root.firstChild);
   const sh = $(".sheet", ov); sh.scrollTop = scroll;
@@ -341,17 +351,26 @@ function buildSheet() {
     if (a === "retry") { delete m.detailsErr; buildSheet(); return ensureDetails(m.id, 0); }
     if (a === "rm") { removeLike(m.id); return closeSheet(); }
     if (a === "w") { toggleWatched(m.id); return buildSheet(); }
-    const r = a === "l" ? T.LIKE : a === "n" ? T.NOPE : T.SUPER;
+    const dir = a === "l" ? 1 : a === "n" ? -1 : a === "e" ? 3 : 2;
     closeSheet(); const c = $(`.card[data-id="${m.id}"]`);
-    if (c && c.dataset.pos === "0") fly(c, r === T.SUPER ? 2 : r > 0 ? 1 : -1);
+    if (c && c.dataset.pos === "0") fly(c, dir);
   };
 }
 function closeSheet() { openSheetId = null; $("#overlay").innerHTML = ""; $("#overlay").classList.add("hidden"); if (popupQueue.length) showMatchPopup(popupQueue.shift()); }
 function toggleWatched(id) {
-  const on = !watched.has(id); on ? watched.add(id) : watched.delete(id); room.watched(id, on); if (tab === "matches") renderMatches();
+  const on = !watched.has(id);
+  if (on) { watched.add(id); watchedAt.set(id, Date.now()); }
+  else {
+    watched.delete(id); watchedAt.delete(id);
+    const mine = mySwipes.get(id); // if I marked it watched by swiping down, put it back in my pool
+    if (mine && mine.r === T.SEEN) { mySwipes.delete(id); tomb.add(id); lsSet("rm_swipes_" + cfg.code, [...mySwipes]); room.unswipe(id); }
+  }
+  room.watched(id, on);
+  if (tab === "matches") renderMatches(); if (tab === "likes") renderLikes(); if (tab === "watched") renderWatched();
+  if (!on) fillDeck();
 }
 function removeLike(id) {
-  mySwipes.delete(id); lsSet("rm_swipes_" + cfg.code, [...mySwipes]); room.unswipe(id);
+  mySwipes.delete(id); tomb.add(id); lsSet("rm_swipes_" + cfg.code, [...mySwipes]); room.unswipe(id);
   seenMatches.delete(id); lsSet("rm_seenm_" + cfg.code, [...seenMatches]);
   toast("Removed. It can show up in your deck again."); renderLikes(); updateBadge(); fillDeck();
 }
@@ -361,8 +380,8 @@ let svcFilter = "all", matchTimer;
 const scheduleMatches = () => { clearTimeout(matchTimer); matchTimer = setTimeout(() => tab === "matches" && !openSheetId && renderMatches(), 150); };
 function renderMatches() {
   const v = $("#v-matches"); const scrollTop = v.scrollTop;
-  const list = matches();
-  list.forEach((x) => { if (!movies.get(x.id)?.detailsAt) ensureDetails(x.id, 12); else if (Date.now() - movies.get(x.id).detailsAt > 12 * 3.6e6) ensureDetails(x.id, 12); });
+  const list = matches().filter((x) => !watched.has(x.id));
+  list.forEach((x) => { const mv = movies.get(x.id); if (mv && mv.detailsErr) return; if (!mv?.detailsAt || Date.now() - mv.detailsAt > 12 * 3.6e6) ensureDetails(x.id, 12); });
   const counts = new Map(); let none = 0;
   for (const x of list) { const s = streamers(movies.get(x.id) || {}); if (!s.length) none++; s.forEach((p) => counts.set(p.id, { p, n: (counts.get(p.id)?.n || 0) + 1 })); }
   const chips = [`<button class="chip ${svcFilter === "all" ? "on" : ""}" data-f="all">All ${list.length}</button>`]
@@ -372,39 +391,61 @@ function renderMatches() {
     const s = streamers(movies.get(x.id) || {});
     return svcFilter === "all" || (svcFilter === "none" ? !s.length : s.some((p) => String(p.id) === String(svcFilter)));
   });
-  shown = [...shown.filter((x) => !watched.has(x.id)), ...shown.filter((x) => watched.has(x.id))];
   const rows = shown.map((x) => {
     const m = movies.get(x.id); if (!m) return "";
     const s = streamers(m);
     const pv = !m.providers ? `<span class="skel"></span>` : s.length ? s.slice(0, 5).map((p) => `<img src="${logo(p.logo)}" alt="${esc(p.name)}">`).join("") + `<span>${esc(s.slice(0, 2).map((p) => p.name).join(", "))}</span>` : `<span>${[...m.providers.rent, ...m.providers.buy].length ? "Rent / buy only" : "Not available in AU"}</span>`;
-    return `<div class="row ${watched.has(x.id) ? "watched" : ""}" data-id="${x.id}">
+    return `<div class="row" data-id="${x.id}">
       <img class="th" src="${poster(m.poster, "w342")}" alt="" loading="lazy">
-      <div><div class="t">${esc(m.title)}</div><div class="m">${m.year} · ${esc(genreNames(m, 2).join(", "))} · ★ ${m.vote.toFixed(1)}${watched.has(x.id) ? " · watched" : ""}</div><div class="pv">${pv}</div></div>
-      ${x.level >= 2 ? `<span class="love max">♥ Both super</span>` : x.level > 1 ? `<span class="love">★ Super</span>` : ""}</div>`;
+      <div><div class="t">${esc(m.title)}</div><div class="m">${m.year} · ${esc(genreNames(m, 2).join(", "))} · ★ ${m.vote.toFixed(1)}</div><div class="pv">${pv}</div></div>
+      ${x.level >= 2 ? `<span class="love max">Both super-liked</span>` : x.level > 1 ? `<span class="love">Super-liked</span>` : ""}</div>`;
   }).join("");
   v.innerHTML = `<h1 class="page">Your matches</h1><p class="sub">${list.length ? `Movies you and ${esc(partnerName || "your partner")} both liked.` : "Nothing yet. Keep swiping — the moment you both like the same movie it lands here."}</p>
-    ${list.length ? `<div class="chips">${chips.join("")}</div><button class="btn" id="pick" style="margin-bottom:14px">🎲 Pick one for us</button>` : ""}${rows}`;
+    ${list.length ? `<div class="chips">${chips.join("")}</div><button class="btn solid" id="pick" style="margin-bottom:14px">Choose for us</button>` : ""}${rows}`;
   v.scrollTop = scrollTop;
 }
+let pickedBefore = new Set();
 function pickForUs() {
-  const cands = matches().filter((x) => !watched.has(x.id)).filter((x) => {
+  let cands = matches().filter((x) => !watched.has(x.id)).filter((x) => {
     const s = streamers(movies.get(x.id) || {});
     return svcFilter === "all" || (svcFilter === "none" ? !s.length : s.some((p) => String(p.id) === String(svcFilter)));
-  });
+  }).filter((x) => movies.get(x.id));
   if (!cands.length) return toast("No unwatched matches in this filter");
-  const win = T.weightedPick(cands, (x) => x.level + (movies.get(x.id)?.vote || 6) / 10);
+  const fresh = cands.filter((x) => !pickedBefore.has(x.id));
+  if (!fresh.length) pickedBefore = new Set(); else cands = fresh;
+  // favour super-likes, higher-rated films and anything you can stream right now
+  const win = T.weightedPick(cands, (x) => x.level + (movies.get(x.id).vote || 6) / 10 + (streamers(movies.get(x.id)).length ? 0.5 : 0));
+  pickedBefore.add(win.id);
+  const m = movies.get(win.id);
+  const why = win.level >= 2 ? "You both super-liked this one." : win.level > 1 ? "One of you super-liked it and the other liked it." : `You both liked it, and it's rated ${m.vote.toFixed(1)}.`;
   const ov = $("#overlay"); ov.classList.remove("hidden"); ov.innerHTML = "";
-  const d = document.createElement("div"); d.className = "pop"; ov.appendChild(d);
-  let i = 0, steps = 14;
-  const tick = async () => {
-    const x = i++ < steps ? cands[Math.floor(Math.random() * cands.length)] : win;
-    const m = movies.get(x.id);
-    const last = i > steps;
-    d.innerHTML = `<h2>${last ? "Tonight we watch…" : "Choosing…"}</h2><img class="pick-img" src="${poster(m.poster, "w500")}" alt="">${last ? `<div class="tt">${esc(m.title)}</div><div class="prov">${provHtml(m)}</div><div class="btns"><button class="btn" data-a="d">Let's watch it</button><button class="btn alt" data-a="r">Pick again</button><button class="btn alt" data-a="i">Details</button></div>` : ""}`;
-    if (!last) setTimeout(tick, 70 + i * 14);
-    else d.onclick = (e) => { const a = e.target.dataset.a; if (a === "r") pickForUs(); else if (a === "i") openSheet(m.id, "match"); else if (a === "d") { closeSheet(); } };
-  };
-  tick();
+  const d = document.createElement("div"); d.className = "pop pick"; ov.appendChild(d);
+  d.innerHTML = `<div class="eyebrow">Tonight's pick</div><img class="pick-img" src="${poster(m.poster, "w500")}" alt="">
+    <div class="tt">${esc(m.title)}</div><div class="muted">${[m.year, fmtRuntime(m), genreNames(m, 2).join(", ")].filter(Boolean).join(" · ")}</div>
+    <div class="why">${why}</div><div class="prov">${provHtml(m)}</div>
+    <div class="btns"><button class="btn solid" data-a="d">Sounds good</button><button class="btn alt" data-a="r">Show another</button><button class="btn alt" data-a="i">Details</button></div>`;
+  d.onclick = (e) => { e.stopPropagation(); const x = e.target.dataset.a; if (x === "r") pickForUs(); else if (x === "i") openSheet(m.id, "match"); else if (x === "d") closeSheet(); };
+  ensureDetails(m.id, 12);
+}
+
+/* ============ Watched together tab ============ */
+let watchedTimer;
+const scheduleWatched = () => { clearTimeout(watchedTimer); watchedTimer = setTimeout(() => tab === "watched" && !openSheetId && renderWatched(), 200); };
+function renderWatched() {
+  const v = $("#v-watched"), scrollTop = v.scrollTop;
+  const ids = [...watched].sort((a, b) => (watchedAt.get(b) || 0) - (watchedAt.get(a) || 0));
+  loadDetailsGently(ids.filter((id) => !movies.get(id)));
+  const theirs = (id) => theirSwipes.get(id) || theirSwipes.get(String(id));
+  const rows = ids.map((id) => {
+    const m = movies.get(id);
+    if (!m) return `<div class="row"><div class="th"></div><div><div class="t"><span class="skel"></span></div></div></div>`;
+    const when = watchedAt.get(id) ? new Date(watchedAt.get(id)).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" }) : "";
+    const both = mySwipes.get(id)?.r > 0 && theirs(id)?.r > 0;
+    return `<div class="row" data-id="${id}"><img class="th" src="${poster(m.poster, "w342")}" alt="" loading="lazy">
+      <div><div class="t">${esc(m.title)}</div><div class="m">${m.year} · ${esc(genreNames(m, 2).join(", "))} · ★ ${m.vote.toFixed(1)}</div><div class="m" style="margin:0">${when ? "Watched " + when : "Watched"}</div></div>${both ? `<span class="love plain">Matched</span>` : ""}</div>`;
+  }).join("");
+  v.innerHTML = `<h1 class="page">Watched together</h1><p class="sub">${ids.length ? `${ids.length} ${ids.length === 1 ? "movie" : "movies"} you've already seen. They won't show up in either of your decks.` : "Nothing here yet. Swipe a movie down, or tap the eye button, to mark it as already watched."}</p>${rows}`;
+  v.scrollTop = scrollTop;
 }
 
 /* ============ My likes tab ============ */
@@ -415,6 +456,7 @@ function loadDetailsGently(ids) { // a few at a time, so a long list doesn't flo
   const next = () => {
     while (detailActive < 3 && detailQueue.length) {
       const id = detailQueue.shift(), m = movies.get(id);
+      if (m && m.detailsErr) continue;
       if (m && m.detailsAt && Date.now() - m.detailsAt < 24 * 3.6e6) continue;
       detailActive++; ensureDetails(id, 24).finally(() => { detailActive--; next(); });
     }
@@ -441,7 +483,7 @@ function renderLikes() {
   const rows = shown.map((x) => {
     const m = movies.get(x.id), s = streamers(m), t = theirs(x.id);
     const pv = !m.providers ? (m.detailsErr ? `<span>Couldn't load streaming info</span>` : `<span class="skel"></span>`) : s.length ? s.slice(0, 5).map((p) => `<img src="${logo(p.logo)}" alt="${esc(p.name)}">`).join("") + `<span>${esc(s.slice(0, 2).map((p) => p.name).join(", "))}</span>` : `<span>${[...m.providers.rent, ...m.providers.buy].length ? "Rent / buy only" : "Not available in AU"}</span>`;
-    const badge = t && t.r > 0 ? `<span class="love max">♥ Matched</span>` : x.super ? `<span class="love">★ Super</span>` : "";
+    const badge = t && t.r > 0 ? `<span class="love max">Matched</span>` : x.super ? `<span class="love">Super-liked</span>` : "";
     return `<div class="row" data-id="${x.id}"><img class="th" src="${poster(m.poster, "w342")}" alt="" loading="lazy">
       <div><div class="t">${esc(m.title)}</div><div class="m">${m.year} · ${esc(genreNames(m, 2).join(", "))} · ★ ${m.vote.toFixed(1)}</div><div class="pv">${pv}</div></div>${badge}</div>`;
   }).join("");
@@ -478,19 +520,8 @@ async function renderUs() {
   <div class="card2"><h3>Room</h3><p style="margin-top:0">Room code <b style="user-select:text;font-size:20px;letter-spacing:.04em">${esc(cfg.code)}</b>${room.enabled ? "" : " · <span class='muted'>sync is off (solo mode)</span>"}</p>${room.enabled ? `<p class="muted" style="font-size:12px;margin-top:-4px">To join, your partner opens the app, types her name and this code.</p>` : ""}
     ${room.enabled ? `<button class="btn alt" id="invite">Share invite link</button><div style="height:8px"></div>` : ""}
     <button class="btn alt" id="redo">Redo my swipes</button><div style="height:8px"></div><button class="btn alt" id="leave">Leave room / change settings</button>
-    <p class="credit" id="dbg">Build 8 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
+    <p class="credit" >Build 10 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
   if (settings.onlyStreaming && !providerList) loadProviders();
-  showDebug();
-}
-function showDebug() {
-  const d = $("#dbg"); if (!d) return;
-  const probe = document.createElement("div");
-  probe.style.cssText = "position:fixed;visibility:hidden;top:0;left:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)";
-  document.body.appendChild(probe); const cs = getComputedStyle(probe);
-  const vv = window.visualViewport, app = $("#app").getBoundingClientRect(), tabs = $(".tabs").getBoundingClientRect();
-  const info = `inner ${innerWidth}x${innerHeight} · screen ${screen.width}x${screen.height} · vv ${vv ? Math.round(vv.width) + "x" + Math.round(vv.height) : "-"} · safe ${cs.paddingTop}/${cs.paddingBottom} · app ${Math.round(app.top)}-${Math.round(app.bottom)} · tabs ${Math.round(tabs.top)}-${Math.round(tabs.bottom)} · standalone ${!!navigator.standalone} · dpr ${devicePixelRatio}`;
-  probe.remove();
-  d.insertAdjacentHTML("afterend", `<p class="credit" style="user-select:text">${info}</p>`);
 }
 async function loadProviders() {
   providerList = lsGet("rm_providers", null);
@@ -516,8 +547,11 @@ document.addEventListener("input", (e) => {
 document.addEventListener("change", (e) => { if (e.target.id === "mix") { deck = deck.slice(0, 1); $$("#deck .card").forEach((c) => c.dataset.pos !== "0" && c.remove()); fillDeck(); } });
 
 /* ============ sync ============ */
+let syncing = false, lastBeat = 0, freshInstall = false;
 async function syncNow() {
-  if (!room.enabled) return;
+  if (!room.enabled || syncing) return;
+  syncing = true;
+  if (Date.now() - lastBeat > 45000) { lastBeat = Date.now(); room.setName(cfg.name); }
   try {
     room.flush();
     const snap = await room.snapshot();
@@ -531,12 +565,15 @@ async function syncNow() {
       const twins = Object.keys(members).filter((u) => u !== cfg.uid && same(u));
       if (twins.length) {
         const canon = [cfg.uid, ...twins].sort()[0];
-        for (const u of twins) for (const [k, v] of Object.entries(sw[u] || {})) if (!mySwipes.has(Number(k))) mySwipes.set(Number(k), v);
+        let merged = false;
+        for (const u of twins) for (const [k, v] of Object.entries(sw[u] || {})) if (!mySwipes.has(Number(k))) { mySwipes.set(Number(k), v); merged = true; }
+        if (merged || canon === cfg.uid) room.putMany(mySwipes); // never delete a twin's copy before ours is saved
         if (canon !== cfg.uid) {
           const old = cfg.uid;
           room.outbox = room.outbox.filter((o) => !o.path.includes("/" + old)); room.save();
           cfg.uid = canon; room.uid = canon; lsSet("rm_cfg", cfg);
-          room.setName(cfg.name); for (const [k, v] of mySwipes) room.swipe(k, v);
+          room.setName(cfg.name);
+          room.putMany(mySwipes);
           room.forget(old); delete members[old]; delete sw[old];
         }
         for (const u of twins.filter((x) => x !== canon)) { room.forget(u); delete members[u]; delete sw[u]; }
@@ -545,10 +582,21 @@ async function syncNow() {
       partnerUid = Object.keys(members).find((u) => u !== cfg.uid && !same(u)) || null;
       partnerName = partnerUid ? members[partnerUid].name : "";
       theirSwipes = new Map(partnerUid && sw[partnerUid] ? Object.entries(sw[partnerUid]).map(([k, v]) => [Number(k), v]) : []);
-      for (const [k, v] of Object.entries(sw[cfg.uid] || {})) if (!mySwipes.has(Number(k)) && !room.outbox.some((o) => o.path === `swipes/${cfg.uid}/${k}`)) mySwipes.set(Number(k), v);
+      for (const [k, v] of Object.entries(sw[cfg.uid] || {})) if (!mySwipes.has(Number(k)) && !tomb.has(Number(k)) && !room.outbox.some((o) => o.path === `swipes/${cfg.uid}/${k}`)) mySwipes.set(Number(k), v);
       watched = new Set(Object.keys(snap.watched || {}).map(Number));
+      watchedAt = new Map(Object.entries(snap.watched || {}).map(([k, v]) => [Number(k), typeof v === "number" ? v : 0]));
+      // a movie I marked watched that someone un-watched: give it back to my deck instead of hiding it forever
+      for (const [id, rec] of [...mySwipes]) if (rec.r === T.SEEN && !watched.has(id) && !room.outbox.some((o) => o.path === `watched/${id}`)) { mySwipes.delete(id); tomb.add(id); room.unswipe(id); }
+      if (tab === "watched") scheduleWatched();
+      if (deck.some((m) => watched.has(m.id)) && !$(".card.drag")) { // already watched together: pull it out of this deck too
+        const gone = new Set(deck.filter((m) => watched.has(m.id)).map((m) => String(m.id)));
+        deck = deck.filter((m) => !watched.has(m.id));
+        $$("#deck .card").forEach((c) => gone.has(c.dataset.id) && c.remove());
+        fillDeck();
+      }
       lsSet("rm_swipes_" + cfg.code, [...mySwipes]);
       const m = matches();
+      if (freshInstall) { m.forEach((x) => seenMatches.add(x.id)); lsSet("rm_seenm_" + cfg.code, [...seenMatches]); freshInstall = false; } // existing matches on a new install aren't news
       const fresh = m.filter((x) => !seenMatches.has(x.id)).map((x) => x.id);
       for (const id of fresh) if (!movies.get(id)) await ensureDetails(id);
       if (fresh.length && tab !== "matches" && !openSheetId) celebrate(fresh);
@@ -558,13 +606,15 @@ async function syncNow() {
       seedRecommendations();
     }
   } catch (_) { /* offline */ }
+  for (const mv of movies.values()) if (mv.detailsErr && Date.now() - (mv.detailsErrAt || 0) > 60000) delete mv.detailsErr;
   deck.slice(0, 3).forEach((m) => { const c = movies.get(m.id); if (c && !c.providers && !inflight.has(m.id)) { delete c.detailsErr; ensureDetails(m.id); } });
   if (openSheetId != null) { const c = movies.get(openSheetId); if (c && !c.providers && !inflight.has(c.id)) { delete c.detailsErr; ensureDetails(c.id, 0); } }
+  syncing = false;
   updateStatus(); updateBadge();
 }
 function updateStatus() {
   const b = $("#partnerStatus");
-  const online = Date.now() - lastSyncOk < 15000;
+  const online = !!partnerUid && Date.now() - ((members[partnerUid] && members[partnerUid].t) || 0) < 100000;
   if (!room.enabled) b.innerHTML = `<i></i>Solo`;
   else if (!partnerUid) b.innerHTML = `<i></i>Invite partner`;
   else b.innerHTML = `<i class="${online ? "on" : ""}"></i>${esc(partnerName)} · ${theirSwipes.size}`;
@@ -584,9 +634,10 @@ window.addEventListener("online", () => room && syncNow());
 function setTab(t) {
   tab = t;
   $$(".tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
-  $("#v-swipe").classList.toggle("hidden", t !== "swipe"); $("#v-matches").classList.toggle("hidden", t !== "matches"); $("#v-likes").classList.toggle("hidden", t !== "likes"); $("#v-us").classList.toggle("hidden", t !== "us");
+  $("#v-swipe").classList.toggle("hidden", t !== "swipe"); $("#v-matches").classList.toggle("hidden", t !== "matches"); $("#v-likes").classList.toggle("hidden", t !== "likes"); $("#v-watched").classList.toggle("hidden", t !== "watched"); $("#v-us").classList.toggle("hidden", t !== "us");
   if (t === "matches") { renderMatches(); matches().forEach((x) => seenMatches.add(x.id)); lsSet("rm_seenm_" + cfg.code, [...seenMatches]); }
   if (t === "likes") renderLikes();
+  if (t === "watched") renderWatched();
   if (t === "us") renderUs();
   updateBadge();
 }
@@ -596,7 +647,7 @@ function bind() {
   $("#b-nope").onclick = () => fly(topCard(), -1);
   $("#b-super").onclick = () => fly(topCard(), 2);
   $("#b-undo").onclick = undo;
-  $("#b-info").onclick = () => { const c = topCard(); if (c) openSheet(Number(c.dataset.id), "deck"); };
+  $("#b-seen").onclick = () => fly(topCard(), 3);
   $("#partnerStatus").onclick = () => (!partnerUid && room.enabled ? shareInvite() : setTab("us"));
   $("#banner").onclick = (e) => { if (e.target.id === "bInv") shareInvite(); };
   $("#v-matches").onclick = (e) => {
@@ -608,6 +659,7 @@ function bind() {
     const f = e.target.closest("[data-lf]"); if (f) { likeFilter = f.dataset.lf; return renderLikes(); }
     const r = e.target.closest(".row"); if (r) openSheet(Number(r.dataset.id), "likes");
   };
+  $("#v-watched").onclick = (e) => { const r = e.target.closest(".row[data-id]"); if (r) openSheet(Number(r.dataset.id), "watched"); };
   $("#v-us").onclick = (e) => {
     const t = e.target.closest("button"); if (!t) return;
     if (t.id === "onlyS") { settings.onlyStreaming = !settings.onlyStreaming; applySettings(true); renderUs(); if (settings.onlyStreaming) loadProviders(); }
@@ -616,10 +668,11 @@ function bind() {
     else if (t.id === "redo") { if (confirm("Clear all YOUR swipes and start over? Your partner's swipes stay.")) redoSwipes(); }
     else if (t.id === "leave") { if (confirm("Leave this room and go back to setup?")) { localStorage.removeItem("rm_cfg"); location.hash = ""; location.reload(); } }
   };
-  window.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") fly(topCard(), 1); if (e.key === "ArrowLeft") fly(topCard(), -1); if (e.key === "ArrowUp") fly(topCard(), 2); if (e.key === "Escape") closeSheet(); });
+  window.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") fly(topCard(), 1); if (e.key === "ArrowLeft") fly(topCard(), -1); if (e.key === "ArrowUp") fly(topCard(), 2); if (e.key === "ArrowDown") fly(topCard(), 3); if (e.key === "Escape") closeSheet(); });
 }
 async function redoSwipes() {
-  for (const id of [...mySwipes.keys()]) room.unswipe(id);
+  for (const id of mySwipes.keys()) tomb.add(id);
+  room.clearMine();
   mySwipes = new Map(); undoStack = []; seenMatches = new Set(); lsSet("rm_swipes_" + cfg.code, []); lsSet("rm_seenm_" + cfg.code, []);
   deck = []; served = []; $$("#deck .card").forEach((c) => c.remove()); fillDeck(); setTab("swipe");
 }
@@ -680,7 +733,8 @@ async function boot() {
   $("#app").classList.remove("hidden"); $("#setup").classList.add("hidden");
   tmdb = new TMDB(cfg.key); room = new Room(cfg.db, cfg.code, cfg.uid);
   mySwipes = new Map(lsGet("rm_swipes_" + cfg.code, []).map(([k, v]) => [Number(k), v]));
-  seenMatches = new Set(lsGet("rm_seenm_" + cfg.code, [])); seeded = new Set(lsGet("rm_seeded", []));
+  const storedSeen = lsGet("rm_seenm_" + cfg.code, null); freshInstall = storedSeen === null;
+  seenMatches = new Set(storedSeen || []); seeded = new Set(lsGet("rm_seeded", []));
   cursor = lsGet("rm_cursor_" + sig(), 0);
   await loadCache();
   if (room.enabled) { room.setName(cfg.name); room.setKey(cfg.key); }
@@ -694,6 +748,19 @@ async function boot() {
 (async () => {
   const inv = parseInvite(location.hash.slice(1)), hc = (location.hash.match(/(?:#|&)r=([a-z0-9]+)/) || [])[1];
   if ((inv || hc) && (!cfg || cfg.code !== (inv ? inv.c : hc))) { await showSetup(); return; }
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  if ("serviceWorker" in navigator) {
+    const had = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+    navigator.serviceWorker.addEventListener("controllerchange", () => { if (had && !window.__reloaded) { window.__reloaded = true; location.reload(); } });
+  }
   boot();
 })();
+
+/* ============ no zooming ============ */
+["gesturestart", "gesturechange", "gestureend"].forEach((t) => document.addEventListener(t, (e) => e.preventDefault()));
+let lastTap = 0;
+document.addEventListener("touchend", (e) => {
+  const now = Date.now();
+  if (now - lastTap < 350 && !e.target.closest("button, input, a, .card, .row, .chip")) e.preventDefault(); // double-tap zoom
+  lastTap = now;
+}, { passive: false });

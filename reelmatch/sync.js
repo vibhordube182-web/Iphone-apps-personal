@@ -48,7 +48,9 @@ export class Room {
       while (this.outbox.length) {
         const op = this.outbox[0];
         await this.req(op.method, op.path, op.body);
-        this.outbox.shift(); this.save();
+        const i = this.outbox.indexOf(op); // the queue may have been rewritten while this request was in flight
+        if (i >= 0) this.outbox.splice(i, 1);
+        this.save();
       }
     } catch (_) { /* offline: keep the queue, retry on the next poll */ }
     this.flushing = false;
@@ -56,9 +58,14 @@ export class Room {
 
   swipe(id, rec) { this.queue({ method: "PUT", path: `swipes/${this.uid}/${id}`, body: rec }); }
   unswipe(id) { this.queue({ method: "DELETE", path: `swipes/${this.uid}/${id}` }); }
-  watched(id, on) { this.queue(on ? { method: "PUT", path: `watched/${id}`, body: true } : { method: "DELETE", path: `watched/${id}` }); }
+  watched(id, on) { this.queue(on ? { method: "PUT", path: `watched/${id}`, body: Date.now() } : { method: "DELETE", path: `watched/${id}` }); }
   setName(name) { this.queue({ method: "PUT", path: `members/${this.uid}`, body: { name, t: Date.now() } }); }
   setKey(k) { this.queue({ method: "PUT", path: "cfg", body: { k } }); }
+  putMany(map) { // all of my swipes in one request
+    const body = {}; for (const [k, v] of map) body[k] = v;
+    if (Object.keys(body).length) this.queue({ method: "PATCH", path: `swipes/${this.uid}`, body });
+  }
+  clearMine() { this.outbox = this.outbox.filter((o) => !o.path.startsWith(`swipes/${this.uid}`)); this.queue({ method: "DELETE", path: `swipes/${this.uid}` }); }
   forget(uid) { this.queue({ method: "DELETE", path: `members/${uid}` }); this.queue({ method: "DELETE", path: `swipes/${uid}` }); }
 
   // A joiner only knows the room code: the TMDB key is read from the private room.

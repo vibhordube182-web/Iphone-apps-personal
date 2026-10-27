@@ -97,7 +97,9 @@ export class TMDB {
   }
 
   async source(i, opts) {
-    const res = await Promise.all(LANGS.map((L) => this.get("/discover/movie", { language: "en-AU", ...sourceParams(i, L.lang, opts) }).catch((e) => { if (/API key/.test(e.message)) throw e; return { results: [] }; })));
+    let failed = 0, lastErr;
+    const res = await Promise.all(LANGS.map((L) => this.get("/discover/movie", { language: "en-AU", ...sourceParams(i, L.lang, opts) }).catch((e) => { if (/API key/.test(e.message)) throw e; failed++; lastErr = e; return { results: [] }; })));
+    if (failed === LANGS.length) throw lastErr; // nothing arrived: let the caller retry this same page later
     return res.flatMap((r) => r.results.map(fromList)).filter((m) => m.poster && m.overview && m.title);
   }
 
