@@ -1,6 +1,7 @@
 import * as T from "./taste.js";
 import { TMDB, poster, profilePic, logo, streamers, REGION } from "./tmdb.js";
 import { Room } from "./sync.js";
+import { DEFAULT_DB } from "./config.js";
 
 /* ============ helpers ============ */
 const $ = (s, r = document) => r.querySelector(s);
@@ -474,10 +475,10 @@ async function renderUs() {
     <input id="mix" type="range" min="0" max="100" step="5" value="${Math.round(settings.mix * 100)}">
     <div class="toggle"><div>Only things I can stream in Australia<div class="muted" style="font-size:12px">Subscription, free or ad-supported — no rent/buy-only</div></div><button class="sw ${settings.onlyStreaming ? "on" : ""}" id="onlyS" aria-label="toggle"></button></div>
     ${settings.onlyStreaming ? `<div class="muted" style="font-size:12px;margin:4px 0 8px">Pick your services (none = any service):</div><div class="chips" style="flex-wrap:wrap">${svc}</div>` : ""}</div>
-  <div class="card2"><h3>Room</h3><p style="margin-top:0">Room code <b style="user-select:text">${esc(cfg.code)}</b>${room.enabled ? "" : " · <span class='muted'>sync is off (solo mode)</span>"}</p>
+  <div class="card2"><h3>Room</h3><p style="margin-top:0">Room code <b style="user-select:text;font-size:20px;letter-spacing:.04em">${esc(cfg.code)}</b>${room.enabled ? "" : " · <span class='muted'>sync is off (solo mode)</span>"}</p>${room.enabled ? `<p class="muted" style="font-size:12px;margin-top:-4px">To join, your partner opens the app, types her name and this code.</p>` : ""}
     ${room.enabled ? `<button class="btn alt" id="invite">Share invite link</button><div style="height:8px"></div>` : ""}
     <button class="btn alt" id="redo">Redo my swipes</button><div style="height:8px"></div><button class="btn alt" id="leave">Leave room / change settings</button>
-    <p class="credit" id="dbg">Build 7 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
+    <p class="credit" id="dbg">Build 8 · Movie data and images from TMDB. Streaming availability from JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div>`;
   if (settings.onlyStreaming && !providerList) loadProviders();
   showDebug();
 }
@@ -496,11 +497,10 @@ async function loadProviders() {
   if (!providerList) { try { providerList = await tmdb.providers(); lsSet("rm_providers", providerList); } catch (_) { providerList = []; } }
   if (tab === "us") renderUs();
 }
-const inviteLink = () => location.origin + location.pathname + "#i=" + inviteCode();
-const inviteCode = () => b64.enc({ k: cfg.key, d: cfg.db, c: cfg.code });
+const inviteLink = () => location.origin + location.pathname + "#r=" + cfg.code;
 async function shareInvite() {
   const url = inviteLink();
-  try { if (navigator.share) return await navigator.share({ title: "AshKey Entertainment", text: `Join our AshKey Entertainment room`, url }); } catch (_) { return; }
+  try { if (navigator.share) return await navigator.share({ title: "AshKey Entertainment", text: `Join our AshKey Entertainment room. Open the link, type your name and this room code: ${cfg.code}`, url }); } catch (_) { return; }
   try { await navigator.clipboard.writeText(url); toast("Invite link copied"); } catch (_) { prompt("Copy this invite link", url); }
 }
 function applySettings(rebuild) {
@@ -524,9 +524,26 @@ async function syncNow() {
     lastSyncOk = Date.now();
     if (snap) {
       members = snap.members || {};
-      partnerUid = Object.keys(members).find((u) => u !== cfg.uid) || null;
-      partnerName = partnerUid ? members[partnerUid].name : "";
       const sw = snap.swipes || {};
+      const same = (u) => (members[u].name || "").trim().toLowerCase() === cfg.name.trim().toLowerCase();
+      // Same name = same person. If you re-add the app or reinstall, every copy of "you" converges on the
+      // lowest ID and keeps all swipes, so there's never a duplicate partner.
+      const twins = Object.keys(members).filter((u) => u !== cfg.uid && same(u));
+      if (twins.length) {
+        const canon = [cfg.uid, ...twins].sort()[0];
+        for (const u of twins) for (const [k, v] of Object.entries(sw[u] || {})) if (!mySwipes.has(Number(k))) mySwipes.set(Number(k), v);
+        if (canon !== cfg.uid) {
+          const old = cfg.uid;
+          room.outbox = room.outbox.filter((o) => !o.path.includes("/" + old)); room.save();
+          cfg.uid = canon; room.uid = canon; lsSet("rm_cfg", cfg);
+          room.setName(cfg.name); for (const [k, v] of mySwipes) room.swipe(k, v);
+          room.forget(old); delete members[old]; delete sw[old];
+        }
+        for (const u of twins.filter((x) => x !== canon)) { room.forget(u); delete members[u]; delete sw[u]; }
+        lsSet("rm_swipes_" + cfg.code, [...mySwipes]);
+      }
+      partnerUid = Object.keys(members).find((u) => u !== cfg.uid && !same(u)) || null;
+      partnerName = partnerUid ? members[partnerUid].name : "";
       theirSwipes = new Map(partnerUid && sw[partnerUid] ? Object.entries(sw[partnerUid]).map(([k, v]) => [Number(k), v]) : []);
       for (const [k, v] of Object.entries(sw[cfg.uid] || {})) if (!mySwipes.has(Number(k)) && !room.outbox.some((o) => o.path === `swipes/${cfg.uid}/${k}`)) mySwipes.set(Number(k), v);
       watched = new Set(Object.keys(snap.watched || {}).map(Number));
@@ -616,39 +633,45 @@ function parseInvite(s) {
 async function showSetup(error = "") {
   $("#app").classList.add("hidden"); const s = $("#setup"); s.classList.remove("hidden");
   const old = cfg || {};
-  const sameOrigin = await Room.ping(location.origin + "/db");
-  const defDb = old.db || (sameOrigin ? location.origin + "/db" : "");
-  let mode = parseInvite(location.hash.slice(1)) || old.invited ? "join" : "new";
-  const pre = parseInvite(location.hash.slice(1));
-  const draw = () => {
-    s.innerHTML = `<div class="logo">Ash<b>Key</b><small>Entertainment</small></div><p class="muted" style="margin-top:0">Swipe movies together. See what you both want to watch.</p>
+  const sameOrigin = DEFAULT_DB ? false : await Room.ping(location.origin + "/db");
+  const defDb = old.db || DEFAULT_DB || (sameOrigin ? location.origin + "/db" : "");
+  const fromHash = (location.hash.match(/(?:#|&)r=([a-z0-9]+)/) || [])[1] || (parseInvite(location.hash.slice(1)) || {}).c || "";
+  const startCode = old.code || fromHash;
+  s.innerHTML = `<div class="logo">Ash<b>Key</b><small>Entertainment</small></div><p class="muted" style="margin-top:14px">Swipe movies together. See what you both want to watch.</p>
     <label class="field"><span>Your name</span><input id="f-name" value="${esc(old.name || "")}" placeholder="e.g. Vibhor" autocomplete="off"></label>
-    <div class="seg"><button data-m="new" class="${mode === "new" ? "on" : ""}">Start a room</button><button data-m="join" class="${mode === "join" ? "on" : ""}">Join partner's room</button></div>
-    ${mode === "join" ? `<label class="field"><span>Invite link or code</span><input id="f-inv" value="${pre ? esc(location.href) : ""}" placeholder="Paste the invite link or code" autocapitalize="off" autocorrect="off"><small>Your partner gets this from Us → Share invite link. If you opened the link in Safari first, copy it again here: the Home Screen app keeps its own storage.</small></label>`
-    : `<label class="field"><span>TMDB API key</span><input id="f-key" value="${esc(old.key || "")}" placeholder="API key or read access token" autocapitalize="off" autocorrect="off"><small>Free at themoviedb.org → Settings → API (choose "Developer", any URL is fine).</small></label>
-      <label class="field"><span>Sync database URL</span><input id="f-db" value="${esc(defDb)}" placeholder="https://your-project-default-rtdb.firebaseio.com" autocapitalize="off" autocorrect="off"><small>Free Firebase Realtime Database that connects your two phones (see README). Leave empty to try it solo.</small></label>`}
+    <label class="field"><span>Room code</span><input id="f-code" value="${esc(startCode)}" placeholder="Enter your room code" autocapitalize="off" autocorrect="off" autocomplete="off"><small id="f-hint"></small></label>
+    <label class="field hidden" id="w-key"><span>TMDB API key</span><input id="f-key" value="${esc(old.key || "")}" placeholder="Paste your TMDB key" autocapitalize="off" autocorrect="off"></label>
+    <label class="field ${defDb ? "hidden" : ""}"><span>Sync database URL</span><input id="f-db" value="${esc(defDb)}" placeholder="https://your-project-default-rtdb.firebaseio.com" autocapitalize="off" autocorrect="off"></label>
     ${error ? `<div class="err">${esc(error)}</div>` : ""}<div class="err hidden" id="f-err"></div>
-    <button class="btn" id="f-go">${mode === "new" ? "Create room" : "Join room"}</button>
-    ${pre && !isStandalone() ? `<button class="btn alt" id="f-copy" style="margin-top:10px">Copy invite (for the Home Screen app)</button>` : ""}`;
-    $$(".seg button", s).forEach((b) => (b.onclick = () => { old.name = $("#f-name").value; mode = b.dataset.m; draw(); }));
-    const cp = $("#f-copy"); if (cp) cp.onclick = async () => { try { await navigator.clipboard.writeText(location.href); toast("Copied. Now Add to Home Screen, open it, and paste."); } catch (_) {} };
-    $("#f-go").onclick = () => {
-      const name = $("#f-name").value.trim(), err = (m) => { const e = $("#f-err"); e.textContent = m; e.classList.remove("hidden"); };
-      if (!name) return err("What should your partner see as your name?");
-      let c;
-      if (mode === "join") {
-        const inv = parseInvite($("#f-inv").value); if (!inv) return err("That invite doesn't look right. Ask for a fresh link.");
-        c = { key: inv.k, db: inv.d || "", code: inv.c };
-      } else {
-        const key = $("#f-key").value.trim(); if (!key) return err("Add your TMDB API key.");
-        c = { key, db: $("#f-db").value.trim().replace(/\/+$/, ""), code: old.code && old.key === key ? old.code : rid(10) };
-      }
-      cfg = { name, uid: old.uid || rid(10), ...c };
-      lsSet("rm_cfg", cfg); history.replaceState(null, "", location.pathname);
-      s.classList.add("hidden"); boot();
-    };
+    <button class="btn" id="f-go">Continue</button>`;
+  const code = $("#f-code"), refresh = () => {
+    const empty = !code.value.trim();
+    $("#w-key").classList.toggle("hidden", !empty);
+    $("#f-hint").textContent = empty ? "No code? Leave this empty to start a new room, then share its code with your partner." : "Joining an existing room.";
+    $("#f-go").textContent = empty ? "Start a new room" : "Join room";
   };
-  draw();
+  code.oninput = refresh; refresh();
+  $("#f-go").onclick = async () => {
+    const err = (m) => { const e = $("#f-err"); e.textContent = m; e.classList.remove("hidden"); $("#f-go").disabled = false; refresh(); };
+    const name = $("#f-name").value.trim(); if (!name) return err("What should your partner see as your name?");
+    const raw = code.value.trim(), inv = parseInvite(raw);
+    const rc = inv ? inv.c : raw.toLowerCase().replace(/[^a-z0-9]/g, "");
+    let db = inv && inv.d ? inv.d : $("#f-db").value.trim().replace(/\/+$/, ""), key = inv ? inv.k : "";
+    $("#f-go").disabled = true; $("#f-go").textContent = "One moment…";
+    let c;
+    if (rc) {
+      if (!key && old.code === rc && old.key) key = old.key;
+      if (!key && db) key = await Room.fetchKey(db, rc);
+      if (!key) return err("Couldn't find that room. Check the code, and ask your partner to open the app once.");
+      c = { key, db, code: rc };
+    } else {
+      key = $("#f-key").value.trim(); if (!key) return err("Paste your TMDB API key to start a room.");
+      c = { key, db, code: rid(10) };
+    }
+    cfg = { name, uid: old.uid || rid(10), ...c };
+    lsSet("rm_cfg", cfg); history.replaceState(null, "", location.pathname);
+    s.classList.add("hidden"); boot();
+  };
 }
 
 /* ============ boot ============ */
@@ -660,7 +683,7 @@ async function boot() {
   seenMatches = new Set(lsGet("rm_seenm_" + cfg.code, [])); seeded = new Set(lsGet("rm_seeded", []));
   cursor = lsGet("rm_cursor_" + sig(), 0);
   await loadCache();
-  if (room.enabled) room.setName(cfg.name);
+  if (room.enabled) { room.setName(cfg.name); room.setKey(cfg.key); }
   bind(); updateStatus(); renderDeck();
   await syncNow();
   await refill(); await fillDeck();
@@ -669,8 +692,8 @@ async function boot() {
 }
 
 (async () => {
-  const inv = parseInvite(location.hash.slice(1));
-  if (inv && (!cfg || cfg.code !== inv.c)) { await showSetup(); return; }
+  const inv = parseInvite(location.hash.slice(1)), hc = (location.hash.match(/(?:#|&)r=([a-z0-9]+)/) || [])[1];
+  if ((inv || hc) && (!cfg || cfg.code !== (inv ? inv.c : hc))) { await showSetup(); return; }
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
   boot();
 })();

@@ -57,5 +57,12 @@ export class Room {
   swipe(id, rec) { this.queue({ method: "PUT", path: `swipes/${this.uid}/${id}`, body: rec }); }
   unswipe(id) { this.queue({ method: "DELETE", path: `swipes/${this.uid}/${id}` }); }
   watched(id, on) { this.queue(on ? { method: "PUT", path: `watched/${id}`, body: true } : { method: "DELETE", path: `watched/${id}` }); }
-  setName(name) { this.queue({ method: "PUT", path: `members/${this.uid}`, body: { name } }); }
+  setName(name) { this.queue({ method: "PUT", path: `members/${this.uid}`, body: { name, t: Date.now() } }); }
+  setKey(k) { this.queue({ method: "PUT", path: "cfg", body: { k } }); }
+  forget(uid) { this.queue({ method: "DELETE", path: `members/${uid}` }); this.queue({ method: "DELETE", path: `swipes/${uid}` }); }
+
+  // A joiner only knows the room code: the TMDB key is read from the private room.
+  static async fetchKey(db, code) {
+    try { const r = await fetch(`${db.replace(/\/+$/, "")}/rooms/${code}/cfg.json`); const o = r.ok ? await r.json() : null; return o && o.k ? o.k : null; } catch (_) { return null; }
+  }
 }
