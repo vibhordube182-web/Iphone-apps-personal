@@ -61,6 +61,35 @@ FEEDS = [
     ("youtube", "PewDiePie", "https://www.youtube.com/feeds/videos.xml?channel_id=UC-lHJZR3Gqxm24_Vd_AJ5Yw"),
 ]
 
+# ---- The Odeon: music, comedy and nights out, tuned to taste ----
+# Edit these lists to retune it. Feeds that fail or move are skipped quietly.
+FAVOURITES = ["Led Zeppelin", "Foo Fighters", "Red Hot Chili Peppers", "System of a Down", "The Beatles", "Beatles",
+              "Elvis", "Elton John", "Tool"]
+RELATED = ["Pearl Jam", "Metallica", "AC/DC", "Queens of the Stone Age", "Pink Floyd", "Rolling Stones", "Nirvana",
+           "Green Day", "Rage Against the Machine", "Black Sabbath", "Deep Purple", "Guns N' Roses", "Soundgarden",
+           "Audioslave", "Paul McCartney", "Robert Plant", "Jimmy Page", "Dave Grohl", "Serj Tankian", "Anthony Kiedis"]
+GIG_WORDS = r"\b(tour|tours|concert|tickets?|on sale|gig|gigs|live|festival|headline[sd]?|announces?|australian|australia|melbourne|stadium|residency)\b"
+
+FAV_Q = ("%22Led+Zeppelin%22+OR+%22Foo+Fighters%22+OR+%22Red+Hot+Chili+Peppers%22+OR+%22System+of+a+Down%22"
+         "+OR+%22Elton+John%22+OR+%22Paul+McCartney%22+OR+%22Tool%22+band+OR+Beatles")
+ODEON_FEEDS = [
+    ("radar", "*", GN + "(" + FAV_Q + ")+(tour+OR+concert+OR+tickets+OR+%22live+in%22)+Australia"),
+    ("radar", "*", GN + "(" + FAV_Q + ")+(tour+OR+concert+OR+tickets)"),
+    ("radar", "Louder", "https://www.loudersound.com/feeds/all"),
+    ("radar", "Ultimate Classic Rock", "https://ultimateclassicrock.com/feed/"),
+    ("music", "Beat", "https://beat.com.au/feed/"),
+    ("music", "The Music", "https://themusic.com.au/rss"),
+    ("music", "*", GN + "Melbourne+(gig+OR+concert+OR+%22live+music%22+OR+tour)+rock"),
+    ("music", "*", GN + "Australian+tour+announced+rock+OR+metal+OR+%22classic+rock%22"),
+    ("comedy", "The Guardian", "https://www.theguardian.com/stage/comedy/rss"),
+    ("comedy", "*", GN + "(%22stand-up%22+OR+comedian)+(Melbourne+OR+Australia)+(tour+OR+show+OR+tickets)"),
+    ("comedy", "*", GN + "%22Melbourne+International+Comedy+Festival%22"),
+    ("out", "*", GN + "Melbourne+(festival+OR+%22this+weekend%22+OR+%22night+market%22+OR+event)"),
+    ("out", "*", GN + "Melbourne+(MCG+OR+%22Marvel+Stadium%22+OR+%22AAMI+Park%22)+(match+OR+tickets+OR+tour)"),
+    ("out", "*", GN + "Melbourne+(startup+OR+tech)+(event+OR+conference+OR+summit)"),
+]
+ODEON_LIMITS = {"radar": 4, "music": 6, "comedy": 5, "out": 5}
+
 CITIES = [("Melbourne", -37.81, 144.96), ("Mumbai", 19.08, 72.88)]
 WMO = {0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog", 48: "Fog",
        51: "Drizzle", 53: "Drizzle", 55: "Drizzle", 56: "Freezing drizzle", 57: "Freezing drizzle",
@@ -182,6 +211,67 @@ def tokens(t):
     return {w for w in re.split(r"[^a-z0-9]+", t.lower()) if len(w) > 2}
 
 
+def taste(item):
+    """(score, artist) for an item: 3 per favourite artist named, 1 per related one, plus a nudge for gig words."""
+    text = item["title"] + " " + item["summary"]
+    score, artist = 0, ""
+    for name in FAVOURITES:
+        pat = r"\b" + re.escape(name) + r"\b"
+        if name == "Tool":
+            # a very common word: only count the band, in a music context
+            if re.search(pat, text) and re.search(r"(?i)\b(band|tour|album|maynard|concert|tickets|live)\b", text):
+                score, artist = score + 3, artist or name
+        elif re.search(pat, text, re.I):
+            score, artist = score + 3, artist or ("The Beatles" if name == "Beatles" else name)
+    for name in RELATED:
+        if re.search(r"\b" + re.escape(name) + r"\b", text, re.I):
+            score += 1
+            artist = artist or name
+    if re.search(GIG_WORDS, text, re.I):
+        score += 1
+    return score, artist
+
+
+def build_odeon(results, taken_links):
+    """Pick the Odeon rows from fetched items: {radar, music, comedy, out}. Never raises."""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=14)
+    by_group = {}
+    for feed, items in zip(ODEON_FEEDS, results):
+        by_group.setdefault(feed[0], []).extend(items)
+    used, seen_words, out = set(taken_links), [], {}
+
+    def take(items, limit, key, min_score=0):
+        fresh = [i for i in items if i["date"] > cutoff]
+        pool = fresh if len(fresh) >= limit else items
+        scored = []
+        for i in pool:
+            sc, artist = taste(i)
+            if sc >= min_score and i["link"] not in used:
+                scored.append((key(sc, i), i, artist))
+        scored.sort(key=lambda t: t[0], reverse=True)
+        picked = []
+        for _, i, artist in scored:
+            words = tokens(i["title"])
+            if any(len(words & o) / max(1, len(words | o)) > 0.5 for o in seen_words):
+                continue
+            seen_words.append(words)
+            used.add(i["link"])
+            i = dict(i, tag=artist)
+            i.pop("group", None)
+            i["date"] = i["date"].astimezone(timezone.utc).isoformat()
+            picked.append(i)
+            if len(picked) >= limit:
+                break
+        return picked
+
+    # newest first, taste as a boost; the radar needs a favourite artist actually named
+    recency = lambda sc, i: sc * 3 + (i["date"] - cutoff).total_seconds() / 86400.0
+    out["radar"] = take(by_group.get("radar", []) + by_group.get("music", []), ODEON_LIMITS["radar"], recency, 3)
+    for k in ("music", "comedy", "out"):
+        out[k] = take(by_group.get(k, []), ODEON_LIMITS[k], recency)
+    return out
+
+
 def weather():
     out = []
     for city, lat, lon in CITIES:
@@ -200,6 +290,7 @@ def weather():
 def main():
     with ThreadPoolExecutor(8) as ex:
         results = list(ex.map(fetch, FEEDS))
+        odeon_results = list(ex.map(fetch, ODEON_FEEDS))
     cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
     stories, seen = [], []
     for realm, group, limit in GROUPS:
@@ -224,15 +315,20 @@ def main():
             picked += 1
     if not stories:
         sys.exit("no stories fetched; keeping previous edition")
+    try:
+        odeon = build_odeon(odeon_results, {x["link"] for x in stories})
+    except Exception as e:
+        print(f"skip odeon: {e}", file=sys.stderr)
+        odeon = {}
     for s in stories:
         s["date"] = s["date"].astimezone(timezone.utc).isoformat()
     Path("web/news.json").write_text(json.dumps(
-        {"generated": datetime.now(timezone.utc).isoformat(), "stories": stories, "weather": weather(),
+        {"generated": datetime.now(timezone.utc).isoformat(), "stories": stories, "odeon": odeon, "weather": weather(),
          "maxims": json.loads(Path("web/maxims.json").read_text()),
          "reading": json.loads(Path("web/readings/index.json" if Path("web/readings/index.json").exists()
                                    else "web/reading.json").read_text())},
         ensure_ascii=False, indent=1))
-    print(f"wrote {len(stories)} stories")
+    print(f"wrote {len(stories)} stories; odeon " + ", ".join(f"{k} {len(v)}" for k, v in odeon.items()))
 
 
 if __name__ == "__main__":

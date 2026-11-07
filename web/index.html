@@ -223,6 +223,36 @@
   .story h3 { margin: 0 0 7px; font-size: 1.2rem; line-height: 1.22; font-weight: 650; letter-spacing: -.005em; text-wrap: balance; transition: color .25s; }
   .story p { margin: 0; font-size: .97rem; line-height: 1.45; color: color-mix(in srgb, var(--ink) 78%, var(--paper)); text-wrap: pretty; }
   .story a.cover::after { content: ""; position: absolute; inset: 0; }
+  /* ---- the Odeon: music, comedy and nights out (a dark stage with swipeable posters) ---- */
+  .odeon { --tint: var(--plum); }
+  .od-sec { scroll-margin-top: calc(var(--bar-h) + env(safe-area-inset-top, 0px) + 6px); margin: 34px 0 6px; padding: 22px 0 8px; border-radius: 26px; color: #f3efe3;
+    background: radial-gradient(120% 70% at 12% 0%, #3a2350 0%, transparent 60%), radial-gradient(90% 60% at 100% 100%, #10343a 0%, transparent 62%), #0a0a0f; box-shadow: 0 0 0 1px rgba(255,255,255,.07) inset; overflow: hidden; }
+  .od-head { padding: 0 20px 6px; }
+  .od-head h2 { margin: 0; font-family: var(--display); font-size: 1.55rem; letter-spacing: .18em; font-weight: 700; color: #f3efe3; }
+  .od-head .gk { margin-top: 3px; font-size: .78rem; color: #e0c57a; font-family: var(--ui); }
+  .od-head .gk b { font-family: var(--serif); font-weight: 600; margin-right: 8px; }
+  .od-head .gk .gloss { opacity: .7; font-size: .68rem; }
+  .od-head p { margin: 8px 0 0; font: .84rem/1.35 var(--ui); color: rgba(243,239,227,.66); }
+  .od-row { margin-top: 18px; }
+  .od-label { display: flex; align-items: center; gap: 10px; padding: 0 20px 10px; font: 700 .68rem/1 var(--ui); letter-spacing: .2em; text-transform: uppercase; color: var(--c); }
+  .od-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--c), transparent); opacity: .45; }
+  .od-strip { display: flex; gap: 12px; padding: 0 20px 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .od-strip::-webkit-scrollbar { display: none; }
+  .od-card { position: relative; flex: 0 0 min(66vw, 252px); height: 276px; scroll-snap-align: start; border-radius: 18px; overflow: hidden; color: #fff; text-decoration: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 55%, #000) 0%, #0d0d12 78%); box-shadow: 0 0 0 1px rgba(255,255,255,.09) inset; transition: transform .18s ease; -webkit-tap-highlight-color: transparent; }
+  .od-card:active { transform: scale(.975); }
+  .od-card .od-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .od-card::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,.05) 18%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.92) 100%); }
+  .od-card .glyph { position: absolute; top: 34px; right: -6px; font: 700 7.2rem/1 var(--display); color: var(--c); opacity: .18; }
+  .od-card > * { position: relative; z-index: 2; }
+  .od-card .od-img, .od-card .glyph { position: absolute; z-index: 0; }
+  .od-chip { position: absolute !important; top: 12px; left: 12px; z-index: 2; padding: 5px 9px; border-radius: 999px; font: 700 .6rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; background: var(--c); color: #0a0a0f; max-width: calc(100% - 24px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .od-card h3 { margin: 0 0 8px; font-family: var(--serif); font-size: 1.12rem; line-height: 1.2; font-weight: 700; text-wrap: balance; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .od-card .od-meta { font: 600 .68rem/1.2 var(--ui); letter-spacing: .04em; color: rgba(255,255,255,.7); }
+  .od-card.radar { flex-basis: min(78vw, 290px); height: 312px; box-shadow: 0 0 0 1.5px var(--c) inset; }
+  .od-card.radar h3 { font-size: 1.28rem; }
+  .od-empty { padding: 4px 20px 18px; font: .84rem/1.4 var(--ui); color: rgba(243,239,227,.55); }
+  .od-foot { padding: 0 20px 14px; font: .68rem/1.35 var(--ui); color: rgba(243,239,227,.4); }
   .share { position: relative; z-index: 2; margin: -10px -10px -10px auto; width: 34px; height: 34px; }
   .share svg { width: 17px; height: 17px; }
   .thumb { grid-column: 2; grid-row: 1 / span 2; align-self: start; width: 92px; height: 92px; border-radius: 12px; overflow: hidden; background: color-mix(in srgb, var(--tint) 14%, var(--card)); margin-top: 24px; }
@@ -336,7 +366,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-10-25 f</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-07 odeon</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -365,7 +395,8 @@ function lyceumMain() {
     oikonomia: { name: "Oikonomia", greek: "Οἰκονομία", gloss: "household management", sub: "Markets & business",            mark: "Χ" },
     arete:     { name: "Arete",     greek: "Ἀρετή",     gloss: "excellence, virtue", sub: "Discipline & longevity",        mark: "Α" },
     sophia:    { name: "Sophia",    greek: "Σοφία",     gloss: "wisdom", sub: "Ideas worth your time",         mark: "Σ" },
-    schole:    { name: "Schole",    greek: "Σχολή",     gloss: "leisure", sub: "Rock, football & play",         mark: "Φ" }
+    schole:    { name: "Schole",    greek: "Σχολή",     gloss: "leisure", sub: "Rock, football & play",         mark: "Φ" },
+    odeon:     { name: "Odeon",     greek: "ᾠδεῖον",    gloss: "hall of song", sub: "Music, comedy & nights out",    mark: "♪" }
   };
   var ORDER = ["polis", "oikos", "techne", "kosmos", "oikonomia", "arete", "sophia", "schole"];
   var BOOK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M4 19V5.5M8 7h8"/></svg>';
@@ -646,6 +677,55 @@ function lyceumMain() {
   }
 
   /* ---- chips, progress ---- */
+  /* ---- the Odeon ---- */
+  var ODEON_ROWS = [
+    { key: "radar",  name: "On your radar",  chip: "Your artists", c: "#e0c57a", glyph: "★" },
+    { key: "music",  name: "Live music",     chip: "Music",        c: "#e68cbf", glyph: "♪" },
+    { key: "comedy", name: "Comedy",         chip: "Comedy",       c: "#5fc4b8", glyph: "☺" },
+    { key: "out",    name: "Out & about",    chip: "Out & about",  c: "#afc17d", glyph: "✦" }
+  ];
+  function odeonCard(row, it) {
+    var a = el("a", "od-card " + row.key);
+    a.href = it.link; a.target = "_blank"; a.rel = "noopener";
+    a.style.setProperty("--c", row.c);
+    a.appendChild(el("span", "glyph", row.glyph)).setAttribute("aria-hidden", "true");
+    if (it.image) {
+      var bg = el("div", "od-img"), probe = new Image();
+      probe.referrerPolicy = "no-referrer";
+      probe.onload = function () { bg.style.backgroundImage = 'url("' + it.image + '")'; };
+      probe.onerror = function () { if (it.image_alt && probe.src !== it.image_alt) probe.src = it.image_alt; else bg.remove(); };
+      probe.src = it.image;
+      a.appendChild(bg);
+    }
+    a.appendChild(el("span", "od-chip", it.tag ? it.tag : row.chip));
+    a.appendChild(el("h3", null, it.title));
+    a.appendChild(el("div", "od-meta", it.source + " · " + ago(it.date)));
+    return a;
+  }
+  function renderOdeon(od) {
+    if (!od) return;
+    var rows = ODEON_ROWS.filter(function (r) { return od[r.key] && od[r.key].length; });
+    if (!rows.length) return;
+    var sec = el("section", "od-sec");
+    sec.id = "odeon";
+    var head = el("div", "od-head"), r0 = REALMS.odeon;
+    head.appendChild(el("h2", null, "The " + r0.name));
+    var gk = el("div", "gk"); gk.appendChild(el("b", null, r0.greek)); gk.appendChild(el("span", "gloss", "“" + r0.gloss + "”"));
+    head.appendChild(gk);
+    head.appendChild(el("p", null, "Gigs, laughs and nights out, picked for your taste. Swipe sideways."));
+    sec.appendChild(head);
+    rows.forEach(function (row) {
+      var wrap = el("div", "od-row"), label = el("div", "od-label", row.name);
+      label.style.setProperty("--c", row.c);
+      var strip = el("div", "od-strip");
+      od[row.key].forEach(function (it) { strip.appendChild(odeonCard(row, it)); });
+      wrap.appendChild(label); wrap.appendChild(strip); sec.appendChild(wrap);
+    });
+    sec.appendChild(el("div", "od-foot", "Headlines from music, comedy and Melbourne listings. Tap a poster for details and tickets."));
+    $("edition").appendChild(sec);
+    sections.push({ id: "odeon", el: sec });
+  }
+
   function renderChips() {
     var c = $("chips");
     c.textContent = "";
@@ -780,6 +860,7 @@ function lyceumMain() {
     renderMaxim(data.maxims);
     renderReading(data.reading);
     renderStories(data.stories || []);
+    renderOdeon(data.odeon);
     $("edition").classList.toggle("noanim", again);
     renderChips();
     progress();
