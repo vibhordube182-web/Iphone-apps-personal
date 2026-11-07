@@ -37,6 +37,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Fetch the news
+        env:
+          TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
         run: python scripts/fetch_news.py
       - uses: actions/configure-pages@v5
       - name: Assemble the site (Lyceum at the root, ReelMatch under /reelmatch/)

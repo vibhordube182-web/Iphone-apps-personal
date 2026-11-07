@@ -223,36 +223,53 @@
   .story h3 { margin: 0 0 7px; font-size: 1.2rem; line-height: 1.22; font-weight: 650; letter-spacing: -.005em; text-wrap: balance; transition: color .25s; }
   .story p { margin: 0; font-size: .97rem; line-height: 1.45; color: color-mix(in srgb, var(--ink) 78%, var(--paper)); text-wrap: pretty; }
   .story a.cover::after { content: ""; position: absolute; inset: 0; }
-  /* ---- the Odeon: music, comedy and nights out (a dark stage with swipeable posters) ---- */
-  .odeon { --tint: var(--plum); }
-  .od-sec { scroll-margin-top: calc(var(--bar-h) + env(safe-area-inset-top, 0px) + 6px); margin: 34px 0 6px; padding: 22px 0 8px; border-radius: 26px; color: #f3efe3;
-    background: radial-gradient(120% 70% at 12% 0%, #3a2350 0%, transparent 60%), radial-gradient(90% 60% at 100% 100%, #10343a 0%, transparent 62%), #0a0a0f; box-shadow: 0 0 0 1px rgba(255,255,255,.07) inset; overflow: hidden; }
-  .od-head { padding: 0 20px 6px; }
-  .od-head h2 { margin: 0; font-family: var(--display); font-size: 1.55rem; letter-spacing: .18em; font-weight: 700; color: #f3efe3; }
-  .od-head .gk { margin-top: 3px; font-size: .78rem; color: #e0c57a; font-family: var(--ui); }
-  .od-head .gk b { font-family: var(--serif); font-weight: 600; margin-right: 8px; }
-  .od-head .gk .gloss { opacity: .7; font-size: .68rem; }
-  .od-head p { margin: 8px 0 0; font: .84rem/1.35 var(--ui); color: rgba(243,239,227,.66); }
-  .od-row { margin-top: 18px; }
+  /* ---------- The Odeon: an entry card, and its own full-screen page ---------- */
+  .reading.od-entry .ico { background: color-mix(in srgb, var(--plum) 16%, var(--card)); color: var(--plum); font: 700 1.35rem/1 var(--display); }
+  #odeonPage { position: fixed; inset: 0; z-index: 85; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; color: #f3efe3;
+    background: radial-gradient(120% 50% at 12% 0%, #3a2350 0%, transparent 60%), radial-gradient(90% 40% at 100% 100%, #10343a 0%, transparent 62%), #0a0a0f; }
+  #odeonPage[hidden] { display: none; }
+  .od-bar { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 12px; padding: calc(env(safe-area-inset-top, 0px) + 8px) 14px 10px; background: rgba(10,10,15,.88); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255,255,255,.08); }
+  .od-x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.1); color: #f3efe3; display: grid; place-items: center; cursor: pointer; }
+  .od-x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .od-bar b { font-family: var(--display); letter-spacing: .18em; font-size: 1.05rem; }
+  .od-bar small { display: block; font: .68rem/1.2 var(--ui); color: #e0c57a; letter-spacing: .04em; }
+  .od-wrap { max-width: 640px; margin: 0 auto; padding: 8px 0 calc(env(safe-area-inset-bottom, 0px) + 44px); }
+  .od-intro { padding: 12px 20px 2px; font: .86rem/1.4 var(--ui); color: rgba(243,239,227,.66); }
+  .od-row { margin-top: 20px; }
   .od-label { display: flex; align-items: center; gap: 10px; padding: 0 20px 10px; font: 700 .68rem/1 var(--ui); letter-spacing: .2em; text-transform: uppercase; color: var(--c); }
   .od-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--c), transparent); opacity: .45; }
+  .od-sub { margin: 26px 20px 0; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.1); font: 700 .72rem/1.2 var(--ui); letter-spacing: .16em; text-transform: uppercase; color: rgba(243,239,227,.55); }
+  .ev { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 14px; margin: 0 16px 12px; padding: 14px; border-radius: 18px; background: rgba(255,255,255,.055); box-shadow: 0 0 0 1px rgba(255,255,255,.09) inset; }
+  .ev .date { align-self: start; text-align: center; border-radius: 12px; padding: 8px 0 7px; background: var(--c); color: #0a0a0f; font-family: var(--ui); line-height: 1.05; }
+  .ev .date small { display: block; font-size: .6rem; letter-spacing: .14em; font-weight: 700; text-transform: uppercase; }
+  .ev .date b { display: block; font-size: 1.5rem; font-weight: 800; }
+  .ev h4 { margin: 0 0 4px; font: 700 1.05rem/1.2 var(--serif); text-wrap: balance; }
+  .ev .tagline { display: inline-block; margin-bottom: 6px; font: 700 .6rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; color: var(--c); }
+  .ev .where, .ev .when { font: .8rem/1.4 var(--ui); color: rgba(243,239,227,.72); }
+  .ev .price { display: block; width: fit-content; margin-top: 8px; padding: 5px 10px; border-radius: 999px; font: 700 .74rem/1 var(--ui); background: rgba(255,255,255,.1); }
+  .ev details { margin-top: 10px; font: .82rem/1.45 var(--ui); color: rgba(243,239,227,.8); }
+  .ev summary { cursor: pointer; color: var(--c); font-weight: 700; list-style: none; }
+  .ev summary::-webkit-details-marker { display: none; }
+  .ev summary::after { content: " ▾"; }
+  .ev details p { margin: 6px 0 0; }
+  .ev .fine { display: block; margin-top: 4px; font-size: .7rem; color: rgba(243,239,227,.45); }
+  .ev .buy { display: flex; width: fit-content; align-items: center; margin-top: 12px; height: 38px; padding: 0 16px; border-radius: 999px; background: var(--c); color: #0a0a0f; font: 700 .82rem/1 var(--ui); text-decoration: none; }
+  .ev .buy:active { transform: scale(.96); }
+  .od-note { margin: 0 16px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,.05); box-shadow: 0 0 0 1px rgba(255,255,255,.09) inset; font: .84rem/1.45 var(--ui); color: rgba(243,239,227,.75); }
+  .od-note b { color: #f3efe3; }
   .od-strip { display: flex; gap: 12px; padding: 0 20px 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; overscroll-behavior-x: contain; }
   .od-strip::-webkit-scrollbar { display: none; }
-  .od-card { position: relative; flex: 0 0 min(66vw, 252px); height: 276px; scroll-snap-align: start; border-radius: 18px; overflow: hidden; color: #fff; text-decoration: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px;
+  .od-card { position: relative; flex: 0 0 min(66vw, 252px); height: 250px; scroll-snap-align: start; border-radius: 18px; overflow: hidden; color: #fff; text-decoration: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px;
     background: linear-gradient(160deg, color-mix(in srgb, var(--c) 55%, #000) 0%, #0d0d12 78%); box-shadow: 0 0 0 1px rgba(255,255,255,.09) inset; transition: transform .18s ease; -webkit-tap-highlight-color: transparent; }
   .od-card:active { transform: scale(.975); }
-  .od-card .od-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .od-card .od-img { position: absolute; inset: 0; z-index: 0; background-size: cover; background-position: center; }
   .od-card::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,.05) 18%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.92) 100%); }
-  .od-card .glyph { position: absolute; top: 34px; right: -6px; font: 700 7.2rem/1 var(--display); color: var(--c); opacity: .18; }
-  .od-card > * { position: relative; z-index: 2; }
-  .od-card .od-img, .od-card .glyph { position: absolute; z-index: 0; }
-  .od-chip { position: absolute !important; top: 12px; left: 12px; z-index: 2; padding: 5px 9px; border-radius: 999px; font: 700 .6rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; background: var(--c); color: #0a0a0f; max-width: calc(100% - 24px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .od-card h3 { margin: 0 0 8px; font-family: var(--serif); font-size: 1.12rem; line-height: 1.2; font-weight: 700; text-wrap: balance; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .od-card .glyph { position: absolute; z-index: 0; top: 30px; right: -6px; font: 700 6.4rem/1 var(--display); color: var(--c); opacity: .18; }
+  .od-card h3, .od-card .od-meta { position: relative; z-index: 2; }
+  .od-chip { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 9px; border-radius: 999px; font: 700 .6rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; background: var(--c); color: #0a0a0f; max-width: calc(100% - 24px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .od-card h3 { margin: 0 0 8px; font-family: var(--serif); font-size: 1.08rem; line-height: 1.2; font-weight: 700; text-wrap: balance; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
   .od-card .od-meta { font: 600 .68rem/1.2 var(--ui); letter-spacing: .04em; color: rgba(255,255,255,.7); }
-  .od-card.radar { flex-basis: min(78vw, 290px); height: 312px; box-shadow: 0 0 0 1.5px var(--c) inset; }
-  .od-card.radar h3 { font-size: 1.28rem; }
-  .od-empty { padding: 4px 20px 18px; font: .84rem/1.4 var(--ui); color: rgba(243,239,227,.55); }
-  .od-foot { padding: 0 20px 14px; font: .68rem/1.35 var(--ui); color: rgba(243,239,227,.4); }
+  .od-foot { padding: 6px 20px 0; font: .7rem/1.4 var(--ui); color: rgba(243,239,227,.4); }
   .share { position: relative; z-index: 2; margin: -10px -10px -10px auto; width: 34px; height: 34px; }
   .share svg { width: 17px; height: 17px; }
   .thumb { grid-column: 2; grid-row: 1 / span 2; align-self: start; width: 92px; height: 92px; border-radius: 12px; overflow: hidden; background: color-mix(in srgb, var(--tint) 14%, var(--card)); margin-top: 24px; }
@@ -350,6 +367,7 @@
 
   <section class="logos" id="logos" aria-label="Daily Logos"></section>
   <section class="reading" id="reading" aria-label="Today’s reading" hidden></section>
+  <section class="reading od-entry" id="odeonCard" aria-label="The Odeon" hidden></section>
 
   <div id="edition">
     <div class="skel"><i></i><i></i><i></i></div>
@@ -366,7 +384,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-07 odeon</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-07 odeon 2</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -380,6 +398,13 @@
   </div>
   <article class="rd-body" id="rdBody"></article>
   <div class="rd-end" id="rdEnd" hidden></div>
+</div>
+<div id="odeonPage" hidden role="dialog" aria-modal="true" aria-label="The Odeon">
+  <div class="od-bar">
+    <button class="od-x" id="odClose" type="button" aria-label="Close the Odeon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div><b>THE ODEON</b><small>ᾠδεῖον · “hall of song”</small></div>
+  </div>
+  <div class="od-wrap" id="odWrap"></div>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -677,16 +702,55 @@ function lyceumMain() {
   }
 
   /* ---- chips, progress ---- */
-  /* ---- the Odeon ---- */
+  /* ---- the Odeon: a card on the front page that opens its own page ---- */
   var ODEON_ROWS = [
     { key: "radar",  name: "On your radar",  chip: "Your artists", c: "#e0c57a", glyph: "★" },
     { key: "music",  name: "Live music",     chip: "Music",        c: "#e68cbf", glyph: "♪" },
     { key: "comedy", name: "Comedy",         chip: "Comedy",       c: "#5fc4b8", glyph: "☺" },
     { key: "out",    name: "Out & about",    chip: "Out & about",  c: "#afc17d", glyph: "✦" }
   ];
-  function odeonCard(row, it) {
-    var a = el("a", "od-card " + row.key);
-    a.href = it.link; a.target = "_blank"; a.rel = "noopener";
+  var odeonData = null;
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  function money(v, cur) { var sym = !cur || cur === "AUD" ? "$" : cur + " "; return sym + Math.round(v); }
+  function priceText(e) {
+    if (e.min != null && e.max != null && Math.round(e.min) !== Math.round(e.max)) return money(e.min, e.currency) + " to " + money(e.max, e.currency);
+    if (e.min != null) return "From " + money(e.min, e.currency);
+    return "Price shown at checkout";
+  }
+  function timeText(t) {
+    if (!t) return "";
+    var p = t.split(":"), h = +p[0], m = p[1] || "00";
+    return (h % 12 || 12) + ":" + m + " " + (h >= 12 ? "PM" : "AM");
+  }
+  function eventEl(row, e) {
+    var d = e.date.split("-"), dt = new Date(+d[0], +d[1] - 1, +d[2]);
+    var c = el("article", "ev"); c.style.setProperty("--c", row.c);
+    var date = el("div", "date");
+    date.appendChild(el("small", null, MONTHS[dt.getMonth()]));
+    date.appendChild(el("b", null, String(dt.getDate())));
+    date.appendChild(el("small", null, DAYS[dt.getDay()]));
+    c.appendChild(date);
+    var body = el("div");
+    body.appendChild(el("span", "tagline", e.tag || row.chip));
+    body.appendChild(el("h4", null, e.name));
+    body.appendChild(el("div", "where", e.venue + (e.city ? ", " + e.city : "")));
+    var when = DAYS[dt.getDay()] + " " + dt.getDate() + " " + MONTHS[dt.getMonth()] + (e.time ? " · starts " + timeText(e.time) : "");
+    body.appendChild(el("div", "when", when));
+    body.appendChild(el("span", "price", priceText(e)));
+    if (e.tip) {
+      var det = el("details"); det.appendChild(el("summary", null, "Where to sit"));
+      det.appendChild(el("p", null, e.tip));
+      det.appendChild(el("span", "fine", "General advice for this venue. Check the seat map for what is actually available."));
+      body.appendChild(det);
+    }
+    var buy = el("a", "buy", "Get tickets"); buy.href = e.link; buy.target = "_blank"; buy.rel = "noopener";
+    body.appendChild(buy);
+    c.appendChild(body);
+    return c;
+  }
+  function headlineCard(row, it) {
+    var a = el("a", "od-card"); a.href = it.link; a.target = "_blank"; a.rel = "noopener";
     a.style.setProperty("--c", row.c);
     a.appendChild(el("span", "glyph", row.glyph)).setAttribute("aria-hidden", "true");
     if (it.image) {
@@ -702,29 +766,74 @@ function lyceumMain() {
     a.appendChild(el("div", "od-meta", it.source + " · " + ago(it.date)));
     return a;
   }
-  function renderOdeon(od) {
-    if (!od) return;
-    var rows = ODEON_ROWS.filter(function (r) { return od[r.key] && od[r.key].length; });
-    if (!rows.length) return;
-    var sec = el("section", "od-sec");
-    sec.id = "odeon";
-    var head = el("div", "od-head"), r0 = REALMS.odeon;
-    head.appendChild(el("h2", null, "The " + r0.name));
-    var gk = el("div", "gk"); gk.appendChild(el("b", null, r0.greek)); gk.appendChild(el("span", "gloss", "“" + r0.gloss + "”"));
-    head.appendChild(gk);
-    head.appendChild(el("p", null, "Gigs, laughs and nights out, picked for your taste. Swipe sideways."));
-    sec.appendChild(head);
-    rows.forEach(function (row) {
-      var wrap = el("div", "od-row"), label = el("div", "od-label", row.name);
-      label.style.setProperty("--c", row.c);
-      var strip = el("div", "od-strip");
-      od[row.key].forEach(function (it) { strip.appendChild(odeonCard(row, it)); });
-      wrap.appendChild(label); wrap.appendChild(strip); sec.appendChild(wrap);
-    });
-    sec.appendChild(el("div", "od-foot", "Headlines from music, comedy and Melbourne listings. Tap a poster for details and tickets."));
-    $("edition").appendChild(sec);
-    sections.push({ id: "odeon", el: sec });
+  function odeonCounts(od) {
+    var ev = (od && od.events) || {}, n = 0, h = 0;
+    ODEON_ROWS.forEach(function (r) { n += (ev[r.key] || []).length; h += ((od && od[r.key]) || []).length; });
+    return { events: n, news: h };
   }
+  function renderOdeonCard(od) {
+    var box = $("odeonCard"); odeonData = od || null;
+    var n = odeonCounts(od);
+    if (!od || (!n.events && !n.news)) { box.hidden = true; return; }
+    box.hidden = false; box.textContent = "";
+    box.appendChild(el("div", "ico", "♪")).setAttribute("aria-hidden", "true");
+    var head = el("div"); head.appendChild(el("div", "eyebrow", "The Odeon")); box.appendChild(head);
+    box.appendChild(el("h3", null, "Music, comedy & nights out"));
+    var first = ((od.events || {}).radar || [])[0], lead = first ? first.name + ", " + first.venue : ((od.radar || [])[0] || {}).title;
+    var line = n.events ? n.events + " upcoming shows picked for you" + (lead ? ". Next on your radar: " + lead : "") : (lead || "Gigs and laughs picked for your taste");
+    box.appendChild(el("p", "why", line));
+    var acts = el("div", "acts");
+    acts.appendChild(pill("Open the Odeon", "solid", openOdeon));
+    box.appendChild(acts);
+    [].slice.call(box.children, 1).forEach(function (c) { c.style.gridColumn = "2"; });
+  }
+  function renderOdeonPage() {
+    var od = odeonData || {}, ev = od.events || {}, wrap = $("odWrap"), n = odeonCounts(od);
+    wrap.textContent = "";
+    wrap.appendChild(el("p", "od-intro", "Shows, gigs and laughs chosen for your taste, with dates, times and prices where the ticket seller publishes them."));
+    ODEON_ROWS.forEach(function (row) {
+      var list = ev[row.key] || [];
+      if (!list.length) return;
+      var sec = el("div", "od-row"), label = el("div", "od-label", row.name);
+      label.style.setProperty("--c", row.c);
+      sec.appendChild(label);
+      list.forEach(function (e) { sec.appendChild(eventEl(row, e)); });
+      wrap.appendChild(sec);
+    });
+    if (!n.events) {
+      var note = el("div", "od-note");
+      note.innerHTML = od.events_connected
+        ? "<b>No upcoming shows found right now</b> for your artists or in Melbourne. They will appear here when tickets go on sale."
+        : "<b>Dates, prices and ticket links are not connected yet.</b> They need a free Ticketmaster key, which is a one-time setup. Until then, the headlines below still show who is touring and what is on.";
+      var holder = el("div", "od-row"); holder.appendChild(note); wrap.appendChild(holder);
+    }
+    var any = ODEON_ROWS.some(function (r) { return (od[r.key] || []).length; });
+    if (any) {
+      wrap.appendChild(el("div", "od-sub", "In the news"));
+      ODEON_ROWS.forEach(function (row) {
+        var list = od[row.key] || [];
+        if (!list.length) return;
+        var sec = el("div", "od-row"), label = el("div", "od-label", row.name);
+        label.style.setProperty("--c", row.c);
+        var strip = el("div", "od-strip");
+        list.forEach(function (it) { strip.appendChild(headlineCard(row, it)); });
+        sec.appendChild(label); sec.appendChild(strip); wrap.appendChild(sec);
+      });
+    }
+    wrap.appendChild(el("div", "od-foot", "Event details come from Ticketmaster and can change; always confirm on the ticket page. Seat advice is general, not live availability."));
+  }
+  function openOdeon() {
+    renderOdeonPage();
+    var pg = $("odeonPage"); pg.hidden = false; pg.scrollTop = 0; document.body.classList.add("rd-open");
+    try { history.pushState({ odeon: 1 }, ""); } catch (e) {}
+  }
+  function closeOdeon(fromPop) {
+    $("odeonPage").hidden = true; document.body.classList.remove("rd-open");
+    if (!fromPop && history.state && history.state.odeon) { try { history.back(); } catch (e) {} }
+  }
+  $("odClose").addEventListener("click", function () { closeOdeon(); });
+  window.addEventListener("popstate", function () { if (!$("odeonPage").hidden) closeOdeon(true); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("odeonPage").hidden) closeOdeon(); });
 
   function renderChips() {
     var c = $("chips");
@@ -860,7 +969,7 @@ function lyceumMain() {
     renderMaxim(data.maxims);
     renderReading(data.reading);
     renderStories(data.stories || []);
-    renderOdeon(data.odeon);
+    renderOdeonCard(data.odeon);
     $("edition").classList.toggle("noanim", again);
     renderChips();
     progress();
