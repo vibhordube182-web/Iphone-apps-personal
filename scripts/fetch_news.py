@@ -542,25 +542,53 @@ def bit_events(app_id, artist):
     return out
 
 
+def tmdb_get(path, key, **params):
+    """One TMDB v3 request; the key may be a v3 API key or a v4 read-access token."""
+    headers = {"User-Agent": "Lyceum/1.0"}
+    q = dict(params)
+    if key.startswith("eyJ"):
+        headers["Authorization"] = "Bearer " + key
+    else:
+        q["api_key"] = key
+    url = "https://api.themoviedb.org/3/%s?%s" % (path, urllib.parse.urlencode(q))
+    with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as r:
+        return json.load(r)
+
+
+def movie_details(key, m):
+    """Quick facts for one film: tagline, runtime, genres, Australian rating, director, cast, trailer."""
+    try:
+        d = tmdb_get("movie/%d" % m["id"], key, language="en-AU", append_to_response="credits,videos,release_dates")
+    except Exception as e:
+        print(f"skip tmdb details ({m.get('title')}): {e}", file=sys.stderr)
+        return {}
+    cert = ""
+    for c in (d.get("release_dates") or {}).get("results", []):
+        if c.get("iso_3166_1") == "AU":
+            cert = next((x.get("certification") for x in c.get("release_dates", []) if x.get("certification")), "")
+    crew = (d.get("credits") or {}).get("crew", [])
+    cast = (d.get("credits") or {}).get("cast", [])
+    vids = [v for v in (d.get("videos") or {}).get("results", []) if v.get("site") == "YouTube" and v.get("type") == "Trailer"]
+    vids.sort(key=lambda v: (not v.get("official"), v.get("published_at") or ""), reverse=False)
+    return {"tagline": clean(d.get("tagline") or ""), "runtime": d.get("runtime") or 0,
+            "genres": [g["name"] for g in d.get("genres", [])][:3], "cert": cert,
+            "director": [c["name"] for c in crew if c.get("job") == "Director"][:2],
+            "cast": [c["name"] for c in cast][:5],
+            "trailer": "https://www.youtube.com/watch?v=" + vids[0]["key"] if vids else "",
+            "overview": brief(clean(d.get("overview") or m.get("overview") or ""), 480)}
+
+
 def tmdb_movies(key):
-    """Everything in Australian cinemas now (all pages) plus what is coming soon, from TMDB. No session times: those live
-    in each cinema's own system."""
+    """Everything in Australian cinemas now (all pages) plus what is coming soon, from TMDB, with quick facts for each.
+    No session times: those live in each cinema's own system."""
     if not key:
         return []
     out, seen = [], set()
-    headers = {"User-Agent": "Lyceum/1.0"}
-    bearer = key.startswith("eyJ")
-    if bearer:
-        headers["Authorization"] = "Bearer " + key
     for kind, max_pages, cap in (("now_playing", 6, 80), ("upcoming", 2, 16)):
         n = 0
         for page in range(1, max_pages + 1):
-            url = "https://api.themoviedb.org/3/movie/%s?region=AU&language=en-AU&page=%d" % (kind, page)
-            if not bearer:
-                url += "&api_key=" + urllib.parse.quote(key, safe="")
             try:
-                with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as r:
-                    data = json.load(r)
+                data = tmdb_get("movie/" + kind, key, region="AU", language="en-AU", page=page)
             except Exception as e:
                 print(f"skip tmdb {kind} page {page}: {e}", file=sys.stderr)
                 break
@@ -568,15 +596,18 @@ def tmdb_movies(key):
                 if not m.get("poster_path") or not m.get("title") or m["id"] in seen or blocked(m["title"]):
                     continue
                 seen.add(m["id"])
-                out.append({"title": m["title"], "date": m.get("release_date", ""), "kind": kind,
+                out.append({"id": m["id"], "title": m["title"], "date": m.get("release_date", ""), "kind": kind,
                             "rating": round(m.get("vote_average") or 0, 1), "votes": m.get("vote_count") or 0,
                             "poster": "https://image.tmdb.org/t/p/w342" + m["poster_path"],
-                            "overview": brief(clean(m.get("overview", "")), 140)})
+                            "overview": brief(clean(m.get("overview", "")), 480)})
                 n += 1
                 if n >= cap:
                     break
             if n >= cap or page >= data.get("total_pages", 1):
                 break
+    with ThreadPoolExecutor(8) as ex:
+        for m, extra in zip(out, ex.map(lambda m: movie_details(key, m), out)):
+            m.update({k: v for k, v in extra.items() if v})
     return out
 
 def build_events(key, bit_id=""):

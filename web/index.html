@@ -286,14 +286,43 @@
   .od-card.mv::before { background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.7) 74%, rgba(0,0,0,.94) 100%); }
   .od-card.mv h3 { font-size: .98rem; -webkit-line-clamp: 3; }
   .mv-count { padding: 0 20px 10px; font: .76rem/1.3 var(--ui); color: rgba(243,239,227,.6); }
-  .mv-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 10px; padding: 0 16px 14px; }
-  .mv { display: block; color: #f3efe3; text-decoration: none; -webkit-tap-highlight-color: transparent; }
-  .mv-pic { position: relative; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden; background: linear-gradient(160deg, #1d2a3d, #0d0d12) center / cover; box-shadow: 0 0 0 1px rgba(255,255,255,.09) inset; }
+  .mv-strip { gap: 10px; }
+  .mv { flex: 0 0 112px; scroll-snap-align: start; display: block; padding: 0; border: 0; background: none; text-align: left; color: #f3efe3; cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; }
+  .mv-pic { position: relative; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden; background: linear-gradient(160deg, #1d2a3d, #0d0d12) center / cover; box-shadow: 0 0 0 1px rgba(255,255,255,.09) inset; transition: transform .18s ease; }
   .mv-pic.ready { box-shadow: none; }
-  .mv:active .mv-pic { transform: scale(.97); }
+  .mv:active .mv-pic { transform: scale(.96); }
   .mv-t { margin-top: 6px; font: 600 .72rem/1.25 var(--ui); color: rgba(243,239,227,.85); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .mv-rate, .mv-soon { position: absolute; left: 6px; padding: 3px 6px; border-radius: 999px; font: 700 .6rem/1 var(--ui); background: rgba(0,0,0,.72); color: #f3efe3; }
   .mv-rate { bottom: 6px; } .mv-soon { top: 6px; background: #8db8ea; color: #0a0a0f; }
+  /* film quick-info sheet */
+  #mvSheet { position: fixed; inset: 0; z-index: 95; }
+  #mvSheet[hidden] { display: none; }
+  .mv-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.6); opacity: 0; transition: opacity .3s ease; }
+  .mv-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; box-sizing: border-box;
+    padding: 10px 18px calc(env(safe-area-inset-bottom, 0px) + 22px); border-radius: 24px 24px 0 0; color: #f3efe3; background: #12121a;
+    box-shadow: 0 -1px 0 rgba(255,255,255,.1); transform: translateY(104%); transition: transform .38s cubic-bezier(.22, 1, .36, 1); }
+  #mvSheet.on .mv-scrim { opacity: 1; }
+  #mvSheet.on .mv-panel { transform: none; }
+  .mv-grab { width: 38px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.25); margin: 0 auto 12px; }
+  .mv-x { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(255,255,255,.1); color: #f3efe3; display: grid; place-items: center; cursor: pointer; }
+  .mv-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .mv-top { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; margin-top: 4px; }
+  .mv-big { aspect-ratio: 2 / 3; border-radius: 12px; background: #1d2a3d center / cover; box-shadow: 0 0 0 1px rgba(255,255,255,.1) inset; }
+  .mv-info h3 { margin: 0 34px 4px 0; font: 700 1.2rem/1.2 var(--serif); text-wrap: balance; }
+  .mv-tag { margin: 0 0 8px; font: italic .84rem/1.35 var(--serif); color: rgba(243,239,227,.65); }
+  .mv-meta { font: 600 .78rem/1.35 var(--ui); color: rgba(243,239,227,.8); }
+  .mv-score { margin-top: 4px; font: 600 .78rem/1.3 var(--ui); color: #e0c57a; }
+  .mv-badge { display: inline-block; margin-top: 8px; padding: 4px 9px; border-radius: 999px; font: 700 .64rem/1 var(--ui); letter-spacing: .1em; text-transform: uppercase; background: #8db8ea; color: #0a0a0f; }
+  .mv-genres { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .mv-genres span { padding: 4px 9px; border-radius: 999px; font: 600 .68rem/1 var(--ui); border: 1px solid rgba(255,255,255,.2); color: rgba(243,239,227,.85); }
+  .mv-plot { margin: 16px 0 10px; font: .95rem/1.55 var(--serif); color: rgba(243,239,227,.92); }
+  .mv-fact { margin: 0 0 6px; font: .82rem/1.45 var(--ui); color: rgba(243,239,227,.75); }
+  .mv-fact b { color: #f3efe3; }
+  .mv-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .mv-btn { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); color: #f3efe3; font: 700 .82rem/1 var(--ui); text-decoration: none; }
+  .mv-btn.solid { background: #f3efe3; color: #0a0a0f; border-color: #f3efe3; }
+  .mv-btn:active { transform: scale(.96); }
+  @media (prefers-reduced-motion: reduce) { .mv-panel, .mv-scrim { transition: opacity .15s linear; } .mv-panel { transform: none; opacity: 0; } #mvSheet.on .mv-panel { opacity: 1; } }
   .od-strip { display: flex; gap: 12px; padding: 0 20px 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; overscroll-behavior-x: contain; }
   .od-strip::-webkit-scrollbar { display: none; }
   .od-card { position: relative; flex: 0 0 min(66vw, 252px); height: 250px; scroll-snap-align: start; border-radius: 18px; overflow: hidden; color: #fff; text-decoration: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px;
@@ -421,7 +450,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-15 credit</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-16 films</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -442,6 +471,10 @@
     <div><b>THE ODEON</b><small>ᾠδεῖον · “hall of song”</small></div>
   </div>
   <div class="od-wrap" id="odWrap"></div>
+</div>
+<div id="mvSheet" hidden role="dialog" aria-modal="true" aria-label="Film details">
+  <div class="mv-scrim" id="mvScrim"></div>
+  <div class="mv-panel" id="mvPanel"></div>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -857,29 +890,75 @@ function lyceumMain() {
     a.appendChild(el("div", "od-meta", it.source + " · " + ago(it.date)));
     return a;
   }
-  var posterWatch = null;
-  function lazyPoster(el, url) {
+  function lazyPoster(el, url, root) {
     function load() {
       var probe = new Image(); probe.referrerPolicy = "no-referrer";
       probe.onload = function () { el.style.backgroundImage = 'url("' + url + '")'; el.classList.add("ready"); };
       probe.src = url;
     }
     if (!("IntersectionObserver" in window)) { load(); return; }
-    if (!posterWatch) posterWatch = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { posterWatch.unobserve(e.target); e.target._load(); } });
-    }, { root: $("odeonPage"), rootMargin: "400px 0px" });
-    el._load = load; posterWatch.observe(el);
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); load(); } });
+    }, { root: root, rootMargin: "0px 360px 0px 360px" });
+    el._io = io;
+    requestAnimationFrame(function () { io.observe(el); });
   }
-  function movieCard(m) {
-    var a = el("a", "mv"); a.target = "_blank"; a.rel = "noopener";
-    a.href = "https://www.google.com/search?q=" + encodeURIComponent(m.title + " session times Melbourne");
-    var pic = el("div", "mv-pic"); lazyPoster(pic, m.poster);
+  function movieCard(m, strip) {
+    var a = el("button", "mv"); a.type = "button";
+    a.setAttribute("aria-label", m.title);
+    var pic = el("div", "mv-pic"); lazyPoster(pic, m.poster, strip);
     if (m.kind === "upcoming") pic.appendChild(el("span", "mv-soon", "Soon"));
     if (m.votes >= 20 && m.rating) pic.appendChild(el("span", "mv-rate", "★ " + m.rating));
     a.appendChild(pic);
     a.appendChild(el("div", "mv-t", m.title));
+    a.addEventListener("click", function () { openMovie(m); });
     return a;
   }
+  /* quick-info sheet for a film */
+  var mvOpen = false, mvPop = false;
+  function runtimeText(min) { return min ? (min >= 60 ? Math.floor(min / 60) + "h " : "") + (min % 60 ? (min % 60) + "m" : "") : ""; }
+  function openMovie(m) {
+    var panel = $("mvPanel"); panel.textContent = "";
+    var close = el("button", "mv-x"); close.type = "button"; close.setAttribute("aria-label", "Close");
+    close.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+    close.addEventListener("click", function () { closeMovie(); });
+    panel.appendChild(el("div", "mv-grab")); panel.appendChild(close);
+    var top = el("div", "mv-top"), pic = el("div", "mv-big"); pic.style.backgroundImage = 'url("' + m.poster + '")';
+    var info = el("div", "mv-info");
+    info.appendChild(el("h3", null, m.title));
+    if (m.tagline) info.appendChild(el("p", "mv-tag", m.tagline));
+    var d = m.date ? m.date.split("-") : null;
+    var meta = [m.cert, runtimeText(m.runtime), d ? d[2] + " " + MONTHS[+d[1] - 1] + " " + d[0] : ""].filter(Boolean);
+    if (meta.length) info.appendChild(el("div", "mv-meta", meta.join("  ·  ")));
+    if (m.votes >= 20 && m.rating) info.appendChild(el("div", "mv-score", "★ " + m.rating + " / 10  ·  " + m.votes.toLocaleString() + " ratings"));
+    if (m.kind === "upcoming") info.appendChild(el("div", "mv-badge", "Coming soon"));
+    if ((m.genres || []).length) { var g = el("div", "mv-genres"); m.genres.forEach(function (x) { g.appendChild(el("span", null, x)); }); info.appendChild(g); }
+    top.appendChild(pic); top.appendChild(info); panel.appendChild(top);
+    if (m.overview) panel.appendChild(el("p", "mv-plot", m.overview));
+    function fact(label, list) { if (list && list.length) { var f = el("p", "mv-fact"); f.appendChild(el("b", null, label)); f.appendChild(document.createTextNode(list.join(", "))); panel.appendChild(f); } }
+    fact("Directed by ", m.director); fact("Starring ", m.cast);
+    var acts = el("div", "mv-acts");
+    if (m.trailer) { var t = el("a", "mv-btn solid", "▶  Watch trailer"); t.href = m.trailer; t.target = "_blank"; t.rel = "noopener"; acts.appendChild(t); }
+    var st = el("a", "mv-btn" + (m.trailer ? "" : " solid"), "Session times"); st.href = "https://www.google.com/search?q=" + encodeURIComponent(m.title + " session times Melbourne"); st.target = "_blank"; st.rel = "noopener"; acts.appendChild(st);
+    panel.appendChild(acts);
+    var book = el("div", "sx"); book.appendChild(el("span", null, "Book at"));
+    CINEMAS.forEach(function (c) { var a = el("a", null, c.name); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; book.appendChild(a); });
+    panel.appendChild(book);
+    var box = $("mvSheet"); panel.scrollTop = 0; box.hidden = false; box.classList.remove("on"); void box.offsetWidth;
+    requestAnimationFrame(function () { box.classList.add("on"); });
+    mvOpen = true;
+    try { history.pushState({ movie: 1 }, ""); } catch (e) {}
+  }
+  function closeMovie(fromPop) {
+    if (!mvOpen) return;
+    mvOpen = false;
+    var box = $("mvSheet"); box.classList.remove("on");
+    mvPop = true; setTimeout(function () { mvPop = false; }, fromPop ? 0 : 600);   // the back that follows belongs to the sheet, not the Odeon
+    setTimeout(function () { if (!mvOpen) box.hidden = true; }, 340);
+    if (!fromPop && history.state && history.state.movie) { try { history.back(); } catch (e) {} }
+  }
+  $("mvScrim").addEventListener("click", function () { closeMovie(); });
+  window.addEventListener("popstate", function () { if (mvOpen) closeMovie(true); });
   function odeonCounts(od) {
     var ev = (od && od.events) || {}, n = 0, h = 0;
     ODEON_ROWS.forEach(function (r) { n += (ev[r.key] || []).length; h += ((od && od[r.key]) || []).length; });
@@ -941,10 +1020,10 @@ function lyceumMain() {
     var msec = el("div", "od-row"), mlabel = el("div", "od-label", "At the cinema");
     mlabel.style.setProperty("--c", "#8db8ea"); msec.appendChild(mlabel);
     if ((od.movies || []).length) {
-      msec.appendChild(el("div", "mv-count", od.movies.length + " films in Australian cinemas now and soon"));
-      var grid = el("div", "mv-grid");
-      od.movies.forEach(function (m) { grid.appendChild(movieCard(m)); });
-      msec.appendChild(grid);
+      msec.appendChild(el("div", "mv-count", od.movies.length + " films in Australian cinemas now and soon. Tap one for details."));
+      var mstrip = el("div", "od-strip mv-strip");
+      od.movies.forEach(function (m) { mstrip.appendChild(movieCard(m, mstrip)); });
+      msec.appendChild(mstrip);
     }
     var cin = el("div", "od-note");
     cin.appendChild(el("div", null, od.movies_connected ? "Tap a poster to find session times. Book on the cinema's own site:" : "Book on the cinema's own site (what is showing needs a free TMDB key to list here):"));
@@ -978,8 +1057,8 @@ function lyceumMain() {
     if (!fromPop && history.state && history.state.odeon) { try { history.back(); } catch (e) {} }
   }
   $("odClose").addEventListener("click", function () { closeOdeon(); });
-  window.addEventListener("popstate", function () { if (!$("odeonPage").hidden) closeOdeon(true); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("odeonPage").hidden) closeOdeon(); });
+  window.addEventListener("popstate", function () { if (!mvOpen && !mvPop && !$("odeonPage").hidden) closeOdeon(true); });
+  document.addEventListener("keydown", function (e) { if (e.key !== "Escape") return; if (mvOpen) closeMovie(); else if (!$("odeonPage").hidden) closeOdeon(); });
 
   function renderChips() {
     var c = $("chips");
