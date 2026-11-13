@@ -542,6 +542,9 @@ def bit_events(app_id, artist):
     return out
 
 
+FILM_LANGUAGES = ("en", "hi")
+
+
 def tmdb_get(path, key, **params):
     """One TMDB v3 request; the key may be a v3 API key or a v4 read-access token."""
     headers = {"User-Agent": "Lyceum/1.0"}
@@ -579,12 +582,12 @@ def movie_details(key, m):
 
 
 def tmdb_movies(key):
-    """Everything in Australian cinemas now (all pages) plus what is coming soon, from TMDB, with quick facts for each.
+    """Every English and Hindi film in Australian cinemas now, plus what is coming soon, from TMDB, with quick facts for each.
     No session times: those live in each cinema's own system."""
     if not key:
         return []
     out, seen = [], set()
-    for kind, max_pages, cap in (("now_playing", 6, 80), ("upcoming", 2, 16)):
+    for kind, max_pages, cap in (("now_playing", 12, 80), ("upcoming", 5, 16)):
         n = 0
         for page in range(1, max_pages + 1):
             try:
@@ -594,6 +597,8 @@ def tmdb_movies(key):
                 break
             for m in data.get("results", []):
                 if not m.get("poster_path") or not m.get("title") or m["id"] in seen or blocked(m["title"]):
+                    continue
+                if m.get("original_language") not in FILM_LANGUAGES:     # English and Hindi (Bollywood) only
                     continue
                 seen.add(m["id"])
                 out.append({"id": m["id"], "title": m["title"], "date": m.get("release_date", ""), "kind": kind,
