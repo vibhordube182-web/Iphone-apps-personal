@@ -174,7 +174,7 @@ def fetch(feed):
                     f["link"] = href
                 elif c.text and c.text.strip():
                     f["link"] = c.text.strip()
-            elif tag in ("title", "description", "summary", "content") and tag not in f:
+            elif tag in ("title", "description", "summary", "content", "encoded") and tag not in f:
                 f[tag] = c.text or ""
                 if tag != "title":
                     f["raw"] = f.get("raw", "") + (c.text or "")
@@ -230,6 +230,67 @@ def taste(item):
     if re.search(GIG_WORDS, text, re.I):
         score += 1
     return score, artist
+
+
+WIKI_TITLES = {"Elvis": "Elvis_Presley", "Tool": "Tool_(band)", "The Beatles": "The_Beatles", "Beatles": "The_Beatles"}
+_img_cache = {}
+
+
+def wiki_image(name):
+    """A photo of an artist from Wikipedia (free); None if there is no page or no image."""
+    if name in _img_cache:
+        return _img_cache[name]
+    title = WIKI_TITLES.get(name, name.replace(" ", "_"))
+    url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + urllib.parse.quote(title, safe="()_")
+    img = None
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0 (personal news app)"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            d = json.load(r)
+        src = (d.get("thumbnail") or {}).get("source") or (d.get("originalimage") or {}).get("source")
+        if src:
+            img = re.sub(r"/(\d+)px-", "/640px-", src, count=1)
+    except Exception as e:
+        print(f"skip wikipedia image ({name}): {e}", file=sys.stderr)
+    _img_cache[name] = img
+    return img
+
+
+def og_image(link):
+    """The og:image of an article page, for headlines whose feed carries no picture. Skips Google News redirects."""
+    if "news.google." in link:
+        return None
+    try:
+        req = urllib.request.Request(link, headers={"User-Agent": "Mozilla/5.0 (compatible; Lyceum/1.0)"})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            page = r.read(250000).decode("utf-8", "ignore")
+    except Exception:
+        return None
+    for pat in (r"<meta[^>]+property=[\"']og:image[\"'][^>]+content=[\"']([^\"']+)",
+                r"<meta[^>]+content=[\"']([^\"']+)[\"'][^>]+property=[\"']og:image[\"']"):
+        m = re.search(pat, page, re.I)
+        if m and m.group(1).startswith("http"):
+            return html.unescape(m.group(1)).replace("http://", "https://", 1)
+    return None
+
+
+def add_odeon_images(odeon):
+    """Give picture-less Odeon items a photo: the artist's Wikipedia photo, else the article's own og:image."""
+    jobs = []
+    for k in ("radar", "music", "comedy", "out"):
+        for it in odeon.get(k, []):
+            if not it.get("image"):
+                jobs.append((it, it.get("tag") or "", it["link"]))
+        for e in (odeon.get("events") or {}).get(k, []):
+            if not e.get("image") and e.get("tag"):
+                jobs.append((e, e["tag"], ""))
+    def work(job):
+        item, tag, link = job
+        img = (wiki_image(tag) if tag else None) or (og_image(link) if link else None)
+        if img:
+            item["image"] = img
+    with ThreadPoolExecutor(6) as ex:
+        list(ex.map(work, jobs))
 
 
 def build_odeon(results, taken_links):
@@ -523,6 +584,10 @@ def main():
         print(f"skip movies: {e}", file=sys.stderr)
         odeon["movies"] = []
     odeon["movies_connected"] = bool(tmdb_key)
+    try:
+        add_odeon_images(odeon)
+    except Exception as e:
+        print(f"skip odeon images: {e}", file=sys.stderr)
     for s in stories:
         s["date"] = s["date"].astimezone(timezone.utc).isoformat()
     Path("web/news.json").write_text(json.dumps(
