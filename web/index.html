@@ -281,6 +281,7 @@
   .od-find input:focus { border-color: #e0c57a; }
   .od-find input::placeholder { color: rgba(243,239,227,.4); }
   .od-note .sx { margin-top: 10px; }
+  .od-note .fine { margin-top: 12px; font-size: .68rem; color: rgba(243,239,227,.42); }
   .od-card.mv { flex-basis: min(44vw, 170px); height: 255px; }
   .od-card.mv::before { background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.7) 74%, rgba(0,0,0,.94) 100%); }
   .od-card.mv h3 { font-size: .98rem; -webkit-line-clamp: 3; }
@@ -420,7 +421,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-15 you</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-15 credit</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -949,7 +950,9 @@ function lyceumMain() {
     cin.appendChild(el("div", null, od.movies_connected ? "Tap a poster to find session times. Book on the cinema's own site:" : "Book on the cinema's own site (what is showing needs a free TMDB key to list here):"));
     var cl = el("div", "sx");
     CINEMAS.forEach(function (c) { var a = el("a", null, c.name); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; cl.appendChild(a); });
-    cin.appendChild(cl); msec.appendChild(cin); wrap.appendChild(msec);
+    cin.appendChild(cl);
+    if ((od.movies || []).length) cin.appendChild(el("div", "fine", "Film data and posters from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB."));
+    msec.appendChild(cin); wrap.appendChild(msec);
     var any = ODEON_ROWS.some(function (r) { return (od[r.key] || []).length; });
     if (any) {
       wrap.appendChild(el("div", "od-sub", "In the news"));
