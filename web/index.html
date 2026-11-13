@@ -176,31 +176,16 @@
   #reader[hidden] { display: none; }
   #reader.rd-s0 { --rd: 1rem; } #reader.rd-s2 { --rd: 1.24rem; }
   body.rd-open { overflow: hidden; }
-  /* ---------- Opening and closing the reader and the Odeon: the page opens like a window out of the card you tapped ---------- */
-  #reader, #odeonPage { will-change: clip-path;
-    -webkit-clip-path: inset(var(--ct, 40%) var(--cr, 6%) var(--cb, 40%) var(--cl, 6%) round 20px);
-            clip-path: inset(var(--ct, 40%) var(--cr, 6%) var(--cb, 40%) var(--cl, 6%) round 20px);
-    transition: clip-path .46s cubic-bezier(.5, 0, .75, 0), -webkit-clip-path .46s cubic-bezier(.5, 0, .75, 0), border-radius .46s ease; }
-  #reader.on, #odeonPage.on { -webkit-clip-path: inset(0 0 0 0 round 0px); clip-path: inset(0 0 0 0 round 0px);
-    transition: clip-path .72s cubic-bezier(.32, .72, 0, 1), -webkit-clip-path .72s cubic-bezier(.32, .72, 0, 1); }
-  @keyframes rise { from { opacity: 0; transform: translateY(34px) scale(.985); } to { opacity: 1; transform: none; } }
-  @keyframes dropin { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: none; } }
-  #reader.on .rd-bar, #odeonPage.on .od-bar { animation: dropin .55s cubic-bezier(.22, 1, .36, 1) .18s both; }
-  #reader.on .rd-body > *:nth-child(-n+9), #odeonPage.on .od-wrap > *:not(.od-row):nth-child(-n+9) { animation: rise .75s cubic-bezier(.22, 1, .36, 1) both; }
-  #reader.on .rd-body > :nth-child(1), #odeonPage.on .od-wrap > :nth-child(1) { animation-delay: .24s; }
-  #reader.on .rd-body > :nth-child(2), #odeonPage.on .od-wrap > :nth-child(2) { animation-delay: .32s; }
-  #reader.on .rd-body > :nth-child(3), #odeonPage.on .od-wrap > :nth-child(3) { animation-delay: .4s; }
-  #reader.on .rd-body > :nth-child(4), #odeonPage.on .od-wrap > :nth-child(4) { animation-delay: .48s; }
-  #reader.on .rd-body > :nth-child(5), #odeonPage.on .od-wrap > :nth-child(5) { animation-delay: .56s; }
-  #reader.on .rd-body > :nth-child(6), #odeonPage.on .od-wrap > :nth-child(6) { animation-delay: .64s; }
-  #reader.on .rd-body > :nth-child(n+7), #odeonPage.on .od-wrap > :nth-child(n+7) { animation-delay: .7s; }
-  /* the Odeon's shows and posters land one by one, with a little spring */
-  @keyframes pop { from { opacity: 0; transform: translateY(26px) scale(.94); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
-  #odeonPage.on .ev, #odeonPage.on .od-strip > * { animation: pop .7s cubic-bezier(.34, 1.4, .64, 1) both; animation-delay: calc(.42s + var(--k, 0) * .07s); }
+  /* ---------- Opening and closing the reader and the Odeon: the page zooms out of the card you tapped (transform and opacity only) ---------- */
+  #reader, #odeonPage { opacity: 0; transform: translate3d(var(--dx, 0px), var(--dy, 40px), 0) scale(var(--ds, .9));
+    transition: opacity .2s ease-in, transform .34s cubic-bezier(.4, 0, 1, 1); backface-visibility: hidden; }
+  #reader.on, #odeonPage.on { opacity: 1; transform: none;
+    transition: opacity .28s ease-out, transform .5s cubic-bezier(.32, .72, 0, 1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+  #reader.on .rd-body, #odeonPage.on .od-wrap { animation: rise .6s cubic-bezier(.22, 1, .36, 1) .16s both; }
   @media (prefers-reduced-motion: reduce) {
-    #reader, #odeonPage { -webkit-clip-path: none; clip-path: none; opacity: 0; transition: opacity .15s linear; }
-    #reader.on, #odeonPage.on { opacity: 1; transition: opacity .15s linear; }
-    #reader.on .rd-bar, #odeonPage.on .od-bar, #reader.on .rd-body > *, #odeonPage.on .od-wrap > *, #odeonPage.on .ev, #odeonPage.on .od-strip > * { animation: none; }
+    #reader, #odeonPage, #reader.on, #odeonPage.on { transform: none; transition: opacity .15s linear; }
+    #reader.on .rd-body, #odeonPage.on .od-wrap { animation: none; }
   }
   .rd-bar { position: sticky; top: 0; z-index: 2; background: radial-gradient(120% 140% at 50% 60%, var(--navy-2), var(--navy) 70%); color: var(--ivory); padding-top: env(safe-area-inset-top, 0px); }
   .rd-row { display: flex; align-items: center; gap: 4px; height: 56px; padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
@@ -426,7 +411,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-14 window</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-14 zoom</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -571,10 +556,11 @@ function lyceumMain() {
   function showLayer(box, from) {
     clearTimeout(box._t);
     var r = from && from.getBoundingClientRect(), W = innerWidth, H = innerHeight;
-    if (!r || !r.height) r = { top: H * .42, bottom: H * .58, left: W * .08, right: W * .92 };
-    var cl = Math.max(0, r.left), cr = Math.max(0, W - r.right), ct = Math.max(0, r.top), cb = Math.max(0, H - r.bottom);
-    box.style.setProperty("--cl", cl + "px"); box.style.setProperty("--cr", cr + "px");
-    box.style.setProperty("--ct", ct + "px"); box.style.setProperty("--cb", cb + "px");
+    if (!r || !r.height) r = { top: H * .55, left: W * .05, width: W * .9, height: H * .1 };
+    // start where the tapped card is: centred on it, at about the card's width
+    box.style.setProperty("--dx", Math.round(r.left + r.width / 2 - W / 2) + "px");
+    box.style.setProperty("--dy", Math.round(r.top + r.height / 2 - H / 2) + "px");
+    box.style.setProperty("--ds", Math.max(.8, Math.min(.9, r.width / W - .04)).toFixed(3));
     box.hidden = false;
     box.classList.remove("on");
     void box.offsetWidth;                        // let the starting state register so the transition runs
@@ -584,7 +570,7 @@ function lyceumMain() {
     if (box.hidden) return;
     box.classList.remove("on");
     clearTimeout(box._t);
-    box._t = setTimeout(function () { box.hidden = true; }, 480);
+    box._t = setTimeout(function () { box.hidden = true; }, 380);
   }
   function setReaderSize(box, n) {
     box.classList.remove("rd-s0", "rd-s1", "rd-s2");
@@ -923,7 +909,7 @@ function lyceumMain() {
       var sec = el("div", "od-row"), label = el("div", "od-label", row.name);
       label.style.setProperty("--c", row.c);
       sec.appendChild(label);
-      list.forEach(function (e, i) { var c = eventEl(row, e); c.style.setProperty("--k", Math.min(i, 5)); sec.appendChild(c); });
+      list.forEach(function (e) { sec.appendChild(eventEl(row, e)); });
       wrap.appendChild(sec);
     });
     if (!n.events) {
@@ -938,7 +924,7 @@ function lyceumMain() {
     mlabel.style.setProperty("--c", "#8db8ea"); msec.appendChild(mlabel);
     if ((od.movies || []).length) {
       var mstrip = el("div", "od-strip");
-      od.movies.forEach(function (m, i) { var c = movieCard(m); c.style.setProperty("--k", Math.min(i, 5)); mstrip.appendChild(c); });
+      od.movies.forEach(function (m) { mstrip.appendChild(movieCard(m)); });
       msec.appendChild(mstrip);
     }
     var cin = el("div", "od-note");
@@ -955,7 +941,7 @@ function lyceumMain() {
         var sec = el("div", "od-row"), label = el("div", "od-label", row.name);
         label.style.setProperty("--c", row.c);
         var strip = el("div", "od-strip");
-        list.forEach(function (it, i) { var c = headlineCard(row, it); c.style.setProperty("--k", Math.min(i, 5)); strip.appendChild(c); });
+        list.forEach(function (it) { strip.appendChild(headlineCard(row, it)); });
         sec.appendChild(label); sec.appendChild(strip); wrap.appendChild(sec);
       });
     }

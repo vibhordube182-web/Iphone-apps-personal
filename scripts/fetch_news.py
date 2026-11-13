@@ -84,6 +84,13 @@ ODEON_FEEDS = [
     ("comedy", "The Guardian", "https://www.theguardian.com/stage/comedy/rss"),
     ("comedy", "*", GN + "(%22stand-up%22+OR+comedian)+(Melbourne+OR+Australia)+(tour+OR+show+OR+tickets)"),
     ("comedy", "*", GN + "%22Melbourne+International+Comedy+Festival%22"),
+    ("out", "Concrete Playground", "https://concreteplayground.com/melbourne/feed"),
+    ("out", "Broadsheet", "https://www.broadsheet.com.au/melbourne/rss"),
+    ("out", "Time Out Melbourne", "https://www.timeout.com/melbourne/rss"),
+    ("music", "Music Feeds", "https://musicfeeds.com.au/feed/"),
+    ("music", "Rolling Stone Australia", "https://au.rollingstone.com/feed/"),
+    ("music", "NME", "https://www.nme.com/feed"),
+    ("comedy", "Chortle", "https://www.chortle.co.uk/news/rss"),
     ("out", "*", GN + "Melbourne+(festival+OR+%22this+weekend%22+OR+%22night+market%22+OR+event)"),
     ("out", "*", GN + "Melbourne+(MCG+OR+%22Marvel+Stadium%22+OR+%22AAMI+Park%22)+(match+OR+tickets+OR+tour)"),
     ("out", "*", GN + "Melbourne+(startup+OR+tech)+(event+OR+conference+OR+summit)"),
@@ -326,7 +333,8 @@ def build_odeon(results, taken_links):
         return picked
 
     # newest first, taste as a boost; the radar needs a favourite artist actually named
-    recency = lambda sc, i: sc * 3 + (i["date"] - cutoff).total_seconds() / 86400.0
+    # a picture is worth about a day and a half of freshness, so poster-style cards are not all gradients
+    recency = lambda sc, i: sc * 3 + (i["date"] - cutoff).total_seconds() / 86400.0 + (1.5 if i.get("image") else 0)
     out["radar"] = take(by_group.get("radar", []) + by_group.get("music", []), ODEON_LIMITS["radar"], recency, 3)
     for k in ("music", "comedy", "out"):
         out[k] = take(by_group.get(k, []), ODEON_LIMITS[k], recency)
