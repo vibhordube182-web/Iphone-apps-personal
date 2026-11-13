@@ -159,6 +159,15 @@ def pick_image(el, raw_html):
     return best
 
 
+# Things never to show anywhere in the app.
+BLOCKED = re.compile(r"(?i)\b(k-?pop|blackpink|stray kids|newjeans|aespa|le sserafim|enhypen|itzy|ateez|babymonster|illit|got7|korean idol|idol group)\b")
+BLOCKED_CASE = re.compile(r"\bBTS\b")
+
+
+def blocked(text):
+    return bool(BLOCKED.search(text) or BLOCKED_CASE.search(text))
+
+
 def fetch(feed):
     group, name, url = feed
     req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0"})
@@ -199,6 +208,8 @@ def fetch(feed):
         if not title or not link.startswith("http"):
             continue
         summary = brief(clean(f.get("description") or f.get("summary") or f.get("content")))
+        if blocked(title + " " + summary):
+            continue
         if len(summary) < 30 or summary.lower().startswith(title.lower()):
             summary = ""
         d = f.get("date") or datetime.now(timezone.utc)
@@ -240,27 +251,55 @@ def taste(item):
 
 
 WIKI_TITLES = {"Elvis": "Elvis_Presley", "Tool": "Tool_(band)", "The Beatles": "The_Beatles", "Beatles": "The_Beatles"}
+UA = "Lyceum/1.0 (https://github.com/vibhordube182-web/Iphone-apps-personal; personal news app)"
+PERSON_DESC = re.compile(r"(?i)comedian|stand-?up|actor|actress|musician|singer|rapper|band|presenter|entertainer|songwriter|guitarist|drummer|youtuber|host")
 _img_cache = {}
 
 
-def wiki_image(name):
-    """A photo of an artist from Wikipedia (free); None if there is no page or no image."""
-    if name in _img_cache:
-        return _img_cache[name]
+def _json(url, timeout=10):
+    with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": UA}), timeout=timeout) as r:
+        return json.load(r)
+
+
+def deezer_image(name):
+    """A picture of a musician from Deezer (free, no key); only when the name matches exactly."""
+    try:
+        d = _json("https://api.deezer.com/search/artist?limit=3&q=" + urllib.parse.quote(name))
+        for a in d.get("data", []):
+            if a.get("name", "").lower() == name.lower() and a.get("picture_xl"):
+                return a["picture_xl"]
+    except Exception as e:
+        print(f"skip deezer image ({name}): {e}", file=sys.stderr)
+    return None
+
+
+def wiki_image(name, people_only=False):
+    """A photo from Wikipedia (free). With people_only, the page must describe a performer, so a headline's first
+    words are not mistaken for a person."""
+    key = (name, people_only)
+    if key in _img_cache:
+        return _img_cache[key]
     title = WIKI_TITLES.get(name, name.replace(" ", "_"))
-    url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + urllib.parse.quote(title, safe="()_")
     img = None
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0 (personal news app)"})
-        with urllib.request.urlopen(req, timeout=10) as r:
-            d = json.load(r)
-        src = (d.get("thumbnail") or {}).get("source") or (d.get("originalimage") or {}).get("source")
-        if src:
-            img = re.sub(r"/(\d+)px-", "/640px-", src, count=1)
+        d = _json("https://en.wikipedia.org/api/rest_v1/page/summary/" + urllib.parse.quote(title, safe="()_"))
+        if d.get("type") == "standard" and (not people_only or PERSON_DESC.search(d.get("description", ""))):
+            src = (d.get("thumbnail") or {}).get("source") or (d.get("originalimage") or {}).get("source")
+            if src:
+                img = re.sub(r"/(\d+)px-", "/640px-", src, count=1)
     except Exception as e:
         print(f"skip wikipedia image ({name}): {e}", file=sys.stderr)
-    _img_cache[name] = img
+    _img_cache[key] = img
     return img
+
+
+def lead_names(title):
+    """Capitalised word runs at the start of a headline: 'Urzila Carlson to bring ...' -> ['Urzila Carlson', 'Urzila']."""
+    m = re.match(r"((?:[A-Z][\w'’.-]+)(?:\s+(?:[A-Z][\w'’.-]+|of|the|de|van|von)){1,3})", title)
+    if not m:
+        return []
+    words = m.group(1).split()
+    return [" ".join(words[:n]) for n in (3, 2) if len(words) >= n]
 
 
 def og_image(link):
@@ -293,11 +332,57 @@ def add_odeon_images(odeon):
                 jobs.append((e, e["tag"], ""))
     def work(job):
         item, tag, link = job
-        img = (wiki_image(tag) if tag else None) or (og_image(link) if link else None)
+        img = None
+        if tag:
+            img = deezer_image(tag) or wiki_image(tag)
+        if not img:
+            title = item.get("title") or item.get("name") or ""
+            for name in lead_names(title):            # a person named at the start of the headline
+                img = deezer_image(name) or wiki_image(name, people_only=True)
+                if img:
+                    break
+        if not img and link:
+            img = og_image(link)
         if img:
             item["image"] = img
     with ThreadPoolExecutor(6) as ex:
         list(ex.map(work, jobs))
+
+# What each Odeon row should be about, for Vibhor: rock and its heroes, comedy he is likely to enjoy (stand-up from India
+# and the big touring names), and Melbourne nights out around football, tech/space, longevity, India and Greece.
+# Edit freely. A headline has to match its row's taste and be about Australia, or it is not shown.
+LOCAL = re.compile(r"(?i)\b(australia|australian|aussie|melbourne|victoria|sydney|brisbane|adelaide|perth|canberra)\b")
+LOCAL_MEL = re.compile(r"(?i)\b(melbourne|victoria|mcg|marvel stadium|aami park|docklands|st kilda|fitzroy|carlton)\b")
+ROCK_WORDS = re.compile(r"(?i)\b(rock|metal|grunge|punk|blues|guitar|stadium|alt-rock|hard rock|classic rock|reunion)\b")
+COMEDY_LIKES = ["Zakir Khan", "Vir Das", "Anubhav Singh Bassi", "Abhishek Upmanyu", "Kenny Sebastian", "Biswa Kalyan Rath",
+                "Samay Raina", "Rahul Subramanian", "Aditi Mittal", "Kanan Gill", "Tanmay Bhat", "Russell Peters",
+                "Hasan Minhaj", "Bill Burr", "Joe Rogan", "Ricky Gervais", "Jimmy Carr", "Dave Chappelle", "Jim Jefferies",
+                "Tim Minchin", "Hannah Gadsby", "Nikki Glaser", "Jo Koy", "Nate Bargatze", "John Mulaney", "Trevor Noah",
+                "Jerry Seinfeld", "Kevin Hart", "Ali Wong", "Bo Burnham", "Dave Hughes", "Tom Gleeson", "Adam Hills",
+                "Indian comedian", "Indian stand-up", "Bollywood"]
+COMEDY_CONTEXT = re.compile(r"(?i)\b(stand-?up|comedian|comedy (show|festival|gala|tour)|live comedy)\b")
+OUT_LIKES = re.compile(r"(?i)\b(socceroos|melbourne victory|melbourne city|a-league|premier league|champions league|football|soccer|"
+                       r"spacex|tesla|starship|xai|neuralink|bryan johnson|longevity|biohack\w*|artificial intelligence|startup|"
+                       r"tech conference|diwali|holi|bollywood|indian|india|greek|hellenic|philosophy|stoic\w*|ai summit|"
+                       r"rock|led zeppelin|foo fighters|elton john|beatles|elvis)\b")
+
+
+def likes_comedy(item):
+    text = item["title"] + " " + item["summary"]
+    if not LOCAL.search(text):
+        return False                      # a favourite touring somewhere else is no use to you in Melbourne
+    return any(re.search(r"\b" + re.escape(n) + r"\b", text, re.I) for n in COMEDY_LIKES) or bool(COMEDY_CONTEXT.search(text))
+
+
+def likes_music(item):
+    sc, _ = taste(item)
+    text = item["title"] + " " + item["summary"]
+    return sc >= 4 or (sc >= 2 and bool(LOCAL.search(text))) or bool(ROCK_WORDS.search(text) and LOCAL.search(text))
+
+
+def likes_out(item):
+    text = item["title"] + " " + item["summary"]
+    return bool(LOCAL_MEL.search(text) and OUT_LIKES.search(text))
 
 
 def build_odeon(results, taken_links):
@@ -308,13 +393,13 @@ def build_odeon(results, taken_links):
         by_group.setdefault(feed[0], []).extend(items)
     used, seen_words, out = set(taken_links), [], {}
 
-    def take(items, limit, key, min_score=0):
+    def take(items, limit, key, min_score=0, pred=None):
         fresh = [i for i in items if i["date"] > cutoff]
         pool = fresh if len(fresh) >= limit else items
         scored = []
         for i in pool:
             sc, artist = taste(i)
-            if sc >= min_score and i["link"] not in used:
+            if sc >= min_score and i["link"] not in used and (pred is None or pred(i)):
                 scored.append((key(sc, i), i, artist))
         scored.sort(key=lambda t: t[0], reverse=True)
         picked = []
@@ -336,8 +421,9 @@ def build_odeon(results, taken_links):
     # a picture is worth about a day and a half of freshness, so poster-style cards are not all gradients
     recency = lambda sc, i: sc * 3 + (i["date"] - cutoff).total_seconds() / 86400.0 + (1.5 if i.get("image") else 0)
     out["radar"] = take(by_group.get("radar", []) + by_group.get("music", []), ODEON_LIMITS["radar"], recency, 3)
+    preds = {"music": likes_music, "comedy": likes_comedy, "out": likes_out}
     for k in ("music", "comedy", "out"):
-        out[k] = take(by_group.get(k, []), ODEON_LIMITS[k], recency)
+        out[k] = take(by_group.get(k, []), ODEON_LIMITS[k], recency, 0, preds[k])
     return out
 
 
@@ -407,6 +493,8 @@ def tm_events(key, **params):
                 or (imgs[0]["url"] if imgs else None)
             attractions = [a.get("name", "") for a in (ev.get("_embedded") or {}).get("attractions", [])]
             vname = venue.get("name", "")
+            if blocked(ev["name"] + " " + " ".join(attractions)):
+                continue
             out.append({
                 "name": clean(ev["name"]), "link": ev["url"], "date": start.get("localDate", ""),
                 "time": (start.get("localTime") or "")[:5], "venue": vname,
@@ -455,36 +543,41 @@ def bit_events(app_id, artist):
 
 
 def tmdb_movies(key):
-    """What is in Australian cinemas now and soon, from TMDB. No session times: those live in each cinema's own system."""
+    """Everything in Australian cinemas now (all pages) plus what is coming soon, from TMDB. No session times: those live
+    in each cinema's own system."""
     if not key:
         return []
-    out = []
-    for kind, limit in (("now_playing", 10), ("upcoming", 4)):
-        url = "https://api.themoviedb.org/3/movie/%s?region=AU&language=en-AU&page=1" % kind
-        headers = {"User-Agent": "Lyceum/1.0"}
-        if key.startswith("eyJ"):
-            headers["Authorization"] = "Bearer " + key
-        else:
-            url += "&api_key=" + urllib.parse.quote(key, safe="")
-        try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as r:
-                data = json.load(r)
-        except Exception as e:
-            print(f"skip tmdb {kind}: {e}", file=sys.stderr)
-            continue
+    out, seen = [], set()
+    headers = {"User-Agent": "Lyceum/1.0"}
+    bearer = key.startswith("eyJ")
+    if bearer:
+        headers["Authorization"] = "Bearer " + key
+    for kind, max_pages, cap in (("now_playing", 6, 80), ("upcoming", 2, 16)):
         n = 0
-        for m in data.get("results", []):
-            if not m.get("poster_path") or not m.get("title"):
-                continue
-            out.append({"title": m["title"], "date": m.get("release_date", ""), "kind": kind,
-                        "rating": round(m.get("vote_average") or 0, 1), "votes": m.get("vote_count") or 0,
-                        "poster": "https://image.tmdb.org/t/p/w342" + m["poster_path"],
-                        "overview": brief(clean(m.get("overview", "")), 140)})
-            n += 1
-            if n >= limit:
+        for page in range(1, max_pages + 1):
+            url = "https://api.themoviedb.org/3/movie/%s?region=AU&language=en-AU&page=%d" % (kind, page)
+            if not bearer:
+                url += "&api_key=" + urllib.parse.quote(key, safe="")
+            try:
+                with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as r:
+                    data = json.load(r)
+            except Exception as e:
+                print(f"skip tmdb {kind} page {page}: {e}", file=sys.stderr)
+                break
+            for m in data.get("results", []):
+                if not m.get("poster_path") or not m.get("title") or m["id"] in seen or blocked(m["title"]):
+                    continue
+                seen.add(m["id"])
+                out.append({"title": m["title"], "date": m.get("release_date", ""), "kind": kind,
+                            "rating": round(m.get("vote_average") or 0, 1), "votes": m.get("vote_count") or 0,
+                            "poster": "https://image.tmdb.org/t/p/w342" + m["poster_path"],
+                            "overview": brief(clean(m.get("overview", "")), 140)})
+                n += 1
+                if n >= cap:
+                    break
+            if n >= cap or page >= data.get("total_pages", 1):
                 break
     return out
-
 
 def build_events(key, bit_id=""):
     """Event rows {radar, music, comedy, out}, soonest first: Ticketmaster (prices, tickets) plus Bandsintown tour dates
