@@ -176,6 +176,25 @@
   #reader[hidden] { display: none; }
   #reader.rd-s0 { --rd: 1rem; } #reader.rd-s2 { --rd: 1.24rem; }
   body.rd-open { overflow: hidden; }
+  /* ---------- Opening and closing the reader and the Odeon: the page grows out of its card, then its content rises in ---------- */
+  #reader, #odeonPage { opacity: 0; transform: translateY(6vh) scale(.93); border-radius: 26px; will-change: transform, opacity;
+    transition: opacity .22s ease, transform .3s cubic-bezier(.4, 0, 1, 1), border-radius .3s ease; }
+  #reader.on, #odeonPage.on { opacity: 1; transform: none; border-radius: 0;
+    transition: opacity .3s ease, transform .56s cubic-bezier(.22, 1, .36, 1), border-radius .56s cubic-bezier(.22, 1, .36, 1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  #reader.on .rd-bar, #odeonPage.on .od-bar { animation: rise .5s cubic-bezier(.22, 1, .36, 1) .04s both; }
+  #reader.on .rd-body > *:nth-child(-n+9), #odeonPage.on .od-wrap > *:nth-child(-n+9) { animation: rise .62s cubic-bezier(.22, 1, .36, 1) both; }
+  #reader.on .rd-body > :nth-child(1), #odeonPage.on .od-wrap > :nth-child(1) { animation-delay: .14s; }
+  #reader.on .rd-body > :nth-child(2), #odeonPage.on .od-wrap > :nth-child(2) { animation-delay: .2s; }
+  #reader.on .rd-body > :nth-child(3), #odeonPage.on .od-wrap > :nth-child(3) { animation-delay: .26s; }
+  #reader.on .rd-body > :nth-child(4), #odeonPage.on .od-wrap > :nth-child(4) { animation-delay: .32s; }
+  #reader.on .rd-body > :nth-child(5), #odeonPage.on .od-wrap > :nth-child(5) { animation-delay: .38s; }
+  #reader.on .rd-body > :nth-child(6), #odeonPage.on .od-wrap > :nth-child(6) { animation-delay: .44s; }
+  #reader.on .rd-body > :nth-child(n+7), #odeonPage.on .od-wrap > :nth-child(n+7) { animation-delay: .5s; }
+  @media (prefers-reduced-motion: reduce) {
+    #reader, #odeonPage, #reader.on, #odeonPage.on { transition: opacity .15s linear; transform: none; border-radius: 0; }
+    #reader.on .rd-bar, #odeonPage.on .od-bar, #reader.on .rd-body > *, #odeonPage.on .od-wrap > * { animation: none; }
+  }
   .rd-bar { position: sticky; top: 0; z-index: 2; background: radial-gradient(120% 140% at 50% 60%, var(--navy-2), var(--navy) 70%); color: var(--ivory); padding-top: env(safe-area-inset-top, 0px); }
   .rd-row { display: flex; align-items: center; gap: 4px; height: 56px; padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
   .rd-row .iconbtn { color: var(--ivory); }
@@ -397,7 +416,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-13 odeon 3</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-13 motion</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -538,8 +557,29 @@ function lyceumMain() {
 
   /* ---- in-app reader ---- */
   var readingList = null, readerEntry = null;
+  /* open and close a full-screen layer with the animation above; the page grows out of the card that was tapped */
+  function showLayer(box, from) {
+    clearTimeout(box._t);
+    var r = from && from.getBoundingClientRect();
+    box.style.transformOrigin = r && r.height ? (r.left + r.width / 2) + "px " + (r.top + r.height / 2) + "px" : "50% 85%";
+    box.hidden = false;
+    box.classList.remove("on");
+    void box.offsetWidth;                        // let the starting state register so the transition runs
+    requestAnimationFrame(function () { box.classList.add("on"); });
+  }
+  function hideLayer(box) {
+    if (box.hidden) return;
+    box.classList.remove("on");
+    clearTimeout(box._t);
+    box._t = setTimeout(function () { box.hidden = true; }, 320);
+  }
+  function setReaderSize(box, n) {
+    box.classList.remove("rd-s0", "rd-s1", "rd-s2");
+    box.classList.add("rd-s" + n);
+  }
+
   function closeReader(fromPop) {
-    $("reader").hidden = true; document.body.classList.remove("rd-open");
+    hideLayer($("reader")); document.body.classList.remove("rd-open");
     if (!fromPop && history.state && history.state.reader) { try { history.back(); } catch (e) {} }
   }
   function finishReading() {
@@ -583,10 +623,10 @@ function lyceumMain() {
     readerEntry = r;
     $("rdTitle").textContent = r.work + " · " + r.part;
     $("rdSub").textContent = r.author + " · about " + r.minutes + " min";
-    var size = store("lyceum-rdsize"); box.className = "rd-s" + (size == null ? 1 : size);
+    var size = store("lyceum-rdsize"); setReaderSize(box, size == null ? 1 : size);
     body.textContent = ""; body.appendChild(el("p", "rd-loading", "Opening today’s reading…"));
     $("rdEnd").hidden = true; $("rdBar").style.width = "0";
-    box.hidden = false; box.scrollTop = 0; document.body.classList.add("rd-open");
+    box.scrollTop = 0; showLayer(box, $("reading")); document.body.classList.add("rd-open");
     try { history.pushState({ reader: 1 }, ""); } catch (e) {}
     fetch(r.file).then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
       .then(function (d) { renderPassage(r, d.p); })
@@ -600,7 +640,7 @@ function lyceumMain() {
   $("rdClose").addEventListener("click", function () { closeReader(); });
   $("rdSize").addEventListener("click", function () {
     var cur = store("lyceum-rdsize"); cur = cur == null ? 1 : cur;
-    var next = (cur + 1) % 3; store("lyceum-rdsize", next); $("reader").className = "rd-s" + next;
+    var next = (cur + 1) % 3; store("lyceum-rdsize", next); setReaderSize($("reader"), next);
   });
   $("reader").addEventListener("scroll", function () {
     var r = $("reader"), max = r.scrollHeight - r.clientHeight;
@@ -903,11 +943,11 @@ function lyceumMain() {
   }
   function openOdeon() {
     renderOdeonPage();
-    var pg = $("odeonPage"); pg.hidden = false; pg.scrollTop = 0; document.body.classList.add("rd-open");
+    var pg = $("odeonPage"); pg.scrollTop = 0; showLayer(pg, $("odeonCard")); document.body.classList.add("rd-open");
     try { history.pushState({ odeon: 1 }, ""); } catch (e) {}
   }
   function closeOdeon(fromPop) {
-    $("odeonPage").hidden = true; document.body.classList.remove("rd-open");
+    hideLayer($("odeonPage")); document.body.classList.remove("rd-open");
     if (!fromPop && history.state && history.state.odeon) { try { history.back(); } catch (e) {} }
   }
   $("odClose").addEventListener("click", function () { closeOdeon(); });
