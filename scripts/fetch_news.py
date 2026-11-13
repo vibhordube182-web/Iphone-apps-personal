@@ -350,9 +350,77 @@ def tm_events(key, **params):
     return out
 
 
-def build_events(key):
-    """Event rows {radar, music, comedy, out} from Ticketmaster, soonest first. Empty dict without a key."""
+def bit_events(app_id, artist):
+    """Upcoming Australian shows for an artist from Bandsintown: dates and venues from any seller, no prices."""
+    url = "https://rest.bandsintown.com/artists/%s/events?app_id=%s&date=upcoming" % (
+        urllib.parse.quote(artist, safe=""), urllib.parse.quote(app_id, safe=""))
+    req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            data = json.load(r)
+    except Exception as e:
+        print(f"skip bandsintown ({artist}): {e}", file=sys.stderr)
+        return []
+    time.sleep(0.3)
+    if not isinstance(data, list):
+        return []
+    out = []
+    for ev in data:
+        try:
+            venue = ev.get("venue") or {}
+            if (venue.get("country") or "").lower() not in ("australia", "au"):
+                continue
+            when = ev.get("starts_at") or ev.get("datetime") or ""
+            offers = ev.get("offers") or []
+            link = next((o["url"] for o in offers if o.get("type") == "Tickets" and o.get("url")), "") or ev.get("url", "")
+            if not when or not link.startswith("http"):
+                continue
+            vname = clean(venue.get("name", ""))
+            out.append({"name": clean(ev.get("title") or "") or artist + " live", "link": link, "date": when[:10],
+                        "time": when[11:16] if len(when) > 15 else "", "venue": vname,
+                        "city": venue.get("city", ""), "min": None, "max": None, "currency": "AUD", "image": None,
+                        "acts": [artist], "tip": venue_tip(vname)})
+        except Exception:
+            continue
+    return out
+
+
+def tmdb_movies(key):
+    """What is in Australian cinemas now and soon, from TMDB. No session times: those live in each cinema's own system."""
     if not key:
+        return []
+    out = []
+    for kind, limit in (("now_playing", 10), ("upcoming", 4)):
+        url = "https://api.themoviedb.org/3/movie/%s?region=AU&language=en-AU&page=1" % kind
+        headers = {"User-Agent": "Lyceum/1.0"}
+        if key.startswith("eyJ"):
+            headers["Authorization"] = "Bearer " + key
+        else:
+            url += "&api_key=" + urllib.parse.quote(key, safe="")
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as r:
+                data = json.load(r)
+        except Exception as e:
+            print(f"skip tmdb {kind}: {e}", file=sys.stderr)
+            continue
+        n = 0
+        for m in data.get("results", []):
+            if not m.get("poster_path") or not m.get("title"):
+                continue
+            out.append({"title": m["title"], "date": m.get("release_date", ""), "kind": kind,
+                        "rating": round(m.get("vote_average") or 0, 1), "votes": m.get("vote_count") or 0,
+                        "poster": "https://image.tmdb.org/t/p/w342" + m["poster_path"],
+                        "overview": brief(clean(m.get("overview", "")), 140)})
+            n += 1
+            if n >= limit:
+                break
+    return out
+
+
+def build_events(key, bit_id=""):
+    """Event rows {radar, music, comedy, out}, soonest first: Ticketmaster (prices, tickets) plus Bandsintown tour dates
+    for the artist radar (any seller). Empty dict if neither key is set."""
+    if not key and not bit_id:
         return {}
     seen = set()
 
@@ -374,11 +442,17 @@ def build_events(key):
     radar = []
     for name in ["Led Zeppelin", "Foo Fighters", "Red Hot Chili Peppers", "System of a Down", "The Beatles",
                  "Elvis", "Elton John", "Tool", "Pearl Jam", "Metallica", "Queens of the Stone Age"]:
-        items = tm_events(key, keyword=name, classificationName="music")
         exact = lambda e, n=name: any(a.lower() == n.lower() for a in e["acts"]) and not NOT_THE_ACT.search(e["name"])
-        radar += fresh(items, 3, tag=name, only=exact)
+        mine = fresh(tm_events(key, keyword=name, classificationName="music"), 3, tag=name, only=exact) if key else []
+        if bit_id:
+            have = {e["date"] for e in mine}   # Ticketmaster already has the price and ticket link for those dates
+            extra = [e for e in bit_events(bit_id, name) if e["date"] not in have and not NOT_THE_ACT.search(e["name"])]
+            mine += fresh(extra, 3, tag=name)
+        radar += mine
     radar.sort(key=lambda e: (e["date"], e["time"]))
-    out = {"radar": radar[:8]}
+    out = {"radar": radar[:10]}
+    if not key:
+        return out
     out["music"] = fresh(tm_events(key, city="Melbourne", classificationName="music", keyword="rock"), 6) or \
         fresh(tm_events(key, city="Melbourne", classificationName="music"), 6)
     out["comedy"] = fresh(tm_events(key, city="Melbourne", classificationName="comedy"), 6)
@@ -435,12 +509,20 @@ def main():
         print(f"skip odeon: {e}", file=sys.stderr)
         odeon = {}
     key = os.environ.get("TICKETMASTER_API_KEY", "").strip()
+    bit_id = os.environ.get("BANDSINTOWN_APP_ID", "").strip()
+    tmdb_key = os.environ.get("TMDB_API_KEY", "").strip()
     try:
-        odeon["events"] = build_events(key)
+        odeon["events"] = build_events(key, bit_id)
     except Exception as e:
-        print(f"skip ticketmaster events: {e}", file=sys.stderr)
+        print(f"skip events: {e}", file=sys.stderr)
         odeon["events"] = {}
-    odeon["events_connected"] = bool(key)
+    odeon["events_connected"] = bool(key or bit_id)
+    try:
+        odeon["movies"] = tmdb_movies(tmdb_key)
+    except Exception as e:
+        print(f"skip movies: {e}", file=sys.stderr)
+        odeon["movies"] = []
+    odeon["movies_connected"] = bool(tmdb_key)
     for s in stories:
         s["date"] = s["date"].astimezone(timezone.utc).isoformat()
     Path("web/news.json").write_text(json.dumps(
@@ -450,7 +532,8 @@ def main():
                                    else "web/reading.json").read_text())},
         ensure_ascii=False, indent=1))
     print(f"wrote {len(stories)} stories; odeon news " + ", ".join(f"{k} {len(odeon.get(k, []))}" for k in ("radar", "music", "comedy", "out"))
-          + "; events " + ", ".join(f"{k} {len(v)}" for k, v in odeon["events"].items()))
+          + "; events " + ", ".join(f"{k} {len(v)}" for k, v in odeon["events"].items())
+          + f"; movies {len(odeon['movies'])}")
 
 
 if __name__ == "__main__":
