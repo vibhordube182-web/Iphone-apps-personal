@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Fetch RSS/Atom feeds and write web/news.json (the morning edition)."""
-import html, json, re, ssl, sys, time, urllib.request
+import html, json, os, re, ssl, sys, time, urllib.parse, urllib.request
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
@@ -272,6 +272,120 @@ def build_odeon(results, taken_links):
     return out
 
 
+# ---- Ticketmaster Discovery API: real dates, venues, price ranges and ticket links (needs TICKETMASTER_API_KEY) ----
+TM_URL = "https://app.ticketmaster.com/discovery/v2/events.json"
+NOT_THE_ACT = re.compile(r"(?i)\b(tribute|experience|celebrat|performed by|plays|symphon|orchestra|cover|salute|karaoke|kids|vip upgrade)\b")
+
+# General seating advice by venue (lower-case fragment of the venue name). Not live availability.
+VENUE_TIPS = [
+    ("marvel stadium", "Concerts here: the floor is closest but the view is flat. Lower-bowl seats towards the sides, a little back from the stage, usually balance sound and view best. The far end-zone upper seats are distant."),
+    ("melbourne cricket ground", "For stadium shows, lower-tier seats side-on to the stage tend to balance view and sound. The ground floor is standing. The top of the upper tier is a long way back."),
+    ("mcg", "For stadium shows, lower-tier seats side-on to the stage tend to balance view and sound. The ground floor is standing. The top of the upper tier is a long way back."),
+    ("rod laver arena", "Centre-facing lower-tier seats give a clear view and strong sound. The floor is best for energy, but flat. Seats at the extreme sides or back of the upper tier are the weakest."),
+    ("john cain arena", "Lower-tier seats facing the stage are best value. On the floor, aim for near the sound desk for the clearest sound."),
+    ("margaret court arena", "A smaller arena, so most seats are decent. Lower-tier centre is best; the floor is for the front-of-stage crowd."),
+    ("forum melbourne", "Standing venue with a balcony: the front of the upstairs balcony gives a clear, unobstructed view; downstairs, near the sound desk has the best sound."),
+    ("palais theatre", "In the stalls, the middle rows near the centre balance view and sound; the front of the dress circle is excellent and often cheaper."),
+    ("hamer hall", "The stalls centre and the front of the first tier give the best sound. Seats at the very sides can have angled views."),
+    ("princess theatre", "Dress circle front rows or the stalls from the middle back give the best view of the stage."),
+    ("regent theatre", "Stalls from the middle back, or the front of the dress circle, give a full view of the stage."),
+    ("comedy theatre", "A small room: stalls centre rows are best. Upper seats are still close enough to hear every line."),
+    ("corner hotel", "Small standing room. For sound, stand mid-room near the sound desk; for atmosphere, closer to the stage. Arrive early for the front."),
+    ("the tote", "Very small and loud; earplugs help. The best view is near the front or on the raised side."),
+    ("northcote social club", "Mid-room near the sound desk has the best sound. The upstairs seated area is a calmer, clear view."),
+    ("sidney myer music bowl", "Seated: the reserved seats in the middle of the shell are best. On the lawn, bring a rug and sit mid-lawn for sound and view."),
+    ("aami park", "Floor is standing. Lower-tier seats at the side give a good, close view."),
+]
+VENUE_TIP_BY_TYPE = [
+    (r"(?i)stadium|ground|oval", "Stadium shows: lower-tier seats side-on to the stage usually balance sound and view. The floor is standing."),
+    (r"(?i)arena", "Arena shows: centre-facing lower-tier seats give the best view and sound. The extreme sides and back of the upper tier are weakest."),
+    (r"(?i)theatre|theater|hall|opera", "Seated theatre: the middle of the stalls or the front of the dress circle usually gives the best view and sound."),
+    (r"(?i)hotel|club|bar|pub|social|tote", "Small room: near the sound desk gives the best sound, and closer to the stage gives the best atmosphere. Arrive early."),
+]
+
+
+def venue_tip(venue):
+    v = (venue or "").lower()
+    for frag, tip in VENUE_TIPS:
+        if frag in v:
+            return tip
+    for pat, tip in VENUE_TIP_BY_TYPE:
+        if re.search(pat, venue or ""):
+            return tip
+    return ""
+
+
+def tm_events(key, **params):
+    q = {"apikey": key, "countryCode": "AU", "size": "20", "sort": "date,asc",
+         "startDateTime": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    q.update(params)
+    req = urllib.request.Request(TM_URL + "?" + urllib.parse.urlencode(q), headers={"User-Agent": "Lyceum/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            data = json.load(r)
+    except Exception as e:
+        print(f"skip ticketmaster ({params}): {e}", file=sys.stderr)
+        return []
+    time.sleep(0.3)
+    out = []
+    for ev in (data.get("_embedded") or {}).get("events", []):
+        try:
+            start = ev["dates"]["start"]
+            venue = ((ev.get("_embedded") or {}).get("venues") or [{}])[0]
+            price = (ev.get("priceRanges") or [{}])[0]
+            imgs = sorted(ev.get("images") or [], key=lambda i: i.get("width") or 0, reverse=True)
+            img = next((i["url"] for i in imgs if (i.get("width") or 0) >= 600 and i.get("ratio") == "16_9"), None) \
+                or (imgs[0]["url"] if imgs else None)
+            attractions = [a.get("name", "") for a in (ev.get("_embedded") or {}).get("attractions", [])]
+            vname = venue.get("name", "")
+            out.append({
+                "name": clean(ev["name"]), "link": ev["url"], "date": start.get("localDate", ""),
+                "time": (start.get("localTime") or "")[:5], "venue": vname,
+                "city": (venue.get("city") or {}).get("name", ""),
+                "min": price.get("min"), "max": price.get("max"), "currency": price.get("currency", "AUD"),
+                "image": img, "acts": attractions, "tip": venue_tip(vname),
+            })
+        except Exception:
+            continue
+    return out
+
+
+def build_events(key):
+    """Event rows {radar, music, comedy, out} from Ticketmaster, soonest first. Empty dict without a key."""
+    if not key:
+        return {}
+    seen = set()
+
+    def fresh(items, limit, tag=None, only=None):
+        picked = []
+        for e in items:
+            if e["link"] in seen or not e["date"] or (only and not only(e)):
+                continue
+            seen.add(e["link"])
+            e = dict(e)
+            e.pop("acts", None)
+            if tag:
+                e["tag"] = tag
+            picked.append(e)
+            if len(picked) >= limit:
+                break
+        return picked
+
+    radar = []
+    for name in ["Led Zeppelin", "Foo Fighters", "Red Hot Chili Peppers", "System of a Down", "The Beatles",
+                 "Elvis", "Elton John", "Tool", "Pearl Jam", "Metallica", "Queens of the Stone Age"]:
+        items = tm_events(key, keyword=name, classificationName="music")
+        exact = lambda e, n=name: any(a.lower() == n.lower() for a in e["acts"]) and not NOT_THE_ACT.search(e["name"])
+        radar += fresh(items, 3, tag=name, only=exact)
+    radar.sort(key=lambda e: (e["date"], e["time"]))
+    out = {"radar": radar[:8]}
+    out["music"] = fresh(tm_events(key, city="Melbourne", classificationName="music", keyword="rock"), 6) or \
+        fresh(tm_events(key, city="Melbourne", classificationName="music"), 6)
+    out["comedy"] = fresh(tm_events(key, city="Melbourne", classificationName="comedy"), 6)
+    out["out"] = fresh(tm_events(key, city="Melbourne", classificationName="sports", keyword="football"), 5)
+    return out
+
+
 def weather():
     out = []
     for city, lat, lon in CITIES:
@@ -320,6 +434,13 @@ def main():
     except Exception as e:
         print(f"skip odeon: {e}", file=sys.stderr)
         odeon = {}
+    key = os.environ.get("TICKETMASTER_API_KEY", "").strip()
+    try:
+        odeon["events"] = build_events(key)
+    except Exception as e:
+        print(f"skip ticketmaster events: {e}", file=sys.stderr)
+        odeon["events"] = {}
+    odeon["events_connected"] = bool(key)
     for s in stories:
         s["date"] = s["date"].astimezone(timezone.utc).isoformat()
     Path("web/news.json").write_text(json.dumps(
@@ -328,7 +449,8 @@ def main():
          "reading": json.loads(Path("web/readings/index.json" if Path("web/readings/index.json").exists()
                                    else "web/reading.json").read_text())},
         ensure_ascii=False, indent=1))
-    print(f"wrote {len(stories)} stories; odeon " + ", ".join(f"{k} {len(v)}" for k, v in odeon.items()))
+    print(f"wrote {len(stories)} stories; odeon news " + ", ".join(f"{k} {len(odeon.get(k, []))}" for k in ("radar", "music", "comedy", "out"))
+          + "; events " + ", ".join(f"{k} {len(v)}" for k, v in odeon["events"].items()))
 
 
 if __name__ == "__main__":
