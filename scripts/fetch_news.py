@@ -24,7 +24,7 @@ GROUPS = [
     ("sophia", "sophia", 1),
     ("schole", "music", 2),
     ("schole", "football", 1),
-    ("schole", "youtube", 1),
+    ("schole", "youtube", 4),
 ]
 
 # (group, source name, url). A source name of "*" takes the publisher from the item (Google News).
@@ -59,6 +59,9 @@ FEEDS = [
     ("football", "BBC Football", "https://feeds.bbci.co.uk/sport/football/rss.xml"),
     ("football", "The Guardian", "https://www.theguardian.com/football/rss"),
     ("youtube", "PewDiePie", "https://www.youtube.com/feeds/videos.xml?channel_id=UC-lHJZR3Gqxm24_Vd_AJ5Yw"),
+    ("youtube", "Sidemen", "https://www.youtube.com/feeds/videos.xml?channel_id=UCDogdKl7t7NHzQ95aEwkdMw"),
+    ("youtube", "Linus Tech Tips", "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw"),
+    ("youtube", "MrWhoseTheBoss", "https://www.youtube.com/feeds/videos.xml?channel_id=UCMiJRAwDNSNzuYeN2uWa0pA"),
 ]
 
 # ---- The Odeon: music, comedy and nights out, tuned to taste ----
@@ -184,12 +187,62 @@ def blocked(text):
     return bool(BLOCKED.search(text) or BLOCKED_CASE.search(text))
 
 
+# Favourite YouTube channels: name -> (handle, a word the feed's title must contain, so a wrong channel is never shown).
+YT_CHANNELS = {"PewDiePie": ("@PewDiePie", "pewdie"), "Sidemen": ("@Sidemen", "sidemen"),
+               "Linus Tech Tips": ("@LinusTechTips", "linus"), "MrWhoseTheBoss": ("@Mrwhosetheboss", "whose")}
+YT_FEED = "https://www.youtube.com/feeds/videos.xml?"
+
+
+def _xml(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0"})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return ET.fromstring(r.read())
+
+
+def youtube_channel_id(handle):
+    """Look a channel's id up from its @handle page (used only when its feed will not load)."""
+    try:
+        req = urllib.request.Request("https://www.youtube.com/" + handle,
+                                     headers={"User-Agent": "Mozilla/5.0 (compatible; Lyceum/1.0)", "Cookie": "CONSENT=YES+1"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            page = r.read(400000).decode("utf-8", "ignore")
+        m = re.search(r'channel_id=(UC[\w-]{22})', page) or re.search(r'"(?:channelId|externalId)":"(UC[\w-]{22})"', page)
+        return m.group(1) if m else None
+    except Exception as e:
+        print(f"skip youtube lookup ({handle}): {e}", file=sys.stderr)
+        return None
+
+
+def _youtube_root(name, url):
+    """The channel's feed root, trying the channel feed, the uploads playlist, then the id found from its handle."""
+    handle, token = YT_CHANNELS[name]
+    cid = re.search(r"channel_id=(UC[\w-]{22})", url)
+    tried = []
+    for ident in ([cid.group(1)] if cid else []) + [None]:
+        if ident is None:                                  # last resort: find the id from the handle page
+            ident = youtube_channel_id(handle)
+            if not ident or ident in tried:
+                break
+        tried.append(ident)
+        for query in ("channel_id=" + ident, "playlist_id=UU" + ident[2:]):
+            try:
+                root = _xml(YT_FEED + query)
+            except Exception as e:
+                print(f"skip {name} ({YT_FEED + query}): {e}", file=sys.stderr)
+                continue
+            title = next((c.text or "" for c in root if c.tag.split("}")[-1] == "title"), "")
+            if token in title.lower():
+                return root
+            print(f"skip {name}: feed is for '{title}', not this channel", file=sys.stderr)
+    return None
+
+
 def fetch(feed):
     group, name, url = feed
-    req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0"})
     try:
-        with urllib.request.urlopen(req, timeout=20) as r:
-            root = ET.fromstring(r.read())
+        root = _youtube_root(name, url) if group == "youtube" and name in YT_CHANNELS else _xml(url)
+        if root is None:
+            return []
     except Exception as e:
         print(f"skip {name} ({url}): {e}", file=sys.stderr)
         return []
