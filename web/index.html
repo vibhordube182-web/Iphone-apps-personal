@@ -158,6 +158,27 @@
   .logos hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--rule) 20%, var(--rule) 80%, transparent); margin: 18px 0 14px; }
   .logos .lens { margin: 8px auto 0; max-width: 34ch; font-size: .98rem; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
 
+  /* ---------- Two entry tiles: today's reading and the Odeon ---------- */
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .tiles:has(> [hidden]) > :not([hidden]) { grid-column: 1 / -1; aspect-ratio: 2.1 / 1; }
+  .tile { position: relative; aspect-ratio: 1 / 1.12; border-radius: 28px; padding: 16px; overflow: hidden; color: #fff; cursor: pointer;
+    display: flex; flex-direction: column; justify-content: space-between; -webkit-tap-highlight-color: transparent; isolation: isolate;
+    box-shadow: 0 10px 28px -12px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.09) inset; transition: transform .2s cubic-bezier(.22,1,.36,1); }
+  .tile:active { transform: scale(.965); }
+  .tile:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+  .tile[hidden] { display: none; }
+  .tile.t-read { background: radial-gradient(120% 90% at 0% 0%, #c9a24a 0%, rgba(201,162,74,0) 58%), radial-gradient(90% 70% at 100% 100%, #2f5a3d 0%, rgba(47,90,61,0) 65%), linear-gradient(160deg, #22372a, #09120c); }
+  .tile.t-odeon { background: radial-gradient(110% 85% at 100% 0%, #9a4bb0 0%, rgba(154,75,176,0) 58%), radial-gradient(90% 70% at 0% 100%, #1f6f78 0%, rgba(31,111,120,0) 65%), linear-gradient(160deg, #1a2f3c, #0b0a14); }
+  .tile-mark { position: absolute; right: -26px; bottom: -46px; z-index: -1; font: 700 9.5rem/1 var(--display); color: #fff; opacity: .1; pointer-events: none; }
+  .tile-top { display: flex; align-items: center; justify-content: space-between; }
+  .tile-ico, .tile-go { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .tile-ico svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .tile-ico { font: 700 1.2rem/1 var(--display); }
+  .tile-go svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .tile-eyebrow { font: 700 .6rem/1 var(--ui); letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.72); margin-bottom: 7px; }
+  .tile h3 { margin: 0; font: 700 1.5rem/1.08 var(--serif); letter-spacing: -.01em; text-wrap: balance; text-shadow: 0 1px 12px rgba(0,0,0,.25); }
+  .tile p { margin: 7px 0 0; font: 600 .76rem/1.25 var(--ui); color: rgba(255,255,255,.78); }
+  .tile.done::after { content: "✓"; position: absolute; top: 18px; right: 62px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #22372a; font: 800 .8rem/1 var(--ui); }
   /* ---------- Today's reading ---------- */
   .reading { margin-top: 14px; padding: 16px 18px; border-radius: 16px; background: var(--card); border: 1px solid var(--rule); display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 14px; align-items: start; }
   .reading .ico { grid-row: 1 / span 3; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--olive) 16%, var(--card)); color: var(--olive); }
@@ -442,8 +463,10 @@
   <div class="banner alertcard" id="alert" hidden></div>
 
   <section class="logos" id="logos" aria-label="Daily Logos"></section>
-  <section class="reading" id="reading" aria-label="Today’s reading" hidden></section>
-  <section class="reading od-entry" id="odeonCard" aria-label="The Odeon" hidden></section>
+  <div class="tiles">
+    <section class="tile" id="reading" aria-label="Today’s reading" hidden></section>
+    <section class="tile" id="odeonCard" aria-label="The Odeon" hidden></section>
+  </div>
 
   <div id="edition">
     <div class="skel"><i></i><i></i><i></i></div>
@@ -460,7 +483,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-17 carousel</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-18 tiles</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -702,34 +725,31 @@ function lyceumMain() {
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("reader").hidden) closeReader(); });
 
   /* ---- today's reading ---- */
+  var ARROW_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+  function fillTile(box, cls, icon, eyebrow, title, meta, glyph, tap) {
+    box.className = "tile " + cls; box.textContent = ""; box.hidden = false;
+    box.setAttribute("role", "button"); box.tabIndex = 0;
+    var top = el("div", "tile-top"), ic = el("div", "tile-ico"), go = el("div", "tile-go");
+    ic.innerHTML = icon; go.innerHTML = ARROW_SVG; top.appendChild(ic); top.appendChild(go); box.appendChild(top);
+    box.appendChild(el("div", "tile-mark", glyph)).setAttribute("aria-hidden", "true");
+    var bot = el("div", "tile-bot");
+    bot.appendChild(el("div", "tile-eyebrow", eyebrow)); bot.appendChild(el("h3", null, title));
+    if (meta) bot.appendChild(el("p", null, meta));
+    box.appendChild(bot);
+    box.onclick = tap;
+    box.onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tap(); } };
+  }
   function renderReading(list) {
     var box = $("reading");
     if (!list || !list.length) { box.hidden = true; return; }
     readingList = list;
     var r = list[dayNumber() % list.length], done = store("lyceum-reading") === dayKey();
     if (r.file) fetch(r.file).catch(function () {});   // warm the cache so it opens instantly
-    box.hidden = false; box.textContent = "";
-    var ico = el("div", "ico"); ico.innerHTML = BOOK_SVG; box.appendChild(ico);
-    var head = el("div"); head.appendChild(el("div", "eyebrow", "Today’s reading")); box.appendChild(head);
-    box.appendChild(el("h3", null, r.work + " · " + r.part));
-    box.appendChild(el("p", "by", r.author + " · about " + r.minutes + " min"));
-    box.appendChild(el("p", "why", r.why));
-    var acts = el("div", "acts");
-    var open;
-    if (r.file) { open = pill("Read now · " + r.minutes + " min", "solid", function () { openReader(r); }); }
-    else { open = el("a", "pill solid", "Open the text"); open.href = r.url; open.target = "_blank"; open.rel = "noopener"; }
-    var tick = el("button", "pill" + (done ? " done" : ""), done ? "✓ Read today" : "Mark as read"); tick.type = "button";
-    tick.addEventListener("click", function () {
-      var now = store("lyceum-reading") === dayKey();
-      store("lyceum-reading", now ? "" : dayKey());
-      if (!now) recordDay();
-      renderReading(list);
-    });
-    acts.appendChild(open); acts.appendChild(tick);
-    box.appendChild(acts);
-    // the grid places the first two children (icon, eyebrow) in row 1; the rest flow in column 2
-    [].slice.call(box.children, 1).forEach(function (c) { c.style.gridColumn = "2"; });
+    fillTile(box, "t-read" + (done ? " done" : ""), BOOK_SVG, "Today’s reading", r.work,
+      done ? "Read today" : r.part + " · " + r.minutes + " min", "Φ",
+      function () { if (r.file) openReader(r); else window.open(r.url, "_blank", "noopener"); });
   }
+
 
   /* ---- stories ---- */
   function picture(s, cls) {
@@ -1043,21 +1063,9 @@ function lyceumMain() {
   }
   function renderOdeonCard(od) {
     var box = $("odeonCard"); odeonAll = od || null; od = regionData(od); odeonData = od;
-    var n = odeonCounts(od);
-    box.hidden = false; box.textContent = "";
-    box.appendChild(el("div", "ico", "♪")).setAttribute("aria-hidden", "true");
-    var head = el("div"); head.appendChild(el("div", "eyebrow", "The Odeon · " + region().label)); box.appendChild(head);
-    box.appendChild(el("h3", null, "Music, comedy, movies & nights out"));
-    var first = ((od && od.events) || {}).radar; first = first && first[0];
-    var lead = first ? first.name + ", " + first.venue : (od && (od.radar || [])[0] || {}).title;
-    var line = n.events ? n.events + (n.events === 1 ? " upcoming show" : " upcoming shows") + " picked for you" + (lead ? ". Next on your radar: " + lead : "")
-      : lead || region().findLine;
-    box.appendChild(el("p", "why", line));
-    var acts = el("div", "acts");
-    acts.appendChild(pill("Open the Odeon", "solid", openOdeon));
-    box.appendChild(acts);
-    [].slice.call(box.children, 1).forEach(function (c) { c.style.gridColumn = "2"; });
+    fillTile(box, "t-odeon", "♪", "The Odeon", "What’s on", region().label, "♪", openOdeon);
   }
+
   function regionSwitch() {
     var box = el("div", "od-region"), cur = currentRegion(), auto = !store("lyceum-region");
     Object.keys(REGIONS).forEach(function (key) {
