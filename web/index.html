@@ -290,14 +290,20 @@
   .od-card.mv::before { background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.7) 74%, rgba(0,0,0,.94) 100%); }
   .od-card.mv h3 { font-size: .98rem; -webkit-line-clamp: 3; }
   .mv-count { padding: 0 20px 10px; font: .76rem/1.3 var(--ui); color: rgba(243,239,227,.6); }
-  .mv-strip { gap: 10px; }
-  .mv { flex: 0 0 112px; scroll-snap-align: start; display: block; padding: 0; border: 0; background: none; text-align: left; color: #f3efe3; cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; }
+  .od-strip.mv-strip { gap: 8px; padding-left: calc(50% - 64px); padding-right: calc(50% - 64px); scroll-snap-type: x mandatory; scroll-padding: 0; padding-top: 22px; padding-bottom: 22px; }
+  .mv { flex: 0 0 128px; scroll-snap-align: center; transform-origin: center 60%; will-change: transform, opacity; display: block; padding: 0; border: 0; background: none; text-align: left; color: #f3efe3; cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; }
   .mv-pic { position: relative; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden; background: linear-gradient(160deg, #1d2a3d, #0d0d12) center / cover; box-shadow: 0 0 0 1px rgba(255,255,255,.09) inset; transition: transform .18s ease; }
   .mv-pic.ready { box-shadow: none; }
   .mv:active .mv-pic { transform: scale(.96); }
   .mv-t { margin-top: 6px; font: 600 .72rem/1.25 var(--ui); color: rgba(243,239,227,.85); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .mv-rate, .mv-soon { position: absolute; left: 6px; padding: 3px 6px; border-radius: 999px; font: 700 .6rem/1 var(--ui); background: rgba(0,0,0,.72); color: #f3efe3; }
   .mv-rate { bottom: 6px; } .mv-soon { top: 6px; background: #8db8ea; color: #0a0a0f; }
+  .mv-player { position: relative; aspect-ratio: 16 / 9; margin: 6px 0 4px; border-radius: 14px; overflow: hidden; background: #000; box-shadow: 0 0 0 1px rgba(255,255,255,.1) inset; }
+  .mv-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .mv-hint { font: .68rem/1.3 var(--ui); color: rgba(243,239,227,.45); margin: 0 0 6px; }
+  .has-trailer .mv-top { grid-template-columns: 84px minmax(0, 1fr); gap: 12px; margin-top: 8px; }
+  .has-trailer .mv-info h3 { font-size: 1.05rem; margin-right: 0; }
+  .has-trailer .mv-x { top: 10px; right: 10px; background: rgba(0,0,0,.55); z-index: 2; }
   /* film quick-info sheet */
   #mvSheet { position: fixed; inset: 0; z-index: 95; }
   #mvSheet[hidden] { display: none; }
@@ -454,7 +460,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-16 mumbai</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-17 carousel</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -824,9 +830,7 @@ function lyceumMain() {
         { name: "Palace", url: "https://www.palacecinemas.com.au/" }
       ],
       findLine: "Find tickets across Ticketek, Moshtix, Oztix, Hoyts and IMAX Melbourne",
-      noKeys: "<b>Show dates and prices are not connected yet.</b> They need a free Ticketmaster key (prices and tickets) and a free Bandsintown app ID (tour dates from any seller). Until then, search above and read the headlines below.",
-      none: "<b>No upcoming shows found right now</b> for your artists or in Melbourne. They will appear here when tickets go on sale.",
-      foot: "Dates and prices come from Ticketmaster and Bandsintown and can change; always confirm on the ticket page. Not every show is listed by them, so use the seller links. Cinema session times and prices are only on the cinemas' own sites. Seat advice is general, not live availability." },
+      foot: "Headlines from music, comedy and local listings. Always confirm dates, prices and seats on the ticket page. Cinema showtimes and prices are only on the cinemas' own sites. Seat advice is general, not live availability." },
     mumbai: { label: "Mumbai", adj: "Indian", sessions: "showtimes",
       sellers: [
         { name: "BookMyShow", url: gsite("in.bookmyshow.com", "Mumbai") },
@@ -840,9 +844,7 @@ function lyceumMain() {
         { name: "Cinépolis", url: "https://www.cinepolisindia.com/" }
       ],
       findLine: "Find tickets across BookMyShow, District, Insider, PVR INOX and Cinépolis",
-      noKeys: "<b>Tour dates are not connected yet.</b> They need a free Bandsintown app ID. Until then, search above and read the headlines below.",
-      none: "<b>No upcoming tour dates found right now</b> for your artists in India. They will appear here when tickets go on sale.",
-      foot: "Tour dates come from Bandsintown and can change; always confirm on the ticket page. Prices and seats are on BookMyShow, District or Insider. Cinema showtimes and prices are only on the cinemas' own sites. Seat advice is general, not live availability." }
+      foot: "Headlines from music, comedy and local listings. Always confirm dates, prices and seats on the ticket page (BookMyShow, District or Insider). Cinema showtimes and prices are only on the cinemas' own sites. Seat advice is general, not live availability." }
   };
   // Follows the phone's timezone (India means Mumbai) unless you pick a city in the Odeon.
   function currentRegion() {
@@ -957,6 +959,26 @@ function lyceumMain() {
     a.addEventListener("click", function () { openMovie(m); });
     return a;
   }
+  /* the centre poster is big, the ones either side shrink and fade as you swipe */
+  function carousel(strip) {
+    var raf = 0;
+    function update() {
+      raf = 0;
+      var mid = strip.scrollLeft + strip.clientWidth / 2;
+      [].forEach.call(strip.children, function (c) {
+        var d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid) / (c.offsetWidth + 8);
+        var k = Math.max(0, 1 - d);
+        c.style.transform = "scale(" + (0.82 + 0.36 * k).toFixed(3) + ")";
+        c.style.opacity = (0.5 + 0.5 * k).toFixed(2);
+        c.style.zIndex = String(Math.round(k * 10));
+        var t = c.lastChild; if (t) t.style.opacity = Math.max(0, (k - 0.5) / 0.5).toFixed(2);
+      });
+    }
+    function queue() { if (!raf) raf = requestAnimationFrame(update); }
+    strip.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue);
+    requestAnimationFrame(update); setTimeout(update, 300);
+  }
   /* quick-info sheet for a film */
   var mvOpen = false, mvPop = false;
   function runtimeText(min) { return min ? (min >= 60 ? Math.floor(min / 60) + "h " : "") + (min % 60 ? (min % 60) + "m" : "") : ""; }
@@ -966,6 +988,17 @@ function lyceumMain() {
     close.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
     close.addEventListener("click", function () { closeMovie(); });
     panel.appendChild(el("div", "mv-grab")); panel.appendChild(close);
+    var vid = (m.trailer || "").match(/[?&]v=([\w-]{11})/);
+    if (vid) {
+      // started from the tap, muted so iOS lets it play by itself; tap the video for sound
+      var player = el("div", "mv-player"), fr = document.createElement("iframe");
+      fr.src = "https://www.youtube-nocookie.com/embed/" + vid[1] + "?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1";
+      fr.allow = "autoplay; encrypted-media; picture-in-picture"; fr.setAttribute("allowfullscreen", "");
+      fr.setAttribute("referrerpolicy", "strict-origin-when-cross-origin"); fr.title = m.title + " trailer";
+      player.appendChild(fr); panel.appendChild(player);
+      panel.appendChild(el("div", "mv-hint", "Playing the trailer without sound. Tap the video for sound."));
+    }
+    panel.classList.toggle("has-trailer", !!vid);
     var top = el("div", "mv-top"), pic = el("div", "mv-big"); pic.style.backgroundImage = 'url("' + m.poster + '")';
     var info = el("div", "mv-info");
     info.appendChild(el("h3", null, m.title));
@@ -981,7 +1014,7 @@ function lyceumMain() {
     function fact(label, list) { if (list && list.length) { var f = el("p", "mv-fact"); f.appendChild(el("b", null, label)); f.appendChild(document.createTextNode(list.join(", "))); panel.appendChild(f); } }
     fact("Directed by ", m.director); fact("Starring ", m.cast);
     var acts = el("div", "mv-acts");
-    if (m.trailer) { var t = el("a", "mv-btn solid", "▶  Watch trailer"); t.href = m.trailer; t.target = "_blank"; t.rel = "noopener"; acts.appendChild(t); }
+    if (m.trailer) { var t = el("a", "mv-btn solid", vid ? "Open in YouTube" : "▶  Watch trailer"); t.href = m.trailer; t.target = "_blank"; t.rel = "noopener"; acts.appendChild(t); }
     var st = el("a", "mv-btn" + (m.trailer ? "" : " solid"), "Session times"); st.href = "https://www.google.com/search?q=" + encodeURIComponent(m.title + " " + region().sessions + " " + region().label); st.target = "_blank"; st.rel = "noopener"; acts.appendChild(st);
     panel.appendChild(acts);
     var book = el("div", "sx"); book.appendChild(el("span", null, "Book at"));
@@ -996,6 +1029,7 @@ function lyceumMain() {
     if (!mvOpen) return;
     mvOpen = false;
     var box = $("mvSheet"); box.classList.remove("on");
+    var fr = box.querySelector("iframe"); if (fr) fr.src = "about:blank";       // stop the trailer straight away
     mvPop = true; setTimeout(function () { mvPop = false; }, fromPop ? 0 : 600);   // the back that follows belongs to the sheet, not the Odeon
     setTimeout(function () { if (!mvOpen) box.hidden = true; }, 340);
     if (!fromPop && history.state && history.state.movie) { try { history.back(); } catch (e) {} }
@@ -1068,22 +1102,18 @@ function lyceumMain() {
       list.forEach(function (e) { sec.appendChild(eventEl(row, e)); });
       wrap.appendChild(sec);
     });
-    if (!n.events) {
-      var note = el("div", "od-note");
-      note.innerHTML = od.events_connected ? R.none : R.noKeys;
-      var holder = el("div", "od-row"); holder.appendChild(note); wrap.appendChild(holder);
-    }
     // movies and cinemas
     var msec = el("div", "od-row"), mlabel = el("div", "od-label", "At the cinema");
     mlabel.style.setProperty("--c", "#8db8ea"); msec.appendChild(mlabel);
     if ((od.movies || []).length) {
-      msec.appendChild(el("div", "mv-count", od.movies.length + " English and Bollywood films in " + R.adj + " cinemas now and soon. Tap one for details."));
+      msec.appendChild(el("div", "mv-count", "The most popular English and Bollywood films in " + R.adj + " cinemas. Tap one to play the trailer."));
       var mstrip = el("div", "od-strip mv-strip");
       od.movies.forEach(function (m) { mstrip.appendChild(movieCard(m, mstrip)); });
       msec.appendChild(mstrip);
+      carousel(mstrip);
     }
     var cin = el("div", "od-note");
-    cin.appendChild(el("div", null, od.movies_connected ? "Tap a poster to find session times. Book on the cinema's own site:" : "Book on the cinema's own site (what is showing needs a free TMDB key to list here):"));
+    cin.appendChild(el("div", null, "Showtimes and seats are on the cinema's own site:"));
     var cl = el("div", "sx");
     cinemas().forEach(function (c) { var a = el("a", null, c.name); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; cl.appendChild(a); });
     cin.appendChild(cl);

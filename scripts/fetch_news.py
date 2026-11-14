@@ -654,13 +654,13 @@ def movie_details(key, m):
 
 
 def tmdb_movies(key, region="AU"):
-    """Every English and Hindi film in cinemas in the given region (AU or IN) now, plus what is coming soon, from TMDB, with quick facts for each.
-    No session times: those live in each cinema's own system."""
+    """The most popular English and Hindi films in cinemas in the given region (AU or IN) now, plus a few popular ones coming
+    soon, from TMDB, with quick facts for each. No session times: those live in each cinema's own system."""
     if not key:
         return []
     out, seen = [], set()
-    for kind, max_pages, cap in (("now_playing", 12, 80), ("upcoming", 5, 16)):
-        n = 0
+    for kind, max_pages, cap in (("now_playing", 12, 20), ("upcoming", 5, 6)):
+        found = []
         for page in range(1, max_pages + 1):
             try:
                 data = tmdb_get("movie/" + kind, key, region=region, language="en-AU", page=page)
@@ -673,15 +673,15 @@ def tmdb_movies(key, region="AU"):
                 if m.get("original_language") not in FILM_LANGUAGES:     # English and Hindi (Bollywood) only
                     continue
                 seen.add(m["id"])
-                out.append({"id": m["id"], "title": m["title"], "date": m.get("release_date", ""), "kind": kind,
-                            "rating": round(m.get("vote_average") or 0, 1), "votes": m.get("vote_count") or 0,
-                            "poster": "https://image.tmdb.org/t/p/w342" + m["poster_path"],
-                            "overview": brief(clean(m.get("overview", "")), 480)})
-                n += 1
-                if n >= cap:
-                    break
-            if n >= cap or page >= data.get("total_pages", 1):
+                found.append({"id": m["id"], "title": m["title"], "date": m.get("release_date", ""), "kind": kind,
+                              "popularity": round(m.get("popularity") or 0, 1),
+                              "rating": round(m.get("vote_average") or 0, 1), "votes": m.get("vote_count") or 0,
+                              "poster": "https://image.tmdb.org/t/p/w342" + m["poster_path"],
+                              "overview": brief(clean(m.get("overview", "")), 480)})
+            if page >= data.get("total_pages", 1):
                 break
+        found.sort(key=lambda m: m["popularity"], reverse=True)       # most popular first
+        out += found[:cap]
     with ThreadPoolExecutor(8) as ex:
         for m, extra in zip(out, ex.map(lambda m: movie_details(key, m), out)):
             extra = dict(extra)
