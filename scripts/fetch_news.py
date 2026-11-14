@@ -97,6 +97,22 @@ ODEON_FEEDS = [
 ]
 ODEON_LIMITS = {"radar": 4, "music": 6, "comedy": 5, "out": 5}
 
+# The same four rows for when you are in Mumbai. The app picks the city from the phone's timezone (or the switch in the Odeon).
+GN_IN = "https://news.google.com/rss/search?hl=en-IN&gl=IN&ceid=IN:en&q="
+MUMBAI_FEEDS = [
+    ("radar", "*", GN_IN + "(" + FAV_Q + ")+(tour+OR+concert+OR+tickets+OR+%22live+in%22)+India"),
+    ("radar", "*", GN_IN + "(" + FAV_Q + ")+India+tour"),
+    ("radar", "Louder", "https://www.loudersound.com/feeds/all"),
+    ("music", "Rolling Stone India", "https://rollingstoneindia.com/feed/"),
+    ("music", "*", GN_IN + "Mumbai+(concert+OR+gig+OR+%22live+music%22+OR+tour)+(rock+OR+metal+OR+band)"),
+    ("music", "*", GN_IN + "India+tour+announced+rock+OR+metal+OR+%22classic+rock%22"),
+    ("comedy", "*", GN_IN + "(%22stand-up%22+OR+comedian)+(Mumbai+OR+India)+(tour+OR+show+OR+tickets)"),
+    ("comedy", "*", GN_IN + "(%22Zakir+Khan%22+OR+%22Vir+Das%22+OR+%22Anubhav+Singh+Bassi%22+OR+%22Kenny+Sebastian%22)+tour"),
+    ("out", "*", GN_IN + "Mumbai+(festival+OR+%22this+weekend%22+OR+event+OR+concert)"),
+    ("out", "*", GN_IN + "Mumbai+(%22Mumbai+City+FC%22+OR+ISL+OR+football+OR+%22Premier+League%22)+(match+OR+tickets)"),
+    ("out", "*", GN_IN + "Mumbai+(startup+OR+tech+OR+AI)+(event+OR+summit+OR+conference)"),
+]
+
 CITIES = [("Melbourne", -37.81, 144.96), ("Mumbai", 19.08, 72.88)]
 WMO = {0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog", 48: "Fog",
        51: "Drizzle", 53: "Drizzle", 55: "Drizzle", 56: "Freezing drizzle", 57: "Freezing drizzle",
@@ -363,33 +379,37 @@ COMEDY_LIKES = ["Zakir Khan", "Vir Das", "Anubhav Singh Bassi", "Abhishek Upmany
 COMEDY_CONTEXT = re.compile(r"(?i)\b(stand-?up|comedian|comedy (show|festival|gala|tour)|live comedy)\b")
 OUT_LIKES = re.compile(r"(?i)\b(socceroos|melbourne victory|melbourne city|a-league|premier league|champions league|football|soccer|"
                        r"spacex|tesla|starship|xai|neuralink|bryan johnson|longevity|biohack\w*|artificial intelligence|startup|"
-                       r"tech conference|diwali|holi|bollywood|indian|india|greek|hellenic|philosophy|stoic\w*|ai summit|"
+                       r"mumbai city fc|indian super league|isl|tech conference|diwali|holi|bollywood|indian|india|greek|hellenic|philosophy|stoic\w*|ai summit|"
                        r"rock|led zeppelin|foo fighters|elton john|beatles|elvis)\b")
 
 
-def likes_comedy(item):
+LOCAL_IN = re.compile(r"(?i)\b(india|indian|mumbai|bombay|delhi|bengaluru|bangalore|pune|hyderabad|chennai|kolkata)\b")
+LOCAL_MUM = re.compile(r"(?i)\b(mumbai|bombay|navi mumbai|thane|bandra|worli|andheri|juhu|bkc|powai|wankhede|nsci)\b")
+
+
+def likes_comedy(item, local=LOCAL):
     text = item["title"] + " " + item["summary"]
-    if not LOCAL.search(text):
+    if not local.search(text):
         return False                      # a favourite touring somewhere else is no use to you in Melbourne
     return any(re.search(r"\b" + re.escape(n) + r"\b", text, re.I) for n in COMEDY_LIKES) or bool(COMEDY_CONTEXT.search(text))
 
 
-def likes_music(item):
+def likes_music(item, local=LOCAL):
     sc, _ = taste(item)
     text = item["title"] + " " + item["summary"]
-    return sc >= 4 or (sc >= 2 and bool(LOCAL.search(text))) or bool(ROCK_WORDS.search(text) and LOCAL.search(text))
+    return sc >= 4 or (sc >= 2 and bool(local.search(text))) or bool(ROCK_WORDS.search(text) and local.search(text))
 
 
-def likes_out(item):
+def likes_out(item, city=LOCAL_MEL):
     text = item["title"] + " " + item["summary"]
-    return bool(LOCAL_MEL.search(text) and OUT_LIKES.search(text))
+    return bool(city.search(text) and OUT_LIKES.search(text))
 
 
-def build_odeon(results, taken_links):
+def build_odeon(results, taken_links, feeds=None, local=LOCAL, city=LOCAL_MEL, other=LOCAL_IN):
     """Pick the Odeon rows from fetched items: {radar, music, comedy, out}. Never raises."""
     cutoff = datetime.now(timezone.utc) - timedelta(days=14)
     by_group = {}
-    for feed, items in zip(ODEON_FEEDS, results):
+    for feed, items in zip(feeds or ODEON_FEEDS, results):
         by_group.setdefault(feed[0], []).extend(items)
     used, seen_words, out = set(taken_links), [], {}
 
@@ -420,8 +440,11 @@ def build_odeon(results, taken_links):
     # newest first, taste as a boost; the radar needs a favourite artist actually named
     # a picture is worth about a day and a half of freshness, so poster-style cards are not all gradients
     recency = lambda sc, i: sc * 3 + (i["date"] - cutoff).total_seconds() / 86400.0 + (1.5 if i.get("image") else 0)
-    out["radar"] = take(by_group.get("radar", []) + by_group.get("music", []), ODEON_LIMITS["radar"], recency, 3)
-    preds = {"music": likes_music, "comedy": likes_comedy, "out": likes_out}
+    # a favourite's tour of the other city (an Australian tour while you are in Mumbai) is no use to you
+    elsewhere = lambda i: not (other.search(i["title"] + " " + i["summary"]) and not local.search(i["title"] + " " + i["summary"]))
+    out["radar"] = take(by_group.get("radar", []) + by_group.get("music", []), ODEON_LIMITS["radar"], recency, 3, elsewhere)
+    preds = {"music": lambda i: likes_music(i, local), "comedy": lambda i: likes_comedy(i, local),
+             "out": lambda i: likes_out(i, city)}
     for k in ("music", "comedy", "out"):
         out[k] = take(by_group.get(k, []), ODEON_LIMITS[k], recency, 0, preds[k])
     return out
@@ -449,6 +472,14 @@ VENUE_TIPS = [
     ("the tote", "Very small and loud; earplugs help. The best view is near the front or on the raised side."),
     ("northcote social club", "Mid-room near the sound desk has the best sound. The upstairs seated area is a calmer, clear view."),
     ("sidney myer music bowl", "Seated: the reserved seats in the middle of the shell are best. On the lawn, bring a rug and sit mid-lawn for sound and view."),
+    ("nsci dome", "Big indoor dome in Worli: the floor near the sound desk has the best sound; lower-tier seats facing the stage give a clear view. Allow extra time for Worli traffic."),
+    ("jio world", "A large convention-centre venue: seated blocks facing the stage centre give the clearest view; the standing area is best a little back from the front for sound."),
+    ("dy patil", "Stadium shows: lower-tier seats side-on to the stage balance sound and view. The ground is standing. Navi Mumbai is a long trip, so plan your return."),
+    ("wankhede", "Lower-tier seats towards the middle of the stand give the best view of the stage or pitch. The upper tier is far back."),
+    ("mmrda", "Open-air ground: stand a little back from the front barriers for the best sound and room to move."),
+    ("ncpa", "Seated halls: the middle of the stalls gives the best sound; the front of the dress circle is excellent."),
+    ("canvas laugh club", "A small comedy room: most seats are close, so the middle rows are best. Book early for popular acts."),
+    ("royal opera house", "Stalls from the middle back, or the front of the lower balcony, give the best view and sound."),
     ("aami park", "Floor is standing. Lower-tier seats at the side give a good, close view."),
 ]
 VENUE_TIP_BY_TYPE = [
@@ -507,8 +538,8 @@ def tm_events(key, **params):
     return out
 
 
-def bit_events(app_id, artist):
-    """Upcoming Australian shows for an artist from Bandsintown: dates and venues from any seller, no prices."""
+def bit_events(app_id, artist, countries=("australia", "au")):
+    """Upcoming shows in the given countries for an artist from Bandsintown: dates and venues from any seller, no prices."""
     url = "https://rest.bandsintown.com/artists/%s/events?app_id=%s&date=upcoming" % (
         urllib.parse.quote(artist, safe=""), urllib.parse.quote(app_id, safe=""))
     req = urllib.request.Request(url, headers={"User-Agent": "Lyceum/1.0"})
@@ -525,7 +556,7 @@ def bit_events(app_id, artist):
     for ev in data:
         try:
             venue = ev.get("venue") or {}
-            if (venue.get("country") or "").lower() not in ("australia", "au"):
+            if (venue.get("country") or "").lower() not in countries:
                 continue
             when = ev.get("starts_at") or ev.get("datetime") or ""
             offers = ev.get("offers") or []
@@ -558,31 +589,38 @@ def tmdb_get(path, key, **params):
         return json.load(r)
 
 
+_details = {}
+
+
 def movie_details(key, m):
     """Quick facts for one film: tagline, runtime, genres, Australian rating, director, cast, trailer."""
+    if m["id"] in _details:
+        return _details[m["id"]]
     try:
         d = tmdb_get("movie/%d" % m["id"], key, language="en-AU", append_to_response="credits,videos,release_dates")
     except Exception as e:
         print(f"skip tmdb details ({m.get('title')}): {e}", file=sys.stderr)
         return {}
-    cert = ""
+    certs = {}
     for c in (d.get("release_dates") or {}).get("results", []):
-        if c.get("iso_3166_1") == "AU":
-            cert = next((x.get("certification") for x in c.get("release_dates", []) if x.get("certification")), "")
+        if c.get("iso_3166_1") in ("AU", "IN"):
+            certs[c["iso_3166_1"]] = next((x.get("certification") for x in c.get("release_dates", []) if x.get("certification")), "")
     crew = (d.get("credits") or {}).get("crew", [])
     cast = (d.get("credits") or {}).get("cast", [])
     vids = [v for v in (d.get("videos") or {}).get("results", []) if v.get("site") == "YouTube" and v.get("type") == "Trailer"]
     vids.sort(key=lambda v: (not v.get("official"), v.get("published_at") or ""), reverse=False)
-    return {"tagline": clean(d.get("tagline") or ""), "runtime": d.get("runtime") or 0,
-            "genres": [g["name"] for g in d.get("genres", [])][:3], "cert": cert,
+    out = {"tagline": clean(d.get("tagline") or ""), "runtime": d.get("runtime") or 0,
+            "genres": [g["name"] for g in d.get("genres", [])][:3], "certs": certs,
             "director": [c["name"] for c in crew if c.get("job") == "Director"][:2],
             "cast": [c["name"] for c in cast][:5],
             "trailer": "https://www.youtube.com/watch?v=" + vids[0]["key"] if vids else "",
             "overview": brief(clean(d.get("overview") or m.get("overview") or ""), 480)}
+    _details[m["id"]] = out
+    return out
 
 
-def tmdb_movies(key):
-    """Every English and Hindi film in Australian cinemas now, plus what is coming soon, from TMDB, with quick facts for each.
+def tmdb_movies(key, region="AU"):
+    """Every English and Hindi film in cinemas in the given region (AU or IN) now, plus what is coming soon, from TMDB, with quick facts for each.
     No session times: those live in each cinema's own system."""
     if not key:
         return []
@@ -591,7 +629,7 @@ def tmdb_movies(key):
         n = 0
         for page in range(1, max_pages + 1):
             try:
-                data = tmdb_get("movie/" + kind, key, region="AU", language="en-AU", page=page)
+                data = tmdb_get("movie/" + kind, key, region=region, language="en-AU", page=page)
             except Exception as e:
                 print(f"skip tmdb {kind} page {page}: {e}", file=sys.stderr)
                 break
@@ -612,12 +650,16 @@ def tmdb_movies(key):
                 break
     with ThreadPoolExecutor(8) as ex:
         for m, extra in zip(out, ex.map(lambda m: movie_details(key, m), out)):
+            extra = dict(extra)
+            m["cert"] = (extra.pop("certs", {}) or {}).get(region, "")
             m.update({k: v for k, v in extra.items() if v})
     return out
 
-def build_events(key, bit_id=""):
+def build_events(key, bit_id="", countries=("australia", "au"), use_tm=True):
     """Event rows {radar, music, comedy, out}, soonest first: Ticketmaster (prices, tickets) plus Bandsintown tour dates
     for the artist radar (any seller). Empty dict if neither key is set."""
+    if not use_tm:
+        key = ""
     if not key and not bit_id:
         return {}
     seen = set()
@@ -644,7 +686,7 @@ def build_events(key, bit_id=""):
         mine = fresh(tm_events(key, keyword=name, classificationName="music"), 3, tag=name, only=exact) if key else []
         if bit_id:
             have = {e["date"] for e in mine}   # Ticketmaster already has the price and ticket link for those dates
-            extra = [e for e in bit_events(bit_id, name) if e["date"] not in have and not NOT_THE_ACT.search(e["name"])]
+            extra = [e for e in bit_events(bit_id, name, countries) if e["date"] not in have and not NOT_THE_ACT.search(e["name"])]
             mine += fresh(extra, 3, tag=name)
         radar += mine
     radar.sort(key=lambda e: (e["date"], e["time"]))
@@ -677,6 +719,7 @@ def main():
     with ThreadPoolExecutor(8) as ex:
         results = list(ex.map(fetch, FEEDS))
         odeon_results = list(ex.map(fetch, ODEON_FEEDS))
+        mumbai_results = list(ex.map(fetch, MUMBAI_FEEDS))
     cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
     stories, seen = [], []
     for realm, group, limit in GROUPS:
@@ -722,7 +765,17 @@ def main():
         odeon["movies"] = []
     odeon["movies_connected"] = bool(tmdb_key)
     try:
+        mumbai = build_odeon(mumbai_results, {x["link"] for x in stories}, MUMBAI_FEEDS, LOCAL_IN, LOCAL_MUM, LOCAL)
+        mumbai["events"] = build_events("", bit_id, ("india", "in"), use_tm=False)   # Ticketmaster has no India; tours come from Bandsintown
+        mumbai["events_connected"] = bool(bit_id)
+        mumbai["movies"] = tmdb_movies(tmdb_key, "IN")
+        mumbai["movies_connected"] = bool(tmdb_key)
+        odeon["regions"] = {"mumbai": mumbai}
+    except Exception as e:
+        print(f"skip mumbai odeon: {e}", file=sys.stderr)
+    try:
         add_odeon_images(odeon)
+        add_odeon_images(odeon.get("regions", {}).get("mumbai", {}))
     except Exception as e:
         print(f"skip odeon images: {e}", file=sys.stderr)
     for s in stories:
@@ -735,7 +788,8 @@ def main():
         ensure_ascii=False, indent=1))
     print(f"wrote {len(stories)} stories; odeon news " + ", ".join(f"{k} {len(odeon.get(k, []))}" for k in ("radar", "music", "comedy", "out"))
           + "; events " + ", ".join(f"{k} {len(v)}" for k, v in odeon["events"].items())
-          + f"; movies {len(odeon['movies'])}")
+          + f"; movies {len(odeon['movies'])}"
+          + "; mumbai " + ", ".join(f"{k} {len(v)}" for k, v in (odeon.get("regions", {}).get("mumbai", {})).items() if isinstance(v, list)))
 
 
 if __name__ == "__main__":
