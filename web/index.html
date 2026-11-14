@@ -481,7 +481,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-18 tidy</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-19 photos</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -943,7 +943,7 @@ function lyceumMain() {
     if (it.image) {
       var bg = el("div", "od-img"), probe = new Image();
       probe.referrerPolicy = "no-referrer";
-      probe.onload = function () { bg.style.backgroundImage = 'url("' + it.image + '")'; };
+      probe.onload = function () { bg.style.backgroundImage = 'url("' + probe.src + '")'; };   // whichever link actually loaded
       probe.onerror = function () { if (it.image_alt && probe.src !== it.image_alt) probe.src = it.image_alt; else bg.remove(); };
       probe.src = it.image;
       a.appendChild(bg);

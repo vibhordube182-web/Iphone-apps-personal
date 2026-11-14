@@ -270,6 +270,7 @@ WIKI_TITLES = {"Elvis": "Elvis_Presley", "Tool": "Tool_(band)", "The Beatles": "
 UA = "Lyceum/1.0 (https://github.com/vibhordube182-web/Iphone-apps-personal; personal news app)"
 PERSON_DESC = re.compile(r"(?i)comedian|stand-?up|actor|actress|musician|singer|rapper|band|presenter|entertainer|songwriter|guitarist|drummer|youtuber|host")
 _img_cache = {}
+_img_alt = {}      # picture -> the exact link Wikipedia handed out, kept as a fallback if the larger one will not load
 
 
 def _json(url, timeout=10):
@@ -302,7 +303,9 @@ def wiki_image(name, people_only=False):
         if d.get("type") == "standard" and (not people_only or PERSON_DESC.search(d.get("description", ""))):
             src = (d.get("thumbnail") or {}).get("source") or (d.get("originalimage") or {}).get("source")
             if src:
-                img = re.sub(r"/(\d+)px-", "/640px-", src, count=1)
+                # Wikipedia only serves a fixed list of widths, so ask for a standard one (500) and keep its own link as the backup
+                img = re.sub(r"/(\d+)px-", "/500px-", src, count=1)
+                _img_alt[img] = src
     except Exception as e:
         print(f"skip wikipedia image ({name}): {e}", file=sys.stderr)
     _img_cache[key] = img
@@ -395,6 +398,8 @@ def add_odeon_images(odeon, city="melbourne"):
             img = wiki_image(_CITY_PAGE.get(city, "Melbourne"))
         if img:
             item["image"] = img
+            if img in _img_alt and _img_alt[img] != img:
+                item["image_alt"] = _img_alt[img]
     with ThreadPoolExecutor(6) as ex:
         list(ex.map(work, jobs))
 
