@@ -275,6 +275,10 @@
   .sx span { font: 700 .62rem/1 var(--ui); letter-spacing: .12em; text-transform: uppercase; color: rgba(243,239,227,.5); margin-right: 2px; }
   .sx a, .sx button { display: inline-flex; align-items: center; height: 30px; padding: 0 11px; border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: none; color: #f3efe3; font: 600 .74rem/1 var(--ui); text-decoration: none; cursor: pointer; }
   .sx a:active, .sx button:active { background: rgba(255,255,255,.12); }
+  .od-region { display: flex; align-items: center; gap: 8px; margin: 14px 16px 0; flex-wrap: wrap; }
+  .od-region button { height: 34px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: none; color: #f3efe3; font: 700 .8rem/1 var(--ui); cursor: pointer; }
+  .od-region button.on { background: #f3efe3; color: #0a0a0f; border-color: #f3efe3; }
+  .od-region .od-where { font: .68rem/1.2 var(--ui); color: rgba(243,239,227,.45); margin-left: 4px; }
   .od-find { margin-top: 18px; padding: 0 16px; }
   .od-find .od-label { padding: 0 4px 10px; }
   .od-find input { width: 100%; box-sizing: border-box; height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: #f3efe3; font: 1rem/1 var(--ui); outline: none; }
@@ -450,7 +454,7 @@
     <div class="updated" id="streak"></div>
     <div class="updated" id="updated"></div>
     <button class="pill" id="alertLink" type="button" hidden style="margin-top:14px">Morning alert settings</button>
-    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-16 films 2</div>
+    <div style="margin-top:8px;font-size:11px;opacity:.5">Build 2026-11-16 mumbai</div>
   </footer>
 </main>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-label="Today’s reading">
@@ -804,19 +808,58 @@ function lyceumMain() {
     { key: "comedy", name: "Comedy",         chip: "Comedy",       c: "#5fc4b8", glyph: "☺" },
     { key: "out",    name: "Out & about",    chip: "Out & about",  c: "#afc17d", glyph: "✦" }
   ];
-  var SELLERS = [
-    { name: "Ticketek", url: function (q) { return "https://premier.ticketek.com.au/search/SearchResults.aspx?k=" + encodeURIComponent(q); } },
-    { name: "Moshtix",  url: function (q) { return "https://www.moshtix.com.au/v2/search?query=" + encodeURIComponent(q); } },
-    { name: "Oztix",    url: function (q) { return "https://www.oztix.com.au/search?q=" + encodeURIComponent(q); } },
-    { name: "Web",      url: function (q) { return "https://www.google.com/search?q=" + encodeURIComponent(q + " tickets Melbourne"); } }
-  ];
-  var CINEMAS = [
-    { name: "Hoyts", url: "https://www.hoyts.com.au/" },
-    { name: "IMAX Melbourne", url: "https://imaxmelbourne.com.au/" },
-    { name: "Village", url: "https://villagecinemas.com.au/" },
-    { name: "Palace", url: "https://www.palacecinemas.com.au/" }
-  ];
-  var odeonData = null;
+  function gsite(site, city) { return function (q) { return "https://www.google.com/search?q=" + encodeURIComponent(q + " " + city + " site:" + site); }; }
+  var REGIONS = {
+    melbourne: { label: "Melbourne", adj: "Australian", sessions: "session times",
+      sellers: [
+        { name: "Ticketek", url: function (q) { return "https://premier.ticketek.com.au/search/SearchResults.aspx?k=" + encodeURIComponent(q); } },
+        { name: "Moshtix",  url: function (q) { return "https://www.moshtix.com.au/v2/search?query=" + encodeURIComponent(q); } },
+        { name: "Oztix",    url: function (q) { return "https://www.oztix.com.au/search?q=" + encodeURIComponent(q); } },
+        { name: "Web",      url: function (q) { return "https://www.google.com/search?q=" + encodeURIComponent(q + " tickets Melbourne"); } }
+      ],
+      cinemas: [
+        { name: "Hoyts", url: "https://www.hoyts.com.au/" },
+        { name: "IMAX Melbourne", url: "https://imaxmelbourne.com.au/" },
+        { name: "Village", url: "https://villagecinemas.com.au/" },
+        { name: "Palace", url: "https://www.palacecinemas.com.au/" }
+      ],
+      findLine: "Find tickets across Ticketek, Moshtix, Oztix, Hoyts and IMAX Melbourne",
+      noKeys: "<b>Show dates and prices are not connected yet.</b> They need a free Ticketmaster key (prices and tickets) and a free Bandsintown app ID (tour dates from any seller). Until then, search above and read the headlines below.",
+      none: "<b>No upcoming shows found right now</b> for your artists or in Melbourne. They will appear here when tickets go on sale.",
+      foot: "Dates and prices come from Ticketmaster and Bandsintown and can change; always confirm on the ticket page. Not every show is listed by them, so use the seller links. Cinema session times and prices are only on the cinemas' own sites. Seat advice is general, not live availability." },
+    mumbai: { label: "Mumbai", adj: "Indian", sessions: "showtimes",
+      sellers: [
+        { name: "BookMyShow", url: gsite("in.bookmyshow.com", "Mumbai") },
+        { name: "District",   url: gsite("district.in", "Mumbai") },
+        { name: "Insider",    url: gsite("insider.in", "Mumbai") },
+        { name: "Web",        url: function (q) { return "https://www.google.com/search?q=" + encodeURIComponent(q + " tickets Mumbai"); } }
+      ],
+      cinemas: [
+        { name: "BookMyShow", url: "https://in.bookmyshow.com/explore/movies-mumbai" },
+        { name: "PVR INOX", url: "https://www.pvrcinemas.com/" },
+        { name: "Cinépolis", url: "https://www.cinepolisindia.com/" }
+      ],
+      findLine: "Find tickets across BookMyShow, District, Insider, PVR INOX and Cinépolis",
+      noKeys: "<b>Tour dates are not connected yet.</b> They need a free Bandsintown app ID. Until then, search above and read the headlines below.",
+      none: "<b>No upcoming tour dates found right now</b> for your artists in India. They will appear here when tickets go on sale.",
+      foot: "Tour dates come from Bandsintown and can change; always confirm on the ticket page. Prices and seats are on BookMyShow, District or Insider. Cinema showtimes and prices are only on the cinemas' own sites. Seat advice is general, not live availability." }
+  };
+  // Follows the phone's timezone (India means Mumbai) unless you pick a city in the Odeon.
+  function currentRegion() {
+    var pref = store("lyceum-region");
+    if (pref && REGIONS[pref]) return pref;
+    var tz = ""; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+    return /^Asia\/(Kolkata|Calcutta)$/.test(tz) ? "mumbai" : "melbourne";
+  }
+  function region() { return REGIONS[currentRegion()]; }
+  function sellers() { return region().sellers; }
+  function cinemas() { return region().cinemas; }
+  function regionData(od) {
+    if (!od) return null;
+    if (currentRegion() === "mumbai") return (od.regions && od.regions.mumbai) || {};
+    return od;
+  }
+  var odeonData = null, odeonAll = null;
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   function money(v, cur) { var sym = !cur || cur === "AUD" ? "$" : cur + " "; return sym + Math.round(v); }
@@ -833,7 +876,7 @@ function lyceumMain() {
   function sellerLinks(q, label) {
     var box = el("div", "sx");
     box.appendChild(el("span", null, label || "Also check"));
-    SELLERS.forEach(function (sl) {
+    sellers().forEach(function (sl) {
       var a = el("a", null, sl.name); a.href = sl.url(q); a.target = "_blank"; a.rel = "noopener";
       box.appendChild(a);
     });
@@ -939,10 +982,10 @@ function lyceumMain() {
     fact("Directed by ", m.director); fact("Starring ", m.cast);
     var acts = el("div", "mv-acts");
     if (m.trailer) { var t = el("a", "mv-btn solid", "▶  Watch trailer"); t.href = m.trailer; t.target = "_blank"; t.rel = "noopener"; acts.appendChild(t); }
-    var st = el("a", "mv-btn" + (m.trailer ? "" : " solid"), "Session times"); st.href = "https://www.google.com/search?q=" + encodeURIComponent(m.title + " session times Melbourne"); st.target = "_blank"; st.rel = "noopener"; acts.appendChild(st);
+    var st = el("a", "mv-btn" + (m.trailer ? "" : " solid"), "Session times"); st.href = "https://www.google.com/search?q=" + encodeURIComponent(m.title + " " + region().sessions + " " + region().label); st.target = "_blank"; st.rel = "noopener"; acts.appendChild(st);
     panel.appendChild(acts);
     var book = el("div", "sx"); book.appendChild(el("span", null, "Book at"));
-    CINEMAS.forEach(function (c) { var a = el("a", null, c.name); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; book.appendChild(a); });
+    cinemas().forEach(function (c) { var a = el("a", null, c.name); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; book.appendChild(a); });
     panel.appendChild(book);
     var box = $("mvSheet"); panel.scrollTop = 0; box.hidden = false; box.classList.remove("on"); void box.offsetWidth;
     requestAnimationFrame(function () { box.classList.add("on"); });
@@ -965,21 +1008,36 @@ function lyceumMain() {
     return { events: n, news: h, movies: ((od && od.movies) || []).length };
   }
   function renderOdeonCard(od) {
-    var box = $("odeonCard"); odeonData = od || null;
+    var box = $("odeonCard"); odeonAll = od || null; od = regionData(od); odeonData = od;
     var n = odeonCounts(od);
     box.hidden = false; box.textContent = "";
     box.appendChild(el("div", "ico", "♪")).setAttribute("aria-hidden", "true");
-    var head = el("div"); head.appendChild(el("div", "eyebrow", "The Odeon")); box.appendChild(head);
+    var head = el("div"); head.appendChild(el("div", "eyebrow", "The Odeon · " + region().label)); box.appendChild(head);
     box.appendChild(el("h3", null, "Music, comedy, movies & nights out"));
     var first = ((od && od.events) || {}).radar; first = first && first[0];
     var lead = first ? first.name + ", " + first.venue : (od && (od.radar || [])[0] || {}).title;
-    var line = n.events ? n.events + " upcoming shows picked for you" + (lead ? ". Next on your radar: " + lead : "")
-      : lead || "Find tickets across Ticketek, Moshtix, Oztix, Hoyts and IMAX Melbourne";
+    var line = n.events ? n.events + (n.events === 1 ? " upcoming show" : " upcoming shows") + " picked for you" + (lead ? ". Next on your radar: " + lead : "")
+      : lead || region().findLine;
     box.appendChild(el("p", "why", line));
     var acts = el("div", "acts");
     acts.appendChild(pill("Open the Odeon", "solid", openOdeon));
     box.appendChild(acts);
     [].slice.call(box.children, 1).forEach(function (c) { c.style.gridColumn = "2"; });
+  }
+  function regionSwitch() {
+    var box = el("div", "od-region"), cur = currentRegion(), auto = !store("lyceum-region");
+    Object.keys(REGIONS).forEach(function (key) {
+      var b = el("button", cur === key ? "on" : "", REGIONS[key].label); b.type = "button";
+      b.setAttribute("aria-pressed", cur === key ? "true" : "false");
+      b.addEventListener("click", function () {
+        store("lyceum-region", key);
+        renderOdeonCard(odeonAll); renderOdeonPage();
+        $("odeonPage").scrollTop = 0;
+      });
+      box.appendChild(b);
+    });
+    box.appendChild(el("span", "od-where", auto ? "Following your phone's timezone" : "Chosen by you"));
+    return box;
   }
   function findBox() {
     var box = el("div", "od-find");
@@ -988,17 +1046,18 @@ function lyceumMain() {
     inp.setAttribute("enterkeyhint", "search"); inp.autocomplete = "off";
     var out = el("div", "sx");
     function go(sl) { var q = inp.value.trim(); if (q) window.open(sl.url(q), "_blank", "noopener"); else inp.focus(); }
-    SELLERS.forEach(function (sl) {
+    sellers().forEach(function (sl) {
       var b = el("button", null, sl.name); b.type = "button"; b.addEventListener("click", function () { go(sl); }); out.appendChild(b);
     });
-    form.addEventListener("submit", function (e) { e.preventDefault(); go(SELLERS[0]); });
+    form.addEventListener("submit", function (e) { e.preventDefault(); go(sellers()[0]); });
     form.appendChild(inp); box.appendChild(form); box.appendChild(out);
     return box;
   }
   function renderOdeonPage() {
-    var od = odeonData || {}, ev = od.events || {}, wrap = $("odWrap"), n = odeonCounts(od);
+    var od = odeonData || {}, ev = od.events || {}, wrap = $("odWrap"), n = odeonCounts(od), R = region();
     wrap.textContent = "";
     wrap.appendChild(el("p", "od-intro", "Shows, gigs, laughs and movies chosen for your taste, with dates, times and prices where the ticket seller publishes them."));
+    wrap.appendChild(regionSwitch());
     wrap.appendChild(findBox());
     ODEON_ROWS.forEach(function (row) {
       var list = ev[row.key] || [];
@@ -1011,16 +1070,14 @@ function lyceumMain() {
     });
     if (!n.events) {
       var note = el("div", "od-note");
-      note.innerHTML = od.events_connected
-        ? "<b>No upcoming shows found right now</b> for your artists or in Melbourne. They will appear here when tickets go on sale."
-        : "<b>Show dates and prices are not connected yet.</b> They need a free Ticketmaster key (prices and tickets) and a free Bandsintown app ID (tour dates from any seller). Until then, search above and read the headlines below.";
+      note.innerHTML = od.events_connected ? R.none : R.noKeys;
       var holder = el("div", "od-row"); holder.appendChild(note); wrap.appendChild(holder);
     }
     // movies and cinemas
     var msec = el("div", "od-row"), mlabel = el("div", "od-label", "At the cinema");
     mlabel.style.setProperty("--c", "#8db8ea"); msec.appendChild(mlabel);
     if ((od.movies || []).length) {
-      msec.appendChild(el("div", "mv-count", od.movies.length + " English and Bollywood films in Australian cinemas now and soon. Tap one for details."));
+      msec.appendChild(el("div", "mv-count", od.movies.length + " English and Bollywood films in " + R.adj + " cinemas now and soon. Tap one for details."));
       var mstrip = el("div", "od-strip mv-strip");
       od.movies.forEach(function (m) { mstrip.appendChild(movieCard(m, mstrip)); });
       msec.appendChild(mstrip);
@@ -1028,7 +1085,7 @@ function lyceumMain() {
     var cin = el("div", "od-note");
     cin.appendChild(el("div", null, od.movies_connected ? "Tap a poster to find session times. Book on the cinema's own site:" : "Book on the cinema's own site (what is showing needs a free TMDB key to list here):"));
     var cl = el("div", "sx");
-    CINEMAS.forEach(function (c) { var a = el("a", null, c.name); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; cl.appendChild(a); });
+    cinemas().forEach(function (c) { var a = el("a", null, c.name); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; cl.appendChild(a); });
     cin.appendChild(cl);
     if ((od.movies || []).length) cin.appendChild(el("div", "fine", "Film data and posters from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB."));
     msec.appendChild(cin); wrap.appendChild(msec);
@@ -1045,7 +1102,7 @@ function lyceumMain() {
         sec.appendChild(label); sec.appendChild(strip); wrap.appendChild(sec);
       });
     }
-    wrap.appendChild(el("div", "od-foot", "Dates and prices come from Ticketmaster and Bandsintown and can change; always confirm on the ticket page. Not every show is listed by them, so use the seller links. Cinema session times and prices are only on the cinemas' own sites. Seat advice is general, not live availability."));
+    wrap.appendChild(el("div", "od-foot", R.foot));
   }
   function openOdeon() {
     renderOdeonPage();
