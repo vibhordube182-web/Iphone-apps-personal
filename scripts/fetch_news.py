@@ -336,29 +336,63 @@ def og_image(link):
     return None
 
 
-def add_odeon_images(odeon):
-    """Give picture-less Odeon items a photo: the artist's Wikipedia photo, else the article's own og:image."""
+# What a headline is about, as a Wikipedia page whose photo can stand in for it (a club, venue, event or company).
+TOPIC_PAGES = [
+    (r"(?i)melbourne victory", "Melbourne Victory FC"), (r"(?i)melbourne city", "Melbourne City FC"),
+    (r"(?i)socceroos", "Australia men's national soccer team"), (r"(?i)a-league", "A-League Men"),
+    (r"(?i)mumbai city fc", "Mumbai City FC"), (r"(?i)indian super league|\bisl\b", "Indian Super League"),
+    (r"(?i)premier league", "Premier League"), (r"(?i)champions league", "UEFA Champions League"),
+    (r"(?i)marvel stadium|docklands stadium", "Marvel Stadium"), (r"(?i)\bmcg\b|melbourne cricket ground", "Melbourne Cricket Ground"),
+    (r"(?i)aami park", "AAMI Park"), (r"(?i)rod laver", "Rod Laver Arena"), (r"(?i)federation square", "Federation Square"),
+    (r"(?i)queen victoria market|queen vic", "Queen Victoria Market"), (r"(?i)st kilda", "St Kilda, Victoria"),
+    (r"(?i)wankhede", "Wankhede Stadium"), (r"(?i)nsci|worli", "Worli"), (r"(?i)gateway of india", "Gateway of India"),
+    (r"(?i)marine drive", "Marine Drive, Mumbai"), (r"(?i)bandra", "Bandra"), (r"(?i)\bbkc\b|bandra kurla", "Bandra Kurla Complex"),
+    (r"(?i)spacex|starship", "SpaceX"), (r"(?i)tesla", "Tesla, Inc."), (r"(?i)neuralink", "Neuralink"), (r"(?i)\bxai\b", "XAI (company)"),
+    (r"(?i)diwali", "Diwali"), (r"(?i)\bholi\b", "Holi"), (r"(?i)bollywood", "Bollywood"),
+    (r"(?i)greek|hellenic|antipodes", "Greek Orthodox Church of Australia"), (r"(?i)stoic", "Stoicism"),
+    (r"(?i)comedy festival", "Melbourne International Comedy Festival"), (r"(?i)night market", "Queen Victoria Market"),
+]
+_CITY_PAGE = {"melbourne": "Melbourne", "mumbai": "Mumbai"}
+
+
+def topic_image(text):
+    """A photo for what a headline is about: the first matching club, venue or topic from TOPIC_PAGES."""
+    for pat, page in TOPIC_PAGES:
+        if re.search(pat, text):
+            img = wiki_image(page)
+            if img:
+                return img
+    return None
+
+
+def add_odeon_images(odeon, city="melbourne"):
+    """Give picture-less Odeon items a photo: the artist's photo, a person named in the headline, the article's own
+    picture, then a photo of the venue/club/topic it is about, and for 'Out & about' the city itself as a last resort."""
     jobs = []
     for k in ("radar", "music", "comedy", "out"):
         for it in odeon.get(k, []):
             if not it.get("image"):
-                jobs.append((it, it.get("tag") or "", it["link"]))
+                jobs.append((it, it.get("tag") or "", it["link"], k))
         for e in (odeon.get("events") or {}).get(k, []):
             if not e.get("image") and e.get("tag"):
-                jobs.append((e, e["tag"], ""))
+                jobs.append((e, e["tag"], "", k))
     def work(job):
-        item, tag, link = job
+        item, tag, link, row = job
         img = None
+        title = item.get("title") or item.get("name") or ""
         if tag:
             img = deezer_image(tag) or wiki_image(tag)
         if not img:
-            title = item.get("title") or item.get("name") or ""
             for name in lead_names(title):            # a person named at the start of the headline
                 img = deezer_image(name) or wiki_image(name, people_only=True)
                 if img:
                     break
         if not img and link:
             img = og_image(link)
+        if not img:
+            img = topic_image(title + " " + (item.get("summary") or ""))
+        if not img and row == "out":
+            img = wiki_image(_CITY_PAGE.get(city, "Melbourne"))
         if img:
             item["image"] = img
     with ThreadPoolExecutor(6) as ex:
@@ -775,7 +809,7 @@ def main():
         print(f"skip mumbai odeon: {e}", file=sys.stderr)
     try:
         add_odeon_images(odeon)
-        add_odeon_images(odeon.get("regions", {}).get("mumbai", {}))
+        add_odeon_images(odeon.get("regions", {}).get("mumbai", {}), "mumbai")
     except Exception as e:
         print(f"skip odeon images: {e}", file=sys.stderr)
     for s in stories:
